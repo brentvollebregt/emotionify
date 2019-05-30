@@ -1,36 +1,48 @@
 import React from 'react';
-import Navigation from './Navigation'
-import {AppContext, AppContextInterface} from './AppContext'
-import {BrowserRouter, Switch, Route, Redirect} from "react-router-dom";
+import Navigation from './Navigation';
+import { BrowserRouter, Switch, Route, Redirect } from "react-router-dom";
+import SpotifyAuthorization from './spotify-authorization/SpotifyAuthorization';
 
-const context: AppContextInterface = {
+interface IProps { }
+
+interface IState {
   token: {
-    value: undefined,
-    expiry: 0
-  },
-  user: {
-    name: 'No One',
-    playlists: []
+    value: string | null,
+    expiry: number
   }
 }
 
-const App: React.FC = () => {
-  return (
-    <BrowserRouter>
-      <AppContext.Provider value={context}>
+class App extends React.Component<IProps, IState> {
+  constructor(props: IProps) {
+    super(props)
+    this.state = {
+      token: {
+        value: null,
+        expiry: 0
+      }
+    }
+
+    this.onTokenChaged = this.onTokenChaged.bind(this)
+  }
+
+  onTokenChaged(token: string, expiry: number) {
+    console.log(token);
+  }
+
+  render() {
+    return (
+      <BrowserRouter>
         <Navigation />
         <Switch>
-            <Route exact path='/' render={() => {return 'Home'}}/> {/* component={COMP} */}
+            <Route exact path='/' render={() => {return 'Home'}}/>
             <Route exact path='/sort' render={() => {return 'Sort'}}/>
             <Route exact path='/about' render={() => {return 'About'}}/>
+            <Route exact path='/spotify-authorization' render={() => <SpotifyAuthorization currentToken={this.state.token.value} onTokenChanged={this.onTokenChaged}/>}/>
             <Route render={() => <Redirect to='/' />}/>
         </Switch>
-        <AppContext.Consumer>
-          {value => value.user.name}
-        </AppContext.Consumer>
-      </AppContext.Provider>
-    </BrowserRouter>
-  );
+      </BrowserRouter>
+    )
+  }
 }
 
 export default App;
