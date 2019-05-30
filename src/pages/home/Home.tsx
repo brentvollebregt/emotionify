@@ -4,7 +4,6 @@ import Container from 'react-bootstrap/Container';
 import Button from 'react-bootstrap/Button';
 import banner from '../../img/banner.png'
 
-
 interface HomeProps { 
     token: {
         value: string | null,

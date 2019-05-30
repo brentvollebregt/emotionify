@@ -3,6 +3,7 @@ import Navigation from './Navigation';
 import { BrowserRouter, Switch, Route, Redirect } from "react-router-dom";
 import SpotifyAuthorization from './pages/spotify-authorization/SpotifyAuthorization';
 import Home from './pages/home/Home';
+import About from './pages/about/About';
 
 interface IProps { }
 
@@ -45,7 +46,7 @@ class App extends React.Component<IProps, IState> {
         <Switch>
             <Route exact path='/' render={() => <Home token={this.state.token} />}/>
             <Route exact path='/sort' render={() => {return 'Sort'}}/>
-            <Route exact path='/about' render={() => {return 'About'}}/>
+            <Route exact path='/about' component={About}/>
             <Route exact path='/spotify-authorization' render={() => <SpotifyAuthorization currentToken={this.state.token.value} onTokenChanged={this.onTokenChaged}/>}/>
             <Route render={() => <Redirect to='/' />}/>
         </Switch>
