@@ -1,6 +1,6 @@
 import React from 'react';
 import { Redirect, RouteComponentProps, withRouter } from "react-router-dom";
-import { encodeData, randomString } from '../Utils';
+import { encodeData, randomString } from '../../Utils';
 import Container from 'react-bootstrap/Container';
 
 /**
@@ -10,10 +10,9 @@ import Container from 'react-bootstrap/Container';
 const client_id = '3d402278ec5e45bc930e791de2741b3e'; // TODO Move out to a settings object
 const local_storage_state_key = 'spotify-auth-random-state';
 
-interface SpotifyAuthorizationProps extends RouteComponentProps<any> {
+interface SpotifyAuthorizationProps extends RouteComponentProps<{}> {
     currentToken: string | null,
-    onTokenChanged: ((token: string, expiry: number) => void),
-    location: any
+    onTokenChanged: ((token: string, expiry: number) => void)
 }
 
 const SpotifyAuthorization: React.SFC<SpotifyAuthorizationProps> = (props: SpotifyAuthorizationProps) => {

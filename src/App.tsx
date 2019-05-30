@@ -1,14 +1,15 @@
 import React from 'react';
 import Navigation from './Navigation';
 import { BrowserRouter, Switch, Route, Redirect } from "react-router-dom";
-import SpotifyAuthorization from './spotify-authorization/SpotifyAuthorization';
+import SpotifyAuthorization from './pages/spotify-authorization/SpotifyAuthorization';
+import Home from './pages/home/Home';
 
 interface IProps { }
 
 interface IState {
   token: {
     value: string | null,
-    expiry: number
+    expiry: Date
   }
 }
 
@@ -18,7 +19,7 @@ class App extends React.Component<IProps, IState> {
     this.state = {
       token: {
         value: null,
-        expiry: 0
+        expiry: new Date(0)
       }
     }
 
@@ -26,7 +27,15 @@ class App extends React.Component<IProps, IState> {
   }
 
   onTokenChaged(token: string, expiry: number) {
-    console.log(token);
+    let expiryDate = new Date();
+    expiryDate.setSeconds(expiryDate.getSeconds() + expiry);
+
+    this.setState({
+      token: {
+        value: token,
+        expiry: expiryDate
+      }
+    });
   }
 
   render() {
@@ -34,7 +43,7 @@ class App extends React.Component<IProps, IState> {
       <BrowserRouter>
         <Navigation />
         <Switch>
-            <Route exact path='/' render={() => {return 'Home'}}/>
+            <Route exact path='/' render={() => <Home />}/>
             <Route exact path='/sort' render={() => {return 'Sort'}}/>
             <Route exact path='/about' render={() => {return 'About'}}/>
             <Route exact path='/spotify-authorization' render={() => <SpotifyAuthorization currentToken={this.state.token.value} onTokenChanged={this.onTokenChaged}/>}/>

@@ -1,5 +1,5 @@
 import React from 'react';
-import logo from './logo.png';
+import banner from './img/banner.png';
 import Navbar from 'react-bootstrap/Navbar';
 import Nav from 'react-bootstrap/Nav';
 import Container from 'react-bootstrap/Container';
@@ -12,13 +12,11 @@ const Navigation: React.FC = () => {
       <Container>
         <Navbar.Brand href="/">
           <img 
-            src={logo} 
-            width="30"
+            src={banner} 
             height="30"
             className="d-inline-block align-top"
-            alt="Emotionify Logo"
+            alt="Emotionify Banner Logo"
           />
-          {' Emotionify'}
         </Navbar.Brand>
         <Navbar.Toggle aria-controls="responsive-navbar-nav" />
         <Navbar.Collapse id="responsive-navbar-nav">
