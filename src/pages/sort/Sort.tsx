@@ -6,7 +6,7 @@ import Spinner from 'react-bootstrap/Spinner';
 import Table from 'react-bootstrap/Table';
 import SpotifyWebApi from 'spotify-web-api-js';
 
-const playlistRequestLimit = 3;
+const playlistRequestLimit = 20;
 
 interface IProps {
     token: {
@@ -18,8 +18,12 @@ interface IProps {
 
 interface IState {
     requestingPlaylists: boolean,
+    requestingSongs: boolean,
     playlists: SpotifyApi.PlaylistObjectSimplified[]
-    selectedPlaylist: SpotifyApi.PlaylistObjectSimplified | null
+    selectedPlaylist: SpotifyApi.PlaylistObjectSimplified | null,
+    playlistTracks: {
+        [key: string]: SpotifyApi.PlaylistTrackObject[]
+    }
 }
 
 class Sort extends React.Component<IProps, IState> {
@@ -28,8 +32,10 @@ class Sort extends React.Component<IProps, IState> {
 
         this.state = {
             requestingPlaylists: false,
+            requestingSongs: false,
             playlists: [],
-            selectedPlaylist: null
+            selectedPlaylist: null,
+            playlistTracks: {}
         }
 
         this.playlistSelected = this.playlistSelected.bind(this);
@@ -53,7 +59,7 @@ class Sort extends React.Component<IProps, IState> {
         return this.props.token.expiry > new Date();
     }
 
-    getUserPlaylists(): void { // TODO Make recursive to get all playlists
+    getUserPlaylists(): void {
         if (this.props.token.value !== null && this.props.user !== null) {
             let spotifyApi = new SpotifyWebApi();
             spotifyApi.setAccessToken(this.props.token.value);
@@ -85,15 +91,38 @@ class Sort extends React.Component<IProps, IState> {
         if (this.state.playlists !== null) {
             let playlist = this.state.playlists.find(p => p.id === playlist_id);
             if (playlist !== undefined) {
-                this.setState({ selectedPlaylist: playlist });
+                this.setState({ selectedPlaylist: playlist }, this.getSelectedPlaylistData);
             }
         }
     }
 
-    getSelectedPlaylistData(): void {
-        // Ideal to cache this
-        // Request for all tracks in the playlist
-        // Request for song features for all of them
+    getSelectedPlaylistData(): void { // TODO: Ideal to cache this
+        if (this.props.token.value !== null && this.state.selectedPlaylist !== null) {
+
+            const requestSongs = (spotifyApi: SpotifyWebApi.SpotifyWebApiJs, offset: number, limit: number, baseComponent: Sort) => {
+                if (baseComponent.state.selectedPlaylist !== null) {
+                    spotifyApi.getPlaylistTracks(baseComponent.state.selectedPlaylist.id, { offset, limit })
+                        .then(data => {
+                            baseComponent.setState({ playlistTracks: { ...this.state.playlistTracks, [playlist_id]: [...this.state.playlistTracks[playlist_id], ...data.items ] } });
+                            if (data.total > offset + limit) { // Need to request more
+                                requestSongs(spotifyApi, offset + limit, limit, baseComponent);
+                            } else { // End of recursion
+                                this.setState({ requestingSongs: false });
+                            }
+                        }, err => {
+                            console.error(err);
+                        });
+                }
+            }
+
+            const playlist_id = this.state.selectedPlaylist.id;
+            this.setState({ playlistTracks: { ...this.state.playlistTracks, [playlist_id]: [] }, requestingSongs: true });
+            let spotifyApi = new SpotifyWebApi();
+            spotifyApi.setAccessToken(this.props.token.value);
+            requestSongs(spotifyApi, 0, 100, this);
+        }
+
+        // TODO Request for song features
     }
 
     logout(): void {
