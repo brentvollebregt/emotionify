@@ -5,6 +5,7 @@ import SpotifyAuthorization from './pages/spotify-authorization/SpotifyAuthoriza
 import Home from './pages/home/Home';
 import About from './pages/about/About';
 import Sort from './pages/sort/Sort';
+import SpotifyWebApi from 'spotify-web-api-js';
 
 interface IProps { }
 
@@ -12,7 +13,8 @@ interface IState {
   token: {
     value: string | null,
     expiry: Date
-  }
+  },
+  user: SpotifyApi.CurrentUsersProfileResponse | null
 }
 
 class App extends React.Component<IProps, IState> {
@@ -22,7 +24,8 @@ class App extends React.Component<IProps, IState> {
       token: {
         value: null,
         expiry: new Date(0)
-      }
+      },
+      user: null
     }
 
     this.onTokenChaged = this.onTokenChaged.bind(this)
@@ -37,18 +40,28 @@ class App extends React.Component<IProps, IState> {
         value: token,
         expiry: expiryDate
       }
-    });
+    }, this.getUser);
+  }
+
+  getUser() {
+    if (this.state.token.value !== null) {
+      let spotifyApi = new SpotifyWebApi();
+      spotifyApi.setAccessToken(this.state.token.value);
+      spotifyApi.getMe()
+        .then(user => this.setState({ user }));
+    }
   }
 
   render() {
+    const { token, user } = this.state;
     return (
       <BrowserRouter>
         <Navigation />
         <Switch>
-          <Route exact path='/' render={() => <Home token={this.state.token} />} />
-          <Route exact path='/sort' render={() => <Sort token={this.state.token} />} />
+          <Route exact path='/' render={() => <Home token={token} user={user} />} />
+          <Route exact path='/sort' render={() => <Sort token={token} user={user} key={user === null ? '' : user.uri} />} />
           <Route exact path='/about' component={About} />
-          <Route exact path='/spotify-authorization' render={() => <SpotifyAuthorization currentToken={this.state.token.value} onTokenChanged={this.onTokenChaged} />} />
+          <Route exact path='/spotify-authorization' render={() => <SpotifyAuthorization currentToken={token.value} onTokenChanged={this.onTokenChaged} />} />
           <Route render={() => <Redirect to='/' />} />
         </Switch>
       </BrowserRouter>

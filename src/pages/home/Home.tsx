@@ -8,7 +8,8 @@ interface HomeProps {
     token: {
         value: string | null,
         expiry: Date
-    }
+    },
+    user: SpotifyApi.CurrentUsersProfileResponse | null
 }
 
 const Home: React.SFC<HomeProps> = (props: HomeProps) => {
@@ -26,10 +27,7 @@ const Home: React.SFC<HomeProps> = (props: HomeProps) => {
             <Container>
                 <h2 className="text-center">Testing</h2>
                 <p>Token: {props.token.value} (expires: {props.token.expiry.toLocaleString()})</p>
-                <p>
-                    {'Setup spotify authorisation: '}
-                    <Link to="/spotify-authorization"><Button>/spotify-authorization</Button></Link>
-                </p>
+                <p>User: {props.user !== null ? props.user.display_name : 'N/A'}</p>
             </Container>
         </section>
     </>

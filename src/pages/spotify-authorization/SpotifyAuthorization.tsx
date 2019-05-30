@@ -17,7 +17,7 @@ interface SpotifyAuthorizationProps extends RouteComponentProps<{}> {
 
 const SpotifyAuthorization: React.SFC<SpotifyAuthorizationProps> = (props: SpotifyAuthorizationProps) => {
     if (props.currentToken !== null) { // If we do have a token, go to /sort
-        return <Redirect to='/sort' />
+        return <Redirect to='/sort' />;
     } else {
         let message = '';
 
@@ -25,7 +25,7 @@ const SpotifyAuthorization: React.SFC<SpotifyAuthorizationProps> = (props: Spoti
         if (props.location.hash === '') { // No token in URL, redirect user to request for one
             // Setup random state
             const random_state = randomString(16);
-            localStorage.setItem(local_storage_state_key, random_state)
+            localStorage.setItem(local_storage_state_key, random_state);
             // Redirect
             const url_parameters = {
                 'client_id': client_id,
@@ -49,7 +49,7 @@ const SpotifyAuthorization: React.SFC<SpotifyAuthorizationProps> = (props: Spoti
                 const stored_random_state = localStorage.getItem(local_storage_state_key);
                 if (stored_random_state !== null && stored_random_state === state) { // Random state was set and matches
                     props.onTokenChanged(access_token, parseInt(expires_in));
-                    localStorage.removeItem(local_storage_state_key)
+                    localStorage.removeItem(local_storage_state_key);
                     return <Redirect to='/sort' />;
 
                 } else { // Token recieved but it does not match the state stored (if there was one)
