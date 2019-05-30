@@ -4,7 +4,7 @@ import Container from 'react-bootstrap/Container';
 import Button from 'react-bootstrap/Button';
 import banner from '../../img/banner.png'
 
-interface HomeProps { 
+interface HomeProps {
     token: {
         value: string | null,
         expiry: Date
@@ -13,10 +13,10 @@ interface HomeProps {
 
 const Home: React.SFC<HomeProps> = (props: HomeProps) => {
     return <>
-        <section className="jumbotron jumbotron-fluid text-center header">
+        <section className="jumbotron jumbotron-fluid text-center">
             <Container>
                 <h1 className="sr-only">Emotionify</h1>
-                <img src={banner} className="mb-2" style={{width: 800, maxWidth: '100%'}} alt="Emotionify Banner Logo"/>
+                <img src={banner} className="mb-2" style={{ width: 800, maxWidth: '100%' }} alt="Emotionify Banner Logo" />
                 <p className="lead col-md-7 mt-2 mx-auto">Easily create emotionally gradiented Spotify playlists for smoother emotional transitions in your listening</p>
             </Container>
         </section>

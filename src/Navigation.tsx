@@ -11,8 +11,8 @@ const Navigation: React.FC = () => {
     <Navbar collapseOnSelect expand="sm" bg="light" variant="light" sticky="top">
       <Container>
         <Navbar.Brand href="/">
-          <img 
-            src={banner} 
+          <img
+            src={banner}
             height="30"
             className="d-inline-block align-top"
             alt="Emotionify Banner Logo"

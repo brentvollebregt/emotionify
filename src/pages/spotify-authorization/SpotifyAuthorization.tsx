@@ -40,7 +40,7 @@ const SpotifyAuthorization: React.SFC<SpotifyAuthorizationProps> = (props: Spoti
             message = 'Requesting token, you will be redirected to Spotify';
 
         } else { // We have recieved the token, read it from the URL
-            const params = new URLSearchParams(props.location.hash.substr(1)); 
+            const params = new URLSearchParams(props.location.hash.substr(1));
             const access_token = params.get('access_token');
             const expires_in = params.get('expires_in');
             const state = params.get('state');
@@ -59,7 +59,7 @@ const SpotifyAuthorization: React.SFC<SpotifyAuthorizationProps> = (props: Spoti
                 message = 'Incorrect URL parameters';
             }
         }
-        return <Container className="text-center"> 
+        return <Container className="text-center">
             <h1>Spotify Authorization</h1>
             <p className="lead">{message}</p>
         </Container>;
@@ -68,7 +68,7 @@ const SpotifyAuthorization: React.SFC<SpotifyAuthorizationProps> = (props: Spoti
 
 SpotifyAuthorization.defaultProps = {
     currentToken: null,
-    onTokenChanged: () => {},
+    onTokenChanged: () => { },
 }
 
 export default withRouter(SpotifyAuthorization);
