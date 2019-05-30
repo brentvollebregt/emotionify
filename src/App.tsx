@@ -50,7 +50,7 @@ class App extends React.Component<IProps, IState> {
         <Navigation />
         <Switch>
           <Route exact path='/' render={() => <Home token={token} user={user} />} />
-          <Route exact path='/sort' render={() => <Sort token={token} user={user} key={user === null ? '' : user.uri} />} />
+          <Route exact path='/sort' render={() => <Sort token={token} user={user} />} />
           <Route exact path='/about' component={About} />
           <Route exact path='/spotify-authorization' render={() => <SpotifyAuthorization token={token} onUserChange={this.onUserChange} redirectToOnCompletion={'/sort'} />} />
           <Route render={() => <Redirect to='/' />} />

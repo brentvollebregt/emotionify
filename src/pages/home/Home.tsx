@@ -28,6 +28,7 @@ const Home: React.SFC<HomeProps> = (props: HomeProps) => {
                 <h2 className="text-center">Testing</h2>
                 <p>Token: {props.token.value} (expires: {props.token.expiry.toLocaleString()})</p>
                 <p>User: {props.user !== null ? props.user.display_name : 'N/A'}</p>
+                <Link to="/spotify-authorization"><Button>/spotify-authorization</Button></Link>
             </Container>
         </section>
     </>

@@ -48,11 +48,10 @@ class Sort extends React.Component<IProps, IState> {
     }
 
     getUserPlaylists() {
-        console.log('getUserPlaylists', this.props.user);
-        if (this.props.token.value !== null) {
+        if (this.props.token.value !== null && this.props.user !== null) {
             let spotifyApi = new SpotifyWebApi();
             spotifyApi.setAccessToken(this.props.token.value);
-            spotifyApi.getUserPlaylists('brentvollebregt', { limit: 5 })
+            spotifyApi.getUserPlaylists(this.props.user.id, { limit: 5 })
                 .then(data => {
                     this.setState({ playlists: data, requestingPlaylists: false })
                 }, err => {
@@ -60,7 +59,7 @@ class Sort extends React.Component<IProps, IState> {
                 });
             
         } else {
-            alert('Cannot request playlists, token does not exist');
+            alert('Cannot request playlists, token or user not found');
         }
     }
 
