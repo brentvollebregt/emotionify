@@ -5,7 +5,6 @@ import SpotifyAuthorization from './pages/spotify-authorization/SpotifyAuthoriza
 import Home from './pages/home/Home';
 import About from './pages/about/About';
 import Sort from './pages/sort/Sort';
-import SpotifyWebApi from 'spotify-web-api-js';
 
 interface IProps { }
 
@@ -28,10 +27,10 @@ class App extends React.Component<IProps, IState> {
       user: null
     }
 
-    this.onTokenChaged = this.onTokenChaged.bind(this)
+    this.onUserChange = this.onUserChange.bind(this)
   }
 
-  onTokenChaged(token: string, expiry: number) {
+  onUserChange(token: string, expiry: number, user: SpotifyApi.CurrentUsersProfileResponse) {
     let expiryDate = new Date();
     expiryDate.setSeconds(expiryDate.getSeconds() + expiry);
 
@@ -39,17 +38,9 @@ class App extends React.Component<IProps, IState> {
       token: {
         value: token,
         expiry: expiryDate
-      }
-    }, this.getUser);
-  }
-
-  getUser() {
-    if (this.state.token.value !== null) {
-      let spotifyApi = new SpotifyWebApi();
-      spotifyApi.setAccessToken(this.state.token.value);
-      spotifyApi.getMe()
-        .then(user => this.setState({ user }));
-    }
+      },
+      user: user
+    });
   }
 
   render() {
@@ -61,7 +52,7 @@ class App extends React.Component<IProps, IState> {
           <Route exact path='/' render={() => <Home token={token} user={user} />} />
           <Route exact path='/sort' render={() => <Sort token={token} user={user} key={user === null ? '' : user.uri} />} />
           <Route exact path='/about' component={About} />
-          <Route exact path='/spotify-authorization' render={() => <SpotifyAuthorization currentToken={token.value} onTokenChanged={this.onTokenChaged} />} />
+          <Route exact path='/spotify-authorization' render={() => <SpotifyAuthorization token={token} onUserChange={this.onUserChange} redirectToOnCompletion={'/sort'} />} />
           <Route render={() => <Redirect to='/' />} />
         </Switch>
       </BrowserRouter>
