@@ -43,7 +43,7 @@ class App extends React.Component<IProps, IState> {
       <BrowserRouter>
         <Navigation />
         <Switch>
-            <Route exact path='/' render={() => <Home />}/>
+            <Route exact path='/' render={() => <Home token={this.state.token} />}/>
             <Route exact path='/sort' render={() => {return 'Sort'}}/>
             <Route exact path='/about' render={() => {return 'About'}}/>
             <Route exact path='/spotify-authorization' render={() => <SpotifyAuthorization currentToken={this.state.token.value} onTokenChanged={this.onTokenChaged}/>}/>
