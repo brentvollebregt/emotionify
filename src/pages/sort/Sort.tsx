@@ -6,6 +6,8 @@ import Spinner from 'react-bootstrap/Spinner';
 import Table from 'react-bootstrap/Table';
 import SpotifyWebApi from 'spotify-web-api-js';
 
+const playlistRequestLimit = 3;
+
 interface IProps {
     token: {
         value: string | null,
@@ -16,7 +18,7 @@ interface IProps {
 
 interface IState {
     requestingPlaylists: boolean,
-    playlists: SpotifyApi.PlaylistObjectSimplified[] | null
+    playlists: SpotifyApi.PlaylistObjectSimplified[]
     selectedPlaylist: SpotifyApi.PlaylistObjectSimplified | null
 }
 
@@ -26,7 +28,7 @@ class Sort extends React.Component<IProps, IState> {
 
         this.state = {
             requestingPlaylists: false,
-            playlists: null,
+            playlists: [],
             selectedPlaylist: null
         }
 
@@ -55,12 +57,24 @@ class Sort extends React.Component<IProps, IState> {
         if (this.props.token.value !== null && this.props.user !== null) {
             let spotifyApi = new SpotifyWebApi();
             spotifyApi.setAccessToken(this.props.token.value);
-            spotifyApi.getUserPlaylists(this.props.user.id, { limit: 5 })
-                .then(data => {
-                    this.setState({ playlists: data.items, requestingPlaylists: false });
-                }, err => {
-                    console.error(err);
-                });
+
+            const requestPlaylists = (spotifyApi: SpotifyWebApi.SpotifyWebApiJs, offset: number, limit: number, baseComponent: Sort) => {
+                if (baseComponent.props.user !== null) {
+                    spotifyApi.getUserPlaylists(baseComponent.props.user.id, { offset, limit })
+                        .then(data => {
+                            baseComponent.setState({ playlists: [...baseComponent.state.playlists, ...data.items] });
+                            if (data.total > offset + limit) { // Need to request more
+                                requestPlaylists(spotifyApi, offset + limit, limit, baseComponent);
+                            } else { // End of recursion
+                                this.setState({ requestingPlaylists: false });
+                            }
+                        }, err => {
+                            console.error(err);
+                        });
+                } 
+            }
+
+            requestPlaylists(spotifyApi, 0, playlistRequestLimit, this);
 
         } else {
             alert('Cannot request playlists, token or user not found');
@@ -119,20 +133,7 @@ class Sort extends React.Component<IProps, IState> {
             )
         }
 
-        // Check if loading
-        if (this.state.requestingPlaylists) {
-            return (
-                <>
-                    {header}
-                    <Container className="text-center">
-                        <Spinner animation="border" />
-                        <p className="text-center">Loading Playlists</p>
-                    </Container>
-                </>
-            )
-        }
-
-        const { playlists, selectedPlaylist } = this.state;
+        const { playlists, selectedPlaylist, requestingPlaylists } = this.state;
         const { user } = this.props;
 
         return (
@@ -169,6 +170,7 @@ class Sort extends React.Component<IProps, IState> {
                             )}
                         </tbody>
                     </Table>
+                    {requestingPlaylists && <Spinner animation="border" />}
 
                     <hr />
 
