@@ -19,6 +19,9 @@ interface IState {
 class App extends React.Component<IProps, IState> {
   constructor(props: IProps) {
     super(props)
+
+    // TODO Try to read the data from localStorage
+
     this.state = {
       token: {
         value: null,
@@ -41,6 +44,8 @@ class App extends React.Component<IProps, IState> {
       },
       user: user
     });
+
+    // TODO Store
   }
 
   render() {

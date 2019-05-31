@@ -78,6 +78,8 @@ class Sort extends React.Component<IProps, IState> {
     }
 
     getSelectedPlaylistData(): void {
+        // TODO Check if the data is already there
+        // TODO Pass playlist down
         const { selectedPlaylist } = this.state;
 
         if (this.props.token.value !== null && selectedPlaylist !== null) {
@@ -95,6 +97,8 @@ class Sort extends React.Component<IProps, IState> {
     }
 
     getSelectedPlaylistTrackFeatures() {
+        // TODO Check if the data is already there
+        // TODO Pass playlist down
         if (this.props.token.value !== null && this.state.selectedPlaylist !== null) {
             const playlist_id = this.state.selectedPlaylist.id;
             const track_ids = this.state.playlistTracks[playlist_id].map(t => t.id);

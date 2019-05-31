@@ -4,12 +4,12 @@ import { encodeData, randomString } from '../../Utils';
 import Container from 'react-bootstrap/Container';
 import SpotifyWebApi from 'spotify-web-api-js';
 import Spinner from 'react-bootstrap/Spinner';
+import settings from '../../settings.json'
 
 /**
  * Based off https://developer.spotify.com/documentation/general/guides/authorization-guide/#implicit-grant-flow
  */
 
-const client_id = '3d402278ec5e45bc930e791de2741b3e'; // TODO Move out to a settings object
 const local_storage_state_key = 'spotify-auth-random-state';
 
 enum SubState {
@@ -92,7 +92,7 @@ class SpotifyAuthorization extends React.Component<SpotifyAuthorizationProps, Sp
         localStorage.setItem(local_storage_state_key, random_state);
         // Redirect
         const url_parameters = {
-            'client_id': client_id,
+            'client_id': settings.spotify_client_id,
             'response_type': 'token',
             'redirect_uri': window.location.href,
             'state': random_state,
