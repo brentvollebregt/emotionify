@@ -4,7 +4,8 @@ import { encodeData, randomString } from '../../Utils';
 import Container from 'react-bootstrap/Container';
 import SpotifyWebApi from 'spotify-web-api-js';
 import Spinner from 'react-bootstrap/Spinner';
-import settings from '../../settings.json'
+import settings from '../../settings.json';
+import { Token } from '../../Models';
 
 /**
  * Based off https://developer.spotify.com/documentation/general/guides/authorization-guide/#implicit-grant-flow
@@ -23,11 +24,8 @@ enum SubState {
 }
 
 interface SpotifyAuthorizationProps extends RouteComponentProps<{}> {
-    token: {
-        value: string | null,
-        expiry: Date
-    },
-    onUserChange: ((token: string, expiry: Date, user: SpotifyApi.CurrentUsersProfileResponse) => void),
+    token: Token | null,
+    onUserChange: ((token: Token, user: SpotifyApi.CurrentUsersProfileResponse) => void),
     redirectToOnCompletion: string
 }
 
@@ -83,7 +81,7 @@ class SpotifyAuthorization extends React.Component<SpotifyAuthorizationProps, Sp
 
     currentTokenValid(): boolean {
         // Check if the token provided by the parent component is valid
-        return this.props.token.value !== null && this.props.token.expiry > new Date();
+        return this.props.token !== null && this.props.token.expiry > new Date();
     }
 
     directToSpotify(): void {
@@ -110,7 +108,7 @@ class SpotifyAuthorization extends React.Component<SpotifyAuthorizationProps, Sp
             .then(user => {
                 let expiryDate = new Date();
                 expiryDate.setSeconds(expiryDate.getSeconds() + expires_in);
-                this.props.onUserChange(token, expiryDate, user);
+                this.props.onUserChange({ value: token, expiry: expiryDate }, user);
                 this.setState({ subState: SubState.Complete });
             });
     }

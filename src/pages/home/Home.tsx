@@ -2,13 +2,11 @@ import React from 'react';
 import { Link } from "react-router-dom";
 import Container from 'react-bootstrap/Container';
 import Button from 'react-bootstrap/Button';
-import banner from '../../img/banner.png'
+import banner from '../../img/banner.png';
+import { Token } from '../../Models';
 
 interface HomeProps {
-    token: {
-        value: string | null,
-        expiry: Date
-    },
+    token: Token | null,
     user: SpotifyApi.CurrentUsersProfileResponse | null
 }
 
@@ -26,7 +24,7 @@ const Home: React.SFC<HomeProps> = (props: HomeProps) => {
         <section>
             <Container>
                 <h2 className="text-center">Testing</h2>
-                <p>Token: {props.token.value} (expires: {props.token.expiry.toLocaleString()})</p>
+                <p>Token: {props.token !== null ? props.token.value : ''} (expires: {props.token !== null ? props.token.expiry.toLocaleString() : ''})</p>
                 <p>User: {props.user !== null ? props.user.display_name : 'N/A'}</p>
                 <Link to="/spotify-authorization"><Button>/spotify-authorization</Button></Link>
             </Container>
@@ -35,10 +33,7 @@ const Home: React.SFC<HomeProps> = (props: HomeProps) => {
 }
 
 Home.defaultProps = {
-    token: {
-        value: null,
-        expiry: new Date(0)
-    }
+    token: null
 }
 
 export default Home;

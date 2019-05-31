@@ -4,13 +4,13 @@ import Container from 'react-bootstrap/Container';
 import Button from 'react-bootstrap/Button';
 import Spinner from 'react-bootstrap/Spinner';
 import Table from 'react-bootstrap/Table';
-import { getUserPlaylists, getPlaylistTracks, getFeaturesForTracks } from '../../Spotify'
+import { getUserPlaylists, getPlaylistTracks, getFeaturesForTracks } from '../../Spotify';
+import { Token } from '../../Models';
+
+// TODO Store data in session storage
 
 interface IProps {
-    token: {
-        value: string | null,
-        expiry: Date
-    },
+    token: Token | null,
     user: SpotifyApi.CurrentUsersProfileResponse | null
 }
 
@@ -45,7 +45,7 @@ class Sort extends React.Component<IProps, IState> {
     componentDidMount(): void {
         const { token, user } = this.props;
 
-        if (token.value !== null && token.expiry > new Date() && user !== null) {
+        if (token !== null && token.expiry > new Date() && user !== null) {
             this.setState({
                 requestingPlaylists: true,
             });
@@ -58,14 +58,6 @@ class Sort extends React.Component<IProps, IState> {
                     alert('Cannot request playlists, token or user not found');
                 });
         }
-    }
-
-    tokenExists(): boolean {
-        return this.props.token.value !== null;
-    }
-
-    tokenNotExpired(): boolean {
-        return this.props.token.expiry > new Date();
     }
 
     playlistSelected(playlist_id: string): void {
@@ -81,7 +73,7 @@ class Sort extends React.Component<IProps, IState> {
     }
 
     getPlaylistTracks(playlist: SpotifyApi.PlaylistObjectSimplified): void {
-        if (this.props.token.value !== null && !(playlist.id in this.state.playlistTracks)) { // Check if we already have the data
+        if (this.props.token !== null && !(playlist.id in this.state.playlistTracks)) { // Check if we already have the data
             this.setState({ requestingSongs: true });
             getPlaylistTracks(this.props.token.value, playlist)
                 .then(tracks => {
@@ -96,7 +88,7 @@ class Sort extends React.Component<IProps, IState> {
     }
 
     getTrackFeatures(track_ids: string[]) {
-        if (this.props.token.value !== null) {
+        if (this.props.token !== null) {
             const currently_sotred_track_ids_with_features = this.state.audioFeatures.map(af => af.id);
             const track_ids_not_requested = track_ids.filter(t => !(t in currently_sotred_track_ids_with_features));
 
@@ -120,7 +112,7 @@ class Sort extends React.Component<IProps, IState> {
             <p className="text-center lead col-md-7 mx-auto">Here you can select a playlist and look at how the new playlist is sorted. You can then create the new playlist or select a different playlist.</p>
         </Container>;
 
-        if (!this.tokenExists()) { // Check if token exists
+        if (this.props.token === null) { // Check if token exists
             return (
                 <>
                     {header}
@@ -133,7 +125,7 @@ class Sort extends React.Component<IProps, IState> {
             )
         }
 
-        if (!this.tokenNotExpired()) { // Check if token hasn't expired
+        if (this.props.token.expiry <= new Date()) { // Check if token hasn't expired
             return (
                 <>
                     {header}

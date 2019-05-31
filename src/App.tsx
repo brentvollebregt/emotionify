@@ -5,16 +5,14 @@ import SpotifyAuthorization from './pages/spotify-authorization/SpotifyAuthoriza
 import Home from './pages/home/Home';
 import About from './pages/about/About';
 import Sort from './pages/sort/Sort';
+import { Token } from './Models'
 
 const local_storage_token_key = 'spotify-token';
 
 interface IProps { }
 
 interface IState {
-  token: {
-    value: string | null,
-    expiry: Date
-  },
+  token: Token | null
   user: SpotifyApi.CurrentUsersProfileResponse | null
 }
 
@@ -24,12 +22,8 @@ class App extends React.Component<IProps, IState> {
 
     let stored_state = this.readStoredState();
     if (stored_state === null) {
-      // Default state
-      this.state = {
-        token: {
-          value: null,
-          expiry: new Date(0)
-        },
+      this.state = { // Default state
+        token: null,
         user: null
       };
     } else {
@@ -39,25 +33,24 @@ class App extends React.Component<IProps, IState> {
     this.onUserChange = this.onUserChange.bind(this)
   }
 
-  onUserChange(token: string, expiry: Date, user: SpotifyApi.CurrentUsersProfileResponse) {
+  onUserChange(token: Token, user: SpotifyApi.CurrentUsersProfileResponse) {
     this.setState({
-      token: {
-        value: token,
-        expiry: expiry
-      },
+      token: token,
       user: user
     }, this.storeState);
   }
 
   storeState(): void {
-    let serializable_state = {
-      token: {
-        value: this.state.token.value,
-        expiry: this.state.token.expiry.getTime() // Date to seconds
-      },
-      user: this.state.user
+    if (this.state.token !== null) { // Only store something if we have a token
+      let serializable_state = {
+        token: {
+          value: this.state.token.value,
+          expiry: this.state.token.expiry.getTime() // Date to seconds
+        },
+        user: this.state.user
+      }
+      localStorage.setItem(local_storage_token_key, JSON.stringify(serializable_state));
     }
-    localStorage.setItem(local_storage_token_key, JSON.stringify(serializable_state));
   }
 
   readStoredState(): IState | null {
