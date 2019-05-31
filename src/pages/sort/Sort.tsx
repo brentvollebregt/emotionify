@@ -4,9 +4,7 @@ import Container from 'react-bootstrap/Container';
 import Button from 'react-bootstrap/Button';
 import Spinner from 'react-bootstrap/Spinner';
 import Table from 'react-bootstrap/Table';
-import SpotifyWebApi from 'spotify-web-api-js';
-
-const playlistRequestLimit = 20;
+import { getUserPlaylists, getPlaylistTracks, getFeaturesForTracks } from '../../Spotify'
 
 interface IProps {
     token: {
@@ -22,8 +20,9 @@ interface IState {
     playlists: SpotifyApi.PlaylistObjectSimplified[]
     selectedPlaylist: SpotifyApi.PlaylistObjectSimplified | null,
     playlistTracks: {
-        [key: string]: SpotifyApi.PlaylistTrackObject[]
+        [key: string]: SpotifyApi.TrackObjectFull[]
     }
+    audioFeatures: SpotifyApi.AudioFeaturesObject[]
 }
 
 class Sort extends React.Component<IProps, IState> {
@@ -35,7 +34,8 @@ class Sort extends React.Component<IProps, IState> {
             requestingSongs: false,
             playlists: [],
             selectedPlaylist: null,
-            playlistTracks: {}
+            playlistTracks: {},
+            audioFeatures: []
         }
 
         this.playlistSelected = this.playlistSelected.bind(this);
@@ -43,11 +43,20 @@ class Sort extends React.Component<IProps, IState> {
     }
 
     componentDidMount(): void {
-        if (this.tokenExists() && this.tokenValid()) {
+        const { token, user } = this.props;
+
+        if (token.value !== null && token.expiry > new Date() && user !== null) {
             this.setState({
                 requestingPlaylists: true,
             });
-            this.getUserPlaylists();
+
+            getUserPlaylists(token.value, user)
+                .then(playlists => {
+                    this.setState({ requestingPlaylists: false, playlists });
+                }, err => {
+                    console.error(err);
+                    alert('Cannot request playlists, token or user not found');
+                });
         }
     }
 
@@ -55,36 +64,8 @@ class Sort extends React.Component<IProps, IState> {
         return this.props.token.value !== null;
     }
 
-    tokenValid(): boolean {
+    tokenNotExpired(): boolean {
         return this.props.token.expiry > new Date();
-    }
-
-    getUserPlaylists(): void {
-        if (this.props.token.value !== null && this.props.user !== null) {
-            let spotifyApi = new SpotifyWebApi();
-            spotifyApi.setAccessToken(this.props.token.value);
-
-            const requestPlaylists = (spotifyApi: SpotifyWebApi.SpotifyWebApiJs, offset: number, limit: number, baseComponent: Sort) => {
-                if (baseComponent.props.user !== null) {
-                    spotifyApi.getUserPlaylists(baseComponent.props.user.id, { offset, limit })
-                        .then(data => {
-                            baseComponent.setState({ playlists: [...baseComponent.state.playlists, ...data.items] });
-                            if (data.total > offset + limit) { // Need to request more
-                                requestPlaylists(spotifyApi, offset + limit, limit, baseComponent);
-                            } else { // End of recursion
-                                this.setState({ requestingPlaylists: false });
-                            }
-                        }, err => {
-                            console.error(err);
-                        });
-                } 
-            }
-
-            requestPlaylists(spotifyApi, 0, playlistRequestLimit, this);
-
-        } else {
-            alert('Cannot request playlists, token or user not found');
-        }
     }
 
     playlistSelected(playlist_id: string): void {
@@ -96,33 +77,35 @@ class Sort extends React.Component<IProps, IState> {
         }
     }
 
-    getSelectedPlaylistData(): void { // TODO: Ideal to cache this
-        if (this.props.token.value !== null && this.state.selectedPlaylist !== null) {
+    getSelectedPlaylistData(): void {
+        const { selectedPlaylist } = this.state;
 
-            const requestSongs = (spotifyApi: SpotifyWebApi.SpotifyWebApiJs, offset: number, limit: number, baseComponent: Sort) => {
-                if (baseComponent.state.selectedPlaylist !== null) {
-                    spotifyApi.getPlaylistTracks(baseComponent.state.selectedPlaylist.id, { offset, limit })
-                        .then(data => {
-                            baseComponent.setState({ playlistTracks: { ...this.state.playlistTracks, [playlist_id]: [...this.state.playlistTracks[playlist_id], ...data.items ] } });
-                            if (data.total > offset + limit) { // Need to request more
-                                requestSongs(spotifyApi, offset + limit, limit, baseComponent);
-                            } else { // End of recursion
-                                this.setState({ requestingSongs: false });
-                            }
-                        }, err => {
-                            console.error(err);
-                        });
-                }
-            }
-
-            const playlist_id = this.state.selectedPlaylist.id;
-            this.setState({ playlistTracks: { ...this.state.playlistTracks, [playlist_id]: [] }, requestingSongs: true });
-            let spotifyApi = new SpotifyWebApi();
-            spotifyApi.setAccessToken(this.props.token.value);
-            requestSongs(spotifyApi, 0, 100, this);
+        if (this.props.token.value !== null && selectedPlaylist !== null) {
+            this.setState({ requestingSongs: true });
+            getPlaylistTracks(this.props.token.value, selectedPlaylist)
+                .then(data => {
+                    this.setState({ 
+                        playlistTracks: { ...this.state.playlistTracks, [selectedPlaylist.id]: data },
+                        requestingSongs: false 
+                    }, this.getSelectedPlaylistTrackFeatures);
+                }, err => {
+                    console.error(err);
+                });
         }
+    }
 
-        // TODO Request for song features
+    getSelectedPlaylistTrackFeatures() {
+        if (this.props.token.value !== null && this.state.selectedPlaylist !== null) {
+            const playlist_id = this.state.selectedPlaylist.id;
+            const track_ids = this.state.playlistTracks[playlist_id].map(t => t.id);
+
+            getFeaturesForTracks(this.props.token.value, track_ids)
+                .then(data => {
+                    this.setState({ audioFeatures: {...this.state.audioFeatures, ...data} })
+                }, err => {
+                    console.error(err);
+                });
+        }
     }
 
     logout(): void {
@@ -149,7 +132,7 @@ class Sort extends React.Component<IProps, IState> {
             )
         }
 
-        if (!this.tokenValid()) { // Check if token hasn't expired
+        if (!this.tokenNotExpired()) { // Check if token hasn't expired
             return (
                 <>
                     {header}

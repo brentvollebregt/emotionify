@@ -15,3 +15,11 @@ export function randomString(length: number): string {
     }
     return result;
 }
+
+export function chunkList<T>(list: T[], chunk_amount: number): T[][] {
+    let chunks: T[][] = [];
+    for (let i = 0; i < list.length; i += chunk_amount) {
+        chunks = [...chunks, list.slice(i, i+chunk_amount)]
+    }
+    return chunks;
+}
