@@ -4,6 +4,7 @@ import Container from 'react-bootstrap/Container';
 import Button from 'react-bootstrap/Button';
 import Spinner from 'react-bootstrap/Spinner';
 import Table from 'react-bootstrap/Table';
+import Badge from 'react-bootstrap/Badge';
 import { getUserPlaylists, getPlaylistTracks, getFeaturesForTracks } from '../../Spotify';
 import { Token } from '../../Models';
 
@@ -74,7 +75,7 @@ class Sort extends React.Component<IProps, IState> {
         }
     }
 
-    storeState(): void { // TODO Call
+    storeState(): void {
         localStorage.setItem(local_storage_sort_component_state_key, JSON.stringify(this.state));
     }
 
@@ -178,7 +179,7 @@ class Sort extends React.Component<IProps, IState> {
         return (
             <>
                 {header}
-                <Container className="text-center">
+                <Container className="text-center mb-5">
                     <p>
                         Logged in as: {user !== null ? user.display_name : ''}
                         <Button size="sm" className="ml-3" onClick={this.logout}>Logout</Button>
@@ -214,13 +215,13 @@ class Sort extends React.Component<IProps, IState> {
                     <hr />
 
                     {selectedPlaylist && <div>
-                        <h3 className="mt-4 mb-1">{selectedPlaylist.name}</h3>
-                        <p>
-                            <a href={selectedPlaylist.owner.href}>{selectedPlaylist.owner.display_name}</a>{' | '}
-                            <span>Tracks: {selectedPlaylist.tracks.total}</span>{' | '}
-                            <a href={selectedPlaylist.external_urls.spotify}>Spotify</a>{' | '}
-                            <span>{selectedPlaylist.public ? 'Public' : 'Private'}</span>
-                        </p>
+                        <h3 className="mt-4 mb-0">{selectedPlaylist.name}</h3>
+                        <div>
+                            <a href={selectedPlaylist.owner.href}><Badge variant="primary">{selectedPlaylist.owner.display_name}</Badge></a>
+                            <Badge variant="dark" className="ml-1">Tracks: {selectedPlaylist.tracks.total}</Badge>
+                            <a href={selectedPlaylist.external_urls.spotify} className="ml-1"><Badge variant="success">Spotify</Badge></a>
+                            <Badge variant="danger" className="ml-1">{selectedPlaylist.public ? 'Public' : 'Private'}</Badge>
+                        </div>
                     </div>}
 
                 </Container>
