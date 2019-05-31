@@ -8,15 +8,17 @@ import { getUserPlaylists, getPlaylistTracks, getFeaturesForTracks } from '../..
 import { Token } from '../../Models';
 
 // TODO Store data in session storage
+const local_storage_sort_component_state_key = 'emotionify-sort-component-state';
 
 interface IProps {
     token: Token | null,
-    user: SpotifyApi.CurrentUsersProfileResponse | null
+    user: SpotifyApi.CurrentUsersProfileResponse | null,
+    onLogout: () => void
 }
 
 interface IState {
     requestingPlaylists: boolean,
-    requestingSongs: boolean,
+    requestingTracks: boolean,
     playlists: SpotifyApi.PlaylistObjectSimplified[]
     selectedPlaylist: SpotifyApi.PlaylistObjectSimplified | null,
     playlistTracks: {
@@ -25,17 +27,24 @@ interface IState {
     audioFeatures: SpotifyApi.AudioFeaturesObject[]
 }
 
+let blank_state: IState = {
+    requestingPlaylists: false,
+    requestingTracks: false,
+    playlists: [],
+    selectedPlaylist: null,
+    playlistTracks: {},
+    audioFeatures: []
+}
+
 class Sort extends React.Component<IProps, IState> {
     constructor(props: IProps) {
         super(props)
 
-        this.state = {
-            requestingPlaylists: false,
-            requestingSongs: false,
-            playlists: [],
-            selectedPlaylist: null,
-            playlistTracks: {},
-            audioFeatures: []
+        let stored_state = this.getStoredState();
+        if (stored_state === null) {
+            this.state = blank_state;
+        } else {
+            this.state = stored_state;
         }
 
         this.playlistSelected = this.playlistSelected.bind(this);
@@ -60,6 +69,23 @@ class Sort extends React.Component<IProps, IState> {
         }
     }
 
+    storeState(): void { // TODO Call
+        localStorage.setItem(local_storage_sort_component_state_key, JSON.stringify(this.state));
+    }
+
+    getStoredState(): IState | null {
+        let stored_data = localStorage.getItem(local_storage_sort_component_state_key);
+        if (stored_data === null) {
+            return null;
+        } else {
+            return JSON.parse(stored_data);
+        }
+    }
+
+    deleteStoredState(): void {
+        localStorage.removeItem(local_storage_sort_component_state_key);
+    }
+
     playlistSelected(playlist_id: string): void {
         if (this.state.playlists.length > 0) {
             let playlist = this.state.playlists.find(p => p.id === playlist_id);
@@ -74,13 +100,12 @@ class Sort extends React.Component<IProps, IState> {
 
     getPlaylistTracks(playlist: SpotifyApi.PlaylistObjectSimplified): void {
         if (this.props.token !== null && !(playlist.id in this.state.playlistTracks)) { // Check if we already have the data
-            this.setState({ requestingSongs: true });
+            this.setState({ requestingTracks: true });
             getPlaylistTracks(this.props.token.value, playlist)
                 .then(tracks => {
                     this.setState({ 
-                        playlistTracks: { ...this.state.playlistTracks, [playlist.id]: tracks },
-                        requestingSongs: false 
-                    }, () => this.getTrackFeatures(tracks.map(t => t.id)));
+                        playlistTracks: { ...this.state.playlistTracks, [playlist.id]: tracks }
+                        }, () => this.getTrackFeatures(tracks.map(t => t.id)));
                 }, err => {
                     console.error(err);
                 });
@@ -94,7 +119,10 @@ class Sort extends React.Component<IProps, IState> {
 
             getFeaturesForTracks(this.props.token.value, track_ids_not_requested)
                 .then(data => {
-                    this.setState({ audioFeatures: [...this.state.audioFeatures, ...data] })
+                    this.setState({ 
+                        audioFeatures: [...this.state.audioFeatures, ...data],
+                        requestingTracks: false // Now that we have all track data required
+                    });
                 }, err => {
                     console.error(err);
                 });
@@ -102,8 +130,9 @@ class Sort extends React.Component<IProps, IState> {
     }
 
     logout(): void {
-        // Used for testing
-        console.warn(this.state);
+        this.deleteStoredState();
+        this.setState(blank_state);
+        this.props.onLogout();
     }
 
     render() {

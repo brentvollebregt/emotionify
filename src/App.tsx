@@ -16,21 +16,24 @@ interface IState {
   user: SpotifyApi.CurrentUsersProfileResponse | null
 }
 
+let blank_state: IState = {
+  token: null,
+  user: null
+};
+
 class App extends React.Component<IProps, IState> {
   constructor(props: IProps) {
     super(props)
 
     let stored_state = this.readStoredState();
     if (stored_state === null) {
-      this.state = { // Default state
-        token: null,
-        user: null
-      };
+      this.state = blank_state;
     } else {
       this.state = stored_state;
     }
 
     this.onUserChange = this.onUserChange.bind(this)
+    this.onLogout = this.onLogout.bind(this)
   }
 
   onUserChange(token: Token, user: SpotifyApi.CurrentUsersProfileResponse) {
@@ -38,6 +41,11 @@ class App extends React.Component<IProps, IState> {
       token: token,
       user: user
     }, this.storeState);
+  }
+
+  onLogout(): void {
+    this.deleteStoredState();
+    this.setState(blank_state);
   }
 
   storeState(): void {
@@ -70,6 +78,10 @@ class App extends React.Component<IProps, IState> {
     }
   }
 
+  deleteStoredState(): void {
+    localStorage.removeItem(local_storage_token_key);
+  }
+
   render() {
     const { token, user } = this.state;
     return (
@@ -77,7 +89,7 @@ class App extends React.Component<IProps, IState> {
         <Navigation />
         <Switch>
           <Route exact path='/' render={() => <Home token={token} user={user} />} />
-          <Route exact path='/sort' render={() => <Sort token={token} user={user} />} />
+          <Route exact path='/sort' render={() => <Sort token={token} user={user} onLogout={this.onLogout} />} />
           <Route exact path='/about' component={About} />
           <Route exact path='/spotify-authorization' render={() => <SpotifyAuthorization token={token} onUserChange={this.onUserChange} redirectToOnCompletion={'/sort'} />} />
           <Route render={() => <Redirect to='/' />} />
