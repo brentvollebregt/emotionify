@@ -1,10 +1,10 @@
 import React from 'react';
 import Navigation from './Navigation';
 import { BrowserRouter, Switch, Route, Redirect } from "react-router-dom";
-import SpotifyAuthorization from './pages/spotify-authorization/SpotifyAuthorization';
-import Home from './pages/home/Home';
-import About from './pages/about/About';
-import Sort from './pages/sort/Sort';
+import SpotifyAuthorization from './pages/SpotifyAuthorization';
+import Home from './pages/Home';
+import About from './pages/About';
+import Sort from './pages/Sort';
 import { Token } from './Models'
 
 const local_storage_token_key = 'spotify-token';

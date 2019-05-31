@@ -3,12 +3,11 @@ import { Link } from "react-router-dom";
 import Container from 'react-bootstrap/Container';
 import Button from 'react-bootstrap/Button';
 import Spinner from 'react-bootstrap/Spinner';
-import Table from 'react-bootstrap/Table';
 import Badge from 'react-bootstrap/Badge';
 import { getUserPlaylists, getPlaylistTracks, getFeaturesForTracks } from '../../Spotify';
 import { Token } from '../../Models';
+import PlaylistSelection from './PlaylistSelection'
 
-// TODO Store data in session storage
 const local_storage_sort_component_state_key = 'emotionify-sort-component-state';
 
 interface IProps {
@@ -98,8 +97,10 @@ class Sort extends React.Component<IProps, IState> {
             if (playlist !== undefined) {
                 const non_undefined_playlist = playlist; // To keep the TS compiler happy
                 this.setState({ 
-                    selectedPlaylist: non_undefined_playlist 
+                    selectedPlaylist: non_undefined_playlist
+                    // TODO Clear plot data
                 }, () => this.getPlaylistTracks(non_undefined_playlist));
+                this.setPlotData(); // Attempt to set plot data with what we already know
             }
         }
     }
@@ -118,7 +119,7 @@ class Sort extends React.Component<IProps, IState> {
         }
     }
 
-    getTrackFeatures(track_ids: string[]) {
+    getTrackFeatures(track_ids: string[]): void {
         if (this.props.token !== null) {
             const currently_sotred_track_ids_with_features = this.state.audioFeatures.map(af => af.id);
             const track_ids_not_requested = track_ids.filter(t => !(t in currently_sotred_track_ids_with_features));
@@ -128,11 +129,15 @@ class Sort extends React.Component<IProps, IState> {
                     this.setState({ 
                         audioFeatures: [...this.state.audioFeatures, ...data],
                         requestingTracks: false // Now that we have all track data required
-                    });
+                    }, this.setPlotData); // Call setPlotData now that we have the required data
                 }, err => {
                     console.error(err);
                 });
         }
+    }
+
+    setPlotData(): void {
+
     }
 
     logout(): void {
@@ -187,29 +192,7 @@ class Sort extends React.Component<IProps, IState> {
 
                     <hr />
 
-                    <h3 className="mt-4 mb-3">Select a Playlist</h3>
-                    <Table responsive striped hover>
-                        <thead>
-                            <tr>
-                                <th></th>
-                                <th>Name</th>
-                                <th>Owner</th>
-                                <th>Tracks</th>
-                                <th>Public</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {playlists !== null && playlists.map(
-                                playlist => (<tr key={playlist.id} onClick={e => this.playlistSelected(playlist.id)}>
-                                    <td style={{ padding: 2 }}><img src={playlist.images[0].url} style={{ height: 43 }} alt={'Artwork for: ' + playlist.name}/></td>
-                                    <td>{playlist.name}</td>
-                                    <td title={playlist.owner.uri}>{playlist.owner.display_name}</td>
-                                    <td>{playlist.tracks.total}</td>
-                                    <td>{playlist.public ? 'Yes' : 'No'}</td>
-                                </tr>)
-                            )}
-                        </tbody>
-                    </Table>
+                    {playlists && <PlaylistSelection playlists={playlists} onPlaylistSelected={this.playlistSelected} />}
                     {requestingPlaylists && <Spinner animation="border" />}
 
                     <hr />
