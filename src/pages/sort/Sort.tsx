@@ -55,17 +55,22 @@ class Sort extends React.Component<IProps, IState> {
         const { token, user } = this.props;
 
         if (token !== null && token.expiry > new Date() && user !== null) {
-            this.setState({
-                requestingPlaylists: true,
-            });
-
-            getUserPlaylists(token.value, user)
-                .then(playlists => {
-                    this.setState({ requestingPlaylists: false, playlists });
-                }, err => {
-                    console.error(err);
-                    alert('Cannot request playlists, token or user not found');
+            if (this.state.playlists.length === 0) { // Only request if there are no playlists stored
+                this.setState({
+                    requestingPlaylists: true,
                 });
+    
+                getUserPlaylists(token.value, user)
+                    .then(playlists => {
+                        this.setState({ 
+                            requestingPlaylists: false, 
+                            playlists 
+                        }, this.storeState);
+                    }, err => {
+                        console.error(err);
+                        alert('Cannot request playlists, token or user not found');
+                    });
+            }
         }
     }
 

@@ -25,7 +25,7 @@ enum SubState {
 
 interface SpotifyAuthorizationProps extends RouteComponentProps<{}> {
     token: Token | null,
-    onUserChange: ((token: Token, user: SpotifyApi.CurrentUsersProfileResponse) => void),
+    onUserChange: (token: Token, user: SpotifyApi.CurrentUsersProfileResponse) => void,
     redirectToOnCompletion: string
 }
 
