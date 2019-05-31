@@ -102,7 +102,7 @@ class Sort extends React.Component<IProps, IState> {
 
             getFeaturesForTracks(this.props.token.value, track_ids_not_requested)
                 .then(data => {
-                    this.setState({ audioFeatures: {...this.state.audioFeatures, ...data} })
+                    this.setState({ audioFeatures: [...this.state.audioFeatures, ...data] })
                 }, err => {
                     console.error(err);
                 });
