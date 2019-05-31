@@ -68,7 +68,12 @@ class App extends React.Component<IProps, IState> {
     } else {
       let serialized_state = JSON.parse(stored_data);
       serialized_state.token.expiry = new Date(serialized_state.token.expiry); // Seconds to date
-      return serialized_state;
+
+      if (serialized_state.token.expiry > new Date()) {
+        return serialized_state;
+      } else {
+        return null; // Don't return the token if it's expired
+      }
     }
   }
 
