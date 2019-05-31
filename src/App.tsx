@@ -6,6 +6,8 @@ import Home from './pages/home/Home';
 import About from './pages/about/About';
 import Sort from './pages/sort/Sort';
 
+const local_storage_token_key = 'spotify-token';
+
 interface IProps { }
 
 interface IState {
@@ -20,32 +22,54 @@ class App extends React.Component<IProps, IState> {
   constructor(props: IProps) {
     super(props)
 
-    // TODO Try to read the data from localStorage
-
-    this.state = {
-      token: {
-        value: null,
-        expiry: new Date(0)
-      },
-      user: null
+    let stored_state = this.readStoredState();
+    if (stored_state === null) {
+      // Default state
+      this.state = {
+        token: {
+          value: null,
+          expiry: new Date(0)
+        },
+        user: null
+      };
+    } else {
+      this.state = stored_state;
     }
 
     this.onUserChange = this.onUserChange.bind(this)
   }
 
-  onUserChange(token: string, expiry: number, user: SpotifyApi.CurrentUsersProfileResponse) {
-    let expiryDate = new Date();
-    expiryDate.setSeconds(expiryDate.getSeconds() + expiry);
-
+  onUserChange(token: string, expiry: Date, user: SpotifyApi.CurrentUsersProfileResponse) {
     this.setState({
       token: {
         value: token,
-        expiry: expiryDate
+        expiry: expiry
       },
       user: user
-    });
+    }, this.storeState);
+  }
 
-    // TODO Store
+  storeState(): void {
+    let serializable_state = {
+      token: {
+        value: this.state.token.value,
+        expiry: this.state.token.expiry.getTime() // Date to seconds
+      },
+      user: this.state.user
+    }
+    localStorage.setItem(local_storage_token_key, JSON.stringify(serializable_state));
+  }
+
+  readStoredState(): IState | null {
+    let stored_data = localStorage.getItem(local_storage_token_key);
+
+    if (stored_data === null) {
+      return null;
+    } else {
+      let serialized_state = JSON.parse(stored_data);
+      serialized_state.token.expiry = new Date(serialized_state.token.expiry); // Seconds to date
+      return serialized_state;
+    }
   }
 
   render() {

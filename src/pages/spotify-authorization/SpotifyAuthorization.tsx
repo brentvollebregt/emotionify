@@ -27,7 +27,7 @@ interface SpotifyAuthorizationProps extends RouteComponentProps<{}> {
         value: string | null,
         expiry: Date
     },
-    onUserChange: ((token: string, expiry: number, user: SpotifyApi.CurrentUsersProfileResponse) => void),
+    onUserChange: ((token: string, expiry: Date, user: SpotifyApi.CurrentUsersProfileResponse) => void),
     redirectToOnCompletion: string
 }
 
@@ -108,7 +108,9 @@ class SpotifyAuthorization extends React.Component<SpotifyAuthorizationProps, Sp
         spotifyApi.setAccessToken(token);
         spotifyApi.getMe()
             .then(user => {
-                this.props.onUserChange(token, expires_in, user);
+                let expiryDate = new Date();
+                expiryDate.setSeconds(expiryDate.getSeconds() + expires_in);
+                this.props.onUserChange(token, expiryDate, user);
                 this.setState({ subState: SubState.Complete });
             });
     }
