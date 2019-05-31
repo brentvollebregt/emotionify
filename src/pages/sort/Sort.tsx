@@ -69,41 +69,38 @@ class Sort extends React.Component<IProps, IState> {
     }
 
     playlistSelected(playlist_id: string): void {
-        if (this.state.playlists !== null) {
+        if (this.state.playlists.length > 0) {
             let playlist = this.state.playlists.find(p => p.id === playlist_id);
             if (playlist !== undefined) {
-                this.setState({ selectedPlaylist: playlist }, this.getSelectedPlaylistData);
+                const non_undefined_playlist = playlist; // To keep the TS compiler happy
+                this.setState({ 
+                    selectedPlaylist: non_undefined_playlist 
+                }, () => this.getPlaylistTracks(non_undefined_playlist));
             }
         }
     }
 
-    getSelectedPlaylistData(): void {
-        // TODO Check if the data is already there
-        // TODO Pass playlist down
-        const { selectedPlaylist } = this.state;
-
-        if (this.props.token.value !== null && selectedPlaylist !== null) {
+    getPlaylistTracks(playlist: SpotifyApi.PlaylistObjectSimplified): void {
+        if (this.props.token.value !== null && !(playlist.id in this.state.playlistTracks)) { // Check if we already have the data
             this.setState({ requestingSongs: true });
-            getPlaylistTracks(this.props.token.value, selectedPlaylist)
-                .then(data => {
+            getPlaylistTracks(this.props.token.value, playlist)
+                .then(tracks => {
                     this.setState({ 
-                        playlistTracks: { ...this.state.playlistTracks, [selectedPlaylist.id]: data },
+                        playlistTracks: { ...this.state.playlistTracks, [playlist.id]: tracks },
                         requestingSongs: false 
-                    }, this.getSelectedPlaylistTrackFeatures);
+                    }, () => this.getTrackFeatures(tracks.map(t => t.id)));
                 }, err => {
                     console.error(err);
                 });
         }
     }
 
-    getSelectedPlaylistTrackFeatures() {
-        // TODO Check if the data is already there
-        // TODO Pass playlist down
-        if (this.props.token.value !== null && this.state.selectedPlaylist !== null) {
-            const playlist_id = this.state.selectedPlaylist.id;
-            const track_ids = this.state.playlistTracks[playlist_id].map(t => t.id);
+    getTrackFeatures(track_ids: string[]) {
+        if (this.props.token.value !== null) {
+            const currently_sotred_track_ids_with_features = this.state.audioFeatures.map(af => af.id);
+            const track_ids_not_requested = track_ids.filter(t => !(t in currently_sotred_track_ids_with_features));
 
-            getFeaturesForTracks(this.props.token.value, track_ids)
+            getFeaturesForTracks(this.props.token.value, track_ids_not_requested)
                 .then(data => {
                     this.setState({ audioFeatures: {...this.state.audioFeatures, ...data} })
                 }, err => {
