@@ -57,7 +57,7 @@ const TrackTable: React.SFC<IProps> = (props: IProps) => {
             }
 
         } else {
-            console.error('TrackTable/tracks_as_sp: Cannot get the audio features (' + props.x_audio_feature + ', ' + props.y_audio_feature + ') from ' + t.id);
+            // Commonly occurs as t.audioFeatures === null on first playlist selection
             return {
                 id: t.id, 
                 x: 0,
