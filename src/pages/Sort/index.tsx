@@ -39,6 +39,11 @@ interface TrackWithAudioFeatures extends SpotifyApi.TrackObjectFull {
     audioFeatures: SpotifyApi.AudioFeaturesObject | null
 }
 
+interface SortStorage {
+    user_id: string,
+    state: IState
+}
+
 let blank_state: IState = {
     requestingPlaylists: false,
     requestingTracks: false,
@@ -52,14 +57,18 @@ class Sort extends React.Component<IProps, IState> {
     constructor(props: IProps) {
         super(props)
 
-        let stored_state = this.getStoredState();
-        if (stored_state === null) {
-            this.state = blank_state;
+        if (props.user !== null) {
+            let stored_state = this.getStoredState(props.user.id);
+            if (stored_state !== null) {
+                this.state = stored_state;
+            } else {
+                this.state = blank_state;
+            }
         } else {
-            this.state = stored_state;
+            this.state = blank_state;
         }
 
-        this.playlistSelected = this.playlistSelected.bind(this);
+        this.onPlaylistSelected = this.onPlaylistSelected.bind(this);
         this.logout = this.logout.bind(this);
     }
 
@@ -89,16 +98,26 @@ class Sort extends React.Component<IProps, IState> {
     }
 
     storeState(): void {
-        localStorage.setItem(local_storage_sort_component_state_key, JSON.stringify(this.state));
+        if (this.props.user !== null) {
+            let data_to_store: SortStorage = {
+                user_id: this.props.user.id,
+                state: this.state
+            }
+            localStorage.setItem(local_storage_sort_component_state_key, JSON.stringify(data_to_store));
+        }
     }
 
-    getStoredState(): IState | null {
-        // TODO: Match to a user to not mix user data. Pass in user and compare to the user id.
+    getStoredState(user_id: string): IState | null {
         let stored_data = localStorage.getItem(local_storage_sort_component_state_key);
         if (stored_data === null) {
             return null;
         } else {
-            return JSON.parse(stored_data);
+            let stored_data_parsed: SortStorage = JSON.parse(stored_data);
+            if (stored_data_parsed.user_id === user_id) { // Only get a stored state if it relates to the current user
+                return stored_data_parsed.state;
+            } else {
+                return null;
+            }
         }
     }
 
@@ -106,7 +125,7 @@ class Sort extends React.Component<IProps, IState> {
         localStorage.removeItem(local_storage_sort_component_state_key);
     }
 
-    playlistSelected(playlist_id: string): void {
+    onPlaylistSelected(playlist_id: string): void {
         if (playlist_id in this.state.playlists) {
             let playlist = this.state.playlists[playlist_id];
             this.setState({
@@ -216,7 +235,7 @@ class Sort extends React.Component<IProps, IState> {
 
                 <hr />
 
-                {playlists && <PlaylistSelection playlists={Object.values(playlists)} onPlaylistSelected={this.playlistSelected} />}
+                {playlists && <PlaylistSelection playlists={Object.values(playlists)} onPlaylistSelected={this.onPlaylistSelected} />}
                 {requestingPlaylists && <Spinner animation="border" />}
 
                 <hr />
