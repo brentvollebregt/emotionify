@@ -4,6 +4,7 @@ import Container from 'react-bootstrap/Container';
 import Button from 'react-bootstrap/Button';
 import Spinner from 'react-bootstrap/Spinner';
 import Accordion from 'react-bootstrap/Accordion';
+import Alert from 'react-bootstrap/Alert';
 import Card from 'react-bootstrap/Card';
 import { getUserPlaylists, getPlaylistTracks, getFeaturesForTracks } from '../../logic/Spotify';
 import { Token } from '../../Models';
@@ -260,13 +261,13 @@ class Sort extends React.Component<IProps, IState> {
             </>)
         }
 
-        const { playlists, selectedPlaylist, requestingPlaylists, requestingTracks, selectedAxis, selectedSortingMethod } = this.state;
+        const { playlists, tracks, selectedPlaylist, requestingPlaylists, requestingTracks, selectedAxis, selectedSortingMethod } = this.state;
         const { user } = this.props;
 
         let selected_playlist_tracks: TrackWithAudioFeatures[] = [];
         if (selectedPlaylist !== null) {
-            let selected_playlist_track_ids: string[] = this.state.playlists[selectedPlaylist].track_ids;
-            selected_playlist_tracks = Object.values(this.state.tracks).filter(t => selected_playlist_track_ids.indexOf(t.id) !== -1);
+            let selected_playlist_track_ids: string[] = playlists[selectedPlaylist].track_ids;
+            selected_playlist_tracks = Object.values(tracks).filter(t => selected_playlist_track_ids.indexOf(t.id) !== -1);
         }
 
         return (<>
@@ -307,6 +308,11 @@ class Sort extends React.Component<IProps, IState> {
                     <div className="mb-3">
                         <Plot tracks={selected_playlist_tracks} />
                     </div>
+                    {!requestingTracks && playlists[selectedPlaylist].tracks.total !== selected_playlist_tracks.length && 
+                        <Alert variant="warning" style={{display: 'inline-block'}}>
+                            Warning: Duplicates in this playlist will be removed
+                        </Alert>
+                    }
 
                     <Accordion defaultActiveKey="0">
                         <Card>
