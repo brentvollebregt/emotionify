@@ -23,18 +23,18 @@ enum SubState {
     Complete // We now have user information, redirect to provided url
 }
 
-interface SpotifyAuthorizationProps extends RouteComponentProps<{}> {
+interface IProps extends RouteComponentProps<{}> {
     token: Token | null,
     onUserChange: (token: Token, user: SpotifyApi.CurrentUsersProfileResponse) => void,
     redirectToOnCompletion: string
 }
 
-interface SpotifyAuthorizationState {
+interface IState {
     subState: SubState
 }
 
-class SpotifyAuthorization extends React.Component<SpotifyAuthorizationProps, SpotifyAuthorizationState> {
-    constructor(props: SpotifyAuthorizationProps) {
+class SpotifyAuthorization extends React.Component<IProps, IState> {
+    constructor(props: IProps) {
         super(props);
 
         this.state = {

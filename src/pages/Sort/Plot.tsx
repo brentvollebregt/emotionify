@@ -1,7 +1,7 @@
 import React from 'react';
 import { TrackWithAudioFeatures } from './index';
 
-interface PlotProps {
+interface IProps {
     tracks: TrackWithAudioFeatures[]
 }
 
@@ -16,7 +16,7 @@ interface Point {
     },
 }
 
-const Plot: React.SFC<PlotProps> = (props: PlotProps) => {
+const Plot: React.SFC<IProps> = (props: IProps) => {
     const points: Point[] = props.tracks.map(t => {
         return {
             x: t.audioFeatures !== null ? t.audioFeatures.energy : 0,

@@ -1,12 +1,12 @@
 import React from 'react';
 import Table from 'react-bootstrap/Table';
 
-interface PlaylistSelectionProps {
+interface IProps {
     playlists: SpotifyApi.PlaylistObjectSimplified[]
     onPlaylistSelected: (id: string) => void
 }
 
-const PlaylistSelection: React.SFC<PlaylistSelectionProps> = (props: PlaylistSelectionProps) => {
+const PlaylistSelection: React.SFC<IProps> = (props: IProps) => {
     return <>
         <h3 className="mb-3">Select a Playlist</h3>
         <Table responsive striped hover>

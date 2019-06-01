@@ -1,7 +1,7 @@
 import React from 'react';
 import Dropdown from 'react-bootstrap/Dropdown';
 
-interface TrackSortControlProps {
+interface IProps {
     available_audio_features: AudioFeatureNamePair[],
     available_track_sorting_methods: SortingMethodNamePair[],
     selected_x_axis: AudioFeatureNamePair,
@@ -22,7 +22,7 @@ export interface SortingMethodNamePair {
     name: string
 }
 
-const TrackSortControl: React.SFC<TrackSortControlProps> = (props: TrackSortControlProps) => {
+const TrackSortControl: React.SFC<IProps> = (props: IProps) => {
     return <>
         <div style={{display: 'inline-block', marginRight: 20, marginTop: 5}}>
             <span>X-Axis: </span>

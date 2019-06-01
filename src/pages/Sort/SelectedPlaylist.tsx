@@ -1,11 +1,11 @@
 import React from 'react';
 import Badge from 'react-bootstrap/Badge';
 
-interface SelectedPlaylistProps {
+interface IProps {
     playlist: SpotifyApi.PlaylistObjectSimplified
 }
 
-const SelectedPlaylist: React.SFC<SelectedPlaylistProps> = (props: SelectedPlaylistProps) => {
+const SelectedPlaylist: React.SFC<IProps> = (props: IProps) => {
     const { playlist } = props;
     return <>
         <h3 className="mt-4 mb-0">{playlist.name}</h3>

@@ -5,11 +5,11 @@ import { millisecondsToMinSec } from '../../logic/Utils';
 import { SortablePoint } from '../../logic/PointSorting';
 import { AudioFeatureNamePair, SortingMethodNamePair } from './TrackSortControl';
 
-interface TrackTableProps {
-    tracks: TrackWithAudioFeatures[], // These are ordered when the come in
+interface IProps {
+    tracks: TrackWithAudioFeatures[], // These are ordered when they come in
     selected_x_axis: AudioFeatureNamePair,
     selected_y_axis: AudioFeatureNamePair,
-    selected_sorting_method: SortingMethodNamePair,
+    selected_sorting_method: SortingMethodNamePair
 }
 
 interface TrackWithAudioFeaturesAndPlaylistIndex extends TrackWithAudioFeatures {
@@ -19,7 +19,7 @@ interface TrackWithAudioFeaturesAndPlaylistIndex extends TrackWithAudioFeatures 
     }
 }
 
-const TrackTable: React.SFC<TrackTableProps> = (props: TrackTableProps) => {
+const TrackTable: React.SFC<IProps> = (props: IProps) => {
     // Get points initial indexes (to calculate movement)
     let tracks_with_playlist_indexes: TrackWithAudioFeaturesAndPlaylistIndex[] = props.tracks.map((t, i) => {
         return { ...t, index: { before: i, after: 0 } };

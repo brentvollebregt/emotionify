@@ -5,12 +5,12 @@ import Button from 'react-bootstrap/Button';
 import banner from '../../img/banner.png';
 import { Token } from '../../Models';
 
-interface HomeProps {
+interface IProps {
     token: Token | null,
     user: SpotifyApi.CurrentUsersProfileResponse | null
 }
 
-const Home: React.SFC<HomeProps> = (props: HomeProps) => {
+const Home: React.SFC<IProps> = (props: IProps) => {
     return <>
         <section className="jumbotron jumbotron-fluid text-center">
             <Container>
@@ -31,10 +31,6 @@ const Home: React.SFC<HomeProps> = (props: HomeProps) => {
             </Container>
         </section>
     </>
-}
-
-Home.defaultProps = {
-    token: null
 }
 
 export default Home;

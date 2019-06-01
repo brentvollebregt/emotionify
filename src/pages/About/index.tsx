@@ -1,9 +1,9 @@
 import React from 'react';
 import Container from 'react-bootstrap/Container';
 
-interface AboutProps { }
+interface IProps { }
 
-const About: React.SFC<AboutProps> = (props: AboutProps) => {
+const About: React.SFC<IProps> = (props: IProps) => {
     return <Container className="text-center">
         <h1>About</h1>
         <p>Emotionify is ...</p>
@@ -14,7 +14,5 @@ const About: React.SFC<AboutProps> = (props: AboutProps) => {
         <p>Because I wanted it to be.</p>
     </Container>
 }
-
-About.defaultProps = {}
 
 export default About;
