@@ -8,9 +8,9 @@ import Card from 'react-bootstrap/Card';
 import { getUserPlaylists, getPlaylistTracks, getFeaturesForTracks } from '../../Spotify';
 import { Token } from '../../Models';
 import { arrayToObject } from '../../Utils';
-import PlaylistSelection from './PlaylistSelection'
+import PlaylistSelection from './PlaylistSelectionTable'
 import SelectedPlaylist from './SelectedPlaylist'
-import Plot, { Point } from './Plot'
+import Plot from './Plot'
 import TrackTable from './TrackTable'
 
 const local_storage_sort_component_state_key = 'emotionify-sort-component-state';
@@ -250,9 +250,9 @@ class Sort extends React.Component<IProps, IState> {
                         <Card>
                             <Accordion.Toggle as={Card.Header} eventKey="songs">Songs in Playlist</Accordion.Toggle>
                             <Accordion.Collapse eventKey="songs">
-                                <Card.Body>
+                                <Accordion.Toggle as={Card.Body} eventKey="songs" className="p-0" style={{ cursor: 'padding' }}>
                                     <TrackTable tracks={selected_playlist_tracks}/>
-                                </Card.Body>
+                                </Accordion.Toggle>
                             </Accordion.Collapse>
                         </Card>
                     </Accordion>
