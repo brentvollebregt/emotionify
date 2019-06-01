@@ -3,12 +3,15 @@ import { Link } from "react-router-dom";
 import Container from 'react-bootstrap/Container';
 import Button from 'react-bootstrap/Button';
 import Spinner from 'react-bootstrap/Spinner';
+import Accordion from 'react-bootstrap/Accordion';
+import Card from 'react-bootstrap/Card';
 import { getUserPlaylists, getPlaylistTracks, getFeaturesForTracks } from '../../Spotify';
 import { Token } from '../../Models';
-import { arrayToObject, millisecondsToMinSec } from '../../Utils';
+import { arrayToObject } from '../../Utils';
 import PlaylistSelection from './PlaylistSelection'
 import SelectedPlaylist from './SelectedPlaylist'
 import Plot, { Point } from './Plot'
+import TrackTable from './TrackTable'
 
 const local_storage_sort_component_state_key = 'emotionify-sort-component-state';
 
@@ -27,15 +30,14 @@ interface IState {
     tracks: {
         [key: string]: TrackWithAudioFeatures
     }
-    selectedPlaylist: string | null,
-    plotData: Point[]
+    selectedPlaylist: string | null
 }
 
 interface PlaylistWithTracks extends SpotifyApi.PlaylistObjectSimplified {
     track_ids: string[]
 }
 
-interface TrackWithAudioFeatures extends SpotifyApi.TrackObjectFull {
+export interface TrackWithAudioFeatures extends SpotifyApi.TrackObjectFull {
     audioFeatures: SpotifyApi.AudioFeaturesObject | null
 }
 
@@ -49,8 +51,7 @@ let blank_state: IState = {
     requestingTracks: false,
     playlists: {},
     tracks: {},
-    selectedPlaylist: null,
-    plotData: []
+    selectedPlaylist: null
 }
 
 class Sort extends React.Component<IProps, IState> {
@@ -129,11 +130,9 @@ class Sort extends React.Component<IProps, IState> {
         if (playlist_id in this.state.playlists) {
             let playlist = this.state.playlists[playlist_id];
             this.setState({
-                selectedPlaylist: playlist_id,
-                plotData: []
+                selectedPlaylist: playlist_id
             }, () => {
                 this.getPlaylistTracks(playlist);
-                this.setPlotData(); // Attempt to set plot data with what we already know
             });
         }
     }
@@ -172,34 +171,10 @@ class Sort extends React.Component<IProps, IState> {
                     this.setState({ 
                         tracks: {...this.state.tracks, ...features_merged_with_tracks_indexed},
                         requestingTracks: false // Now that we have all track data required
-                    }, () => {
-                        this.storeState(); // Store newly requested data
-                        this.setPlotData(); // Call setPlotData now that we have the required data
-                    });
+                    }, () => this.storeState);
                 }, err => {
                     console.error(err);
                 });
-        }
-    }
-
-    setPlotData(): void {
-        const { selectedPlaylist } = this.state;
-
-        if (selectedPlaylist !== null) {
-            let selected_playlist_track_ids: string[] = this.state.playlists[selectedPlaylist].track_ids;
-            let tracks = Object.values(this.state.tracks).filter(t => selected_playlist_track_ids.indexOf(t.id) !== -1);
-            let points: Point[] = tracks.map(t => {
-                return {
-                    x: t.audioFeatures !== null ? t.audioFeatures.energy : 0,
-                    y: t.audioFeatures !== null ? t.audioFeatures.valence : 0,
-                    track: {
-                        title: t.name,
-                        artist: t.artists.map(a => a.name).join(', '),
-                        length: t.duration_ms
-                    }
-                }
-            });
-            this.setState({ plotData: points });
         }
     }
 
@@ -211,34 +186,40 @@ class Sort extends React.Component<IProps, IState> {
 
     render() {
         const header = <Container className="mt-3 mb-4">
-            <h1 className="text-center" onClick={() => {console.warn(this.state)}}>Playlist Sort</h1>
+            <h1 className="text-center" onClick={() => {console.log('this.props:', this.props, 'this.state:', this.state)}}>Playlist Sort</h1>
             <p className="text-center lead col-md-7 mx-auto">Here you can select a playlist and look at how the new playlist is sorted. You can then create the new playlist or select a different playlist.</p>
         </Container>;
 
         if (this.props.token === null) { // Check if token exists
             return (<>
-                    {header}
-                    <Container className="text-center">
-                        <h2>Login to Spotify</h2>
-                        <p>To get access to your playlists and the ability to create playlists, you need to sign into Spotify.</p>
-                        <Link to="/spotify-authorization"><Button>Sign Into Spotify</Button></Link>
-                    </Container>
+                {header}
+                <Container className="text-center">
+                    <h2>Login to Spotify</h2>
+                    <p>To get access to your playlists and the ability to create playlists, you need to sign into Spotify.</p>
+                    <Link to="/spotify-authorization"><Button>Sign Into Spotify</Button></Link>
+                </Container>
             </>)
         }
 
         if (this.props.token.expiry <= new Date()) { // Check if token hasn't expired
             return (<>
-                    {header}
-                    <Container className="text-center">
-                        <h2 className="text-center">Login to Spotify</h2>
-                        <p className="text-center">A previously stored token has now expired; these tokens last for an hour. Please sign back into Spotify to get a new token and continue with sorting playlists.</p>
-                        <Link to="/spotify-authorization"><Button>Sign Into Spotify</Button></Link>
-                    </Container>
+                {header}
+                <Container className="text-center">
+                    <h2 className="text-center">Login to Spotify</h2>
+                    <p className="text-center">A previously stored token has now expired; these tokens last for an hour. Please sign back into Spotify to get a new token and continue with sorting playlists.</p>
+                    <Link to="/spotify-authorization"><Button>Sign Into Spotify</Button></Link>
+                </Container>
             </>)
         }
 
-        const { playlists, selectedPlaylist, requestingPlaylists, requestingTracks, plotData } = this.state;
+        const { playlists, selectedPlaylist, requestingPlaylists, requestingTracks } = this.state;
         const { user } = this.props;
+
+        let selected_playlist_tracks: TrackWithAudioFeatures[] = [];
+        if (selectedPlaylist !== null) {
+            let selected_playlist_track_ids: string[] = this.state.playlists[selectedPlaylist].track_ids;
+            selected_playlist_tracks = Object.values(this.state.tracks).filter(t => selected_playlist_track_ids.indexOf(t.id) !== -1);
+        }
 
         return (<>
             {header}
@@ -256,9 +237,25 @@ class Sort extends React.Component<IProps, IState> {
                 <hr />
 
                 {selectedPlaylist !== null && <>
-                    <SelectedPlaylist playlist={playlists[selectedPlaylist]}/>
+                    <div className="mb-3">
+                        <SelectedPlaylist playlist={playlists[selectedPlaylist]} />
+                    </div>
+
                     {requestingTracks && <Spinner animation="border" className="my-3" />}
-                    <Plot points={plotData}/>
+                    <div className="mb-3">
+                        <Plot tracks={selected_playlist_tracks} />
+                    </div>
+
+                    <Accordion defaultActiveKey="0">
+                        <Card>
+                            <Accordion.Toggle as={Card.Header} eventKey="songs">Songs in Playlist</Accordion.Toggle>
+                            <Accordion.Collapse eventKey="songs">
+                                <Card.Body>
+                                    <TrackTable tracks={selected_playlist_tracks}/>
+                                </Card.Body>
+                            </Accordion.Collapse>
+                        </Card>
+                    </Accordion>
                 </>}
 
             </Container>
