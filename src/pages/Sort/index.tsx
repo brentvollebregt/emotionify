@@ -151,7 +151,10 @@ class Sort extends React.Component<IProps, IState> {
                     this.setState({ 
                         tracks: {...this.state.tracks, ...features_merged_with_tracks_indexed},
                         requestingTracks: false // Now that we have all track data required
-                    }, this.setPlotData); // Call setPlotData now that we have the required data
+                    }, () => {
+                        this.storeState(); // Store newly requested data
+                        this.setPlotData(); // Call setPlotData now that we have the required data
+                    });
                 }, err => {
                     console.error(err);
                 });
