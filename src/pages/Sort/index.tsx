@@ -5,6 +5,7 @@ import Button from 'react-bootstrap/Button';
 import Spinner from 'react-bootstrap/Spinner';
 import { getUserPlaylists, getPlaylistTracks, getFeaturesForTracks } from '../../Spotify';
 import { Token } from '../../Models';
+import { arrayToObject } from '../../Utils';
 import PlaylistSelection from './PlaylistSelection'
 import SelectedPlaylist from './SelectedPlaylist'
 import Plot, { Point } from './Plot'
@@ -20,22 +21,30 @@ interface IProps {
 interface IState {
     requestingPlaylists: boolean,
     requestingTracks: boolean,
-    playlists: SpotifyApi.PlaylistObjectSimplified[]
-    selectedPlaylist: SpotifyApi.PlaylistObjectSimplified | null,
-    playlistTracks: {
-        [key: string]: SpotifyApi.TrackObjectFull[]
+    playlists: {
+        [key: string]: PlaylistWithTracks
+    },
+    tracks: {
+        [key: string]: TrackWithAudioFeatures
     }
-    audioFeatures: SpotifyApi.AudioFeaturesObject[],
+    selectedPlaylist: string | null,
     plotData: Point[]
+}
+
+interface PlaylistWithTracks extends SpotifyApi.PlaylistObjectSimplified {
+    track_ids: string[]
+}
+
+interface TrackWithAudioFeatures extends SpotifyApi.TrackObjectFull {
+    audioFeatures: SpotifyApi.AudioFeaturesObject | null
 }
 
 let blank_state: IState = {
     requestingPlaylists: false,
     requestingTracks: false,
-    playlists: [],
+    playlists: {},
+    tracks: {},
     selectedPlaylist: null,
-    playlistTracks: {},
-    audioFeatures: [],
     plotData: []
 }
 
@@ -58,16 +67,18 @@ class Sort extends React.Component<IProps, IState> {
         const { token, user } = this.props;
 
         if (token !== null && token.expiry > new Date() && user !== null) {
-            if (this.state.playlists.length === 0) { // Only request if there are no playlists stored
+            if (Object.entries(this.state.playlists).length === 0) { // Only request if there are no playlists stored
                 this.setState({
                     requestingPlaylists: true,
                 });
     
                 getUserPlaylists(token.value, user)
                     .then(playlists => {
+                        let playlists_with_tracks: PlaylistWithTracks[] = playlists.map(p => {return {...p, track_ids: []}});
+                        let playlists_with_tracks_indexed: {[key: string]: PlaylistWithTracks} = arrayToObject(playlists_with_tracks, 'id');
                         this.setState({ 
                             requestingPlaylists: false, 
-                            playlists 
+                            playlists: playlists_with_tracks_indexed
                         }, this.storeState);
                     }, err => {
                         console.error(err);
@@ -82,6 +93,7 @@ class Sort extends React.Component<IProps, IState> {
     }
 
     getStoredState(): IState | null {
+        // TODO: Match to a user to not mix user data. Pass in user and compare to the user id.
         let stored_data = localStorage.getItem(local_storage_sort_component_state_key);
         if (stored_data === null) {
             return null;
@@ -95,26 +107,27 @@ class Sort extends React.Component<IProps, IState> {
     }
 
     playlistSelected(playlist_id: string): void {
-        if (this.state.playlists.length > 0) {
-            let playlist = this.state.playlists.find(p => p.id === playlist_id);
-            if (playlist !== undefined) {
-                const non_undefined_playlist = playlist; // To keep the TS compiler happy
-                this.setState({ 
-                    selectedPlaylist: non_undefined_playlist,
-                    plotData: []
-                }, () => this.getPlaylistTracks(non_undefined_playlist));
-                this.setPlotData(); // Attempt to set plot data with what we already know
-            }
+        if (playlist_id in this.state.playlists) {
+            let playlist = this.state.playlists[playlist_id];
+            this.setState({
+                selectedPlaylist: playlist_id,
+                plotData: []
+            }, () => this.getPlaylistTracks(playlist));
+            this.setPlotData(); // Attempt to set plot data with what we already know
         }
     }
 
-    getPlaylistTracks(playlist: SpotifyApi.PlaylistObjectSimplified): void {
-        if (this.props.token !== null && !(playlist.id in this.state.playlistTracks)) { // Check if we already have the data
+    getPlaylistTracks(playlist: PlaylistWithTracks): void {
+        if (this.props.token !== null && playlist.tracks.total !== playlist.track_ids.length) { // Check if we already have the data
             this.setState({ requestingTracks: true });
             getPlaylistTracks(this.props.token.value, playlist)
                 .then(tracks => {
+                    let track_ids: string[] = tracks.map(t => t.id);
+                    let tracks_with_audio_features: TrackWithAudioFeatures[] = tracks.map(t => {return {...t, audioFeatures: null}});
+                    let tracks_with_audio_features_indexed: {[key: string]: TrackWithAudioFeatures} = arrayToObject(tracks_with_audio_features, 'id');
                     this.setState({ 
-                        playlistTracks: { ...this.state.playlistTracks, [playlist.id]: tracks }
+                        playlists: { ...this.state.playlists, [playlist.id]: {...this.state.playlists[playlist.id], track_ids: track_ids} }, // Put track ids in this playlist
+                        tracks: { ...this.state.tracks, ...tracks_with_audio_features_indexed } // Insert tracks
                         }, () => this.getTrackFeatures(tracks.map(t => t.id)));
                 }, err => {
                     console.error(err);
@@ -124,13 +137,19 @@ class Sort extends React.Component<IProps, IState> {
 
     getTrackFeatures(track_ids: string[]): void {
         if (this.props.token !== null) {
-            const currently_sotred_track_ids_with_features = this.state.audioFeatures.map(af => af.id);
+            const currently_sotred_track_ids_with_features = Object.values(this.state.tracks).filter(t => t.audioFeatures !== null).map(af => af.id);
             const track_ids_not_requested = track_ids.filter(t => !(t in currently_sotred_track_ids_with_features));
 
             getFeaturesForTracks(this.props.token.value, track_ids_not_requested)
                 .then(data => {
+                    const { tracks } = this.state;
+                    let features_merged_with_tracks: TrackWithAudioFeatures[] = data.map(f => {
+                        return { ...tracks[f.id], audioFeatures: f}
+                    });
+                    let features_merged_with_tracks_indexed: {[key: string]: TrackWithAudioFeatures} = arrayToObject(features_merged_with_tracks, 'id');
+
                     this.setState({ 
-                        audioFeatures: [...this.state.audioFeatures, ...data],
+                        tracks: {...this.state.tracks, ...features_merged_with_tracks_indexed},
                         requestingTracks: false // Now that we have all track data required
                     }, this.setPlotData); // Call setPlotData now that we have the required data
                 }, err => {
@@ -143,7 +162,7 @@ class Sort extends React.Component<IProps, IState> {
         const { selectedPlaylist } = this.state
 
         if (selectedPlaylist !== null) {
-            
+
         }
     }
 
@@ -194,13 +213,13 @@ class Sort extends React.Component<IProps, IState> {
 
                 <hr />
 
-                {playlists && <PlaylistSelection playlists={playlists} onPlaylistSelected={this.playlistSelected} />}
+                {playlists && <PlaylistSelection playlists={Object.values(playlists)} onPlaylistSelected={this.playlistSelected} />}
                 {requestingPlaylists && <Spinner animation="border" />}
 
                 <hr />
 
                 {selectedPlaylist !== null && <>
-                    <SelectedPlaylist playlist={selectedPlaylist}/>
+                    <SelectedPlaylist playlist={playlists[selectedPlaylist]}/>
                     <Plot points={plotData}/>
                 </>}
 
