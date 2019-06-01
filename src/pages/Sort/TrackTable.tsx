@@ -3,16 +3,24 @@ import Table from 'react-bootstrap/Table';
 import { TrackWithAudioFeatures } from './index';
 import { millisecondsToMinSec } from '../../Utils';
 
+/*
+* TODO:
+*   - Arrows and numbers showing how much a song has moved in the playlist. Colour them to the dot that is on the graph
+*   - Add support for sorting
+*   - Add support for different x and y names
+*   - Don't close when clicked (can I think of something better? - per row that is)
+*/
+
 interface TrackTableProps {
-    tracks: TrackWithAudioFeatures[]
+    tracks: TrackWithAudioFeatures[] // These are ordered when the come in
 }
 
 const TrackTable: React.SFC<TrackTableProps> = (props: TrackTableProps) => {
     return <>
-        <Table responsive striped size="sm">
+        <Table responsive striped bordered size="sm">
             <thead>
                 <tr>
-                    <th>Moved</th> {/* TODO: Arrows and numbers showing how much a song has moved in the playlist. Colour them to the dot that is on the graph */}
+                    <th>Moved</th>
                     <th>Title</th>
                     <th>Artists</th>
                     <th className="d-none d-lg-block">Length</th>
