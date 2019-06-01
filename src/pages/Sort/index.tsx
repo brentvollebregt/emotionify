@@ -149,6 +149,7 @@ class Sort extends React.Component<IProps, IState> {
         } else {
             let stored_data_parsed: SortStorage = JSON.parse(stored_data);
             if (stored_data_parsed.user_id === user_id) { // Only get a stored state if it relates to the current user
+                stored_data_parsed.state.selectedSortingMethod = { method: originDistance, name: 'Distance From Origin' }; // Can't store functions (TODO: Don't keep the function in the state)
                 return stored_data_parsed.state;
             } else {
                 return null;

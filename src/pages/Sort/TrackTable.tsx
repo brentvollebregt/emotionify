@@ -5,11 +5,6 @@ import { millisecondsToMinSec } from '../../logic/Utils';
 import { SortablePoint } from '../../logic/PointSorting';
 import { AudioFeatureNamePair, SortingMethodNamePair } from './TrackSortControl';
 
-/*
-* TODO:
-*   - Don't close when clicked (can I think of something better? - per row that is)
-*/
-
 interface TrackTableProps {
     tracks: TrackWithAudioFeatures[], // These are ordered when the come in
     selected_x_axis: AudioFeatureNamePair,
@@ -47,7 +42,6 @@ const TrackTable: React.SFC<TrackTableProps> = (props: TrackTableProps) => {
 
             let x = t.audioFeatures[props.selected_x_axis.audioFeature];
             let y = t.audioFeatures[props.selected_y_axis.audioFeature];
-
             if (isNumber(x) && isNumber(y)) {
                 return {
                     id: t.id, 
@@ -63,7 +57,6 @@ const TrackTable: React.SFC<TrackTableProps> = (props: TrackTableProps) => {
                 }
             }
 
-            
         } else {
             console.error('TrackTable/tracks_as_sp: Cannot get the audio features (' + props.selected_x_axis.audioFeature + ', ' + props.selected_y_axis.audioFeature + ') from ' + t.id);
             return {

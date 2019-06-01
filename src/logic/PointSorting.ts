@@ -22,7 +22,7 @@ export function originDistance(points: SortablePoint[]): SortablePoint[] {
     return distances_from_origin.sort((a, b) => a.distance - b.distance);
 }
 
-export function nearestNeighbourFromOrigin(points: SortablePoint[]): SortablePoint[] { // TODO: Fix: Broken - infinite loop
+export function nearestNeighbourFromOrigin(points: SortablePoint[]): SortablePoint[] {
     let nearest_point_to_origin = points.reduce((accumulator: SortablePoint, currentValue: SortablePoint): SortablePoint => {
         let acc_dist = distanceToPoint(0, 0, accumulator.x, accumulator.y);
         let curr_dist = distanceToPoint(0, 0, currentValue.x, currentValue.y);
@@ -31,7 +31,7 @@ export function nearestNeighbourFromOrigin(points: SortablePoint[]): SortablePoi
 
     let sorted_points: SortablePoint[] = [nearest_point_to_origin]; // Put the closest point to 0, 0 in the sorted list
     let points_left: SortablePoint[] = points.slice(); // Make a copy
-    points_left.filter(p => p.id !== nearest_point_to_origin.id); // Remove nearest point
+    points_left = points_left.filter(p => p.id !== nearest_point_to_origin.id); // Remove nearest point
 
     let current_point: SortablePoint = nearest_point_to_origin;
     const reduce_to_closest_point = (accumulator: SortablePoint, currentValue: SortablePoint): SortablePoint => { // Keep function out of the loop
@@ -42,7 +42,7 @@ export function nearestNeighbourFromOrigin(points: SortablePoint[]): SortablePoi
     while (points_left.length > 0) {
         let closest_point: SortablePoint = points_left.reduce(reduce_to_closest_point);
         sorted_points.push(closest_point);
-        points_left.filter(p => p.id !== closest_point.id);
+        points_left = points_left.filter(p => p.id !== closest_point.id);
         current_point = closest_point;
     }
 

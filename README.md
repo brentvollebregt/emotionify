@@ -4,6 +4,7 @@ Create an emotion gradiented Spotify playlist
 ## Current TODO
 - Use IProps / IState in components (they do not need to be used externally)
 - Make all objects stored / passed from the Spotify API smaller (only take what we needs)
+- Don't close tracks clicked (can I think of something better? - something per row?)
 - The graph
 
 ## Simple Idea
