@@ -8,12 +8,33 @@ import Card from 'react-bootstrap/Card';
 import { getUserPlaylists, getPlaylistTracks, getFeaturesForTracks } from '../../logic/Spotify';
 import { Token } from '../../Models';
 import { arrayToObject } from '../../logic/Utils';
-import PlaylistSelection from './PlaylistSelectionTable'
-import SelectedPlaylist from './SelectedPlaylist'
-import Plot from './Plot'
-import TrackTable from './TrackTable'
+import PlaylistSelection from './PlaylistSelectionTable';
+import SelectedPlaylist from './SelectedPlaylist';
+import Plot from './Plot';
+import TrackTable from './TrackTable';
+import TrackSortControl, { AudioFeatureNamePair, SortingMethodNamePair } from './TrackSortControl';
+import { originDistance, nearestNeighbourFromOrigin } from '../../logic/PointSorting';
 
-const local_storage_sort_component_state_key = 'emotionify-sort-component-state';
+const local_storage_sort_component_state_key: string = 'emotionify-sort-component-state';
+const available_audio_features: AudioFeatureNamePair[] = [
+    { audioFeature: 'acousticness', name: 'Acousticness' },
+    { audioFeature: 'danceability', name: 'Danceability' },
+    { audioFeature: 'duration_ms', name: 'Duration' },
+    { audioFeature: 'energy', name: 'Energy' },
+    { audioFeature: 'instrumentalness', name: 'Instrumentalness' },
+    { audioFeature: 'key', name: 'Key' },
+    { audioFeature: 'liveness', name: 'Liveness' },
+    { audioFeature: 'loudness', name: 'Loudness' },
+    { audioFeature: 'mode', name: 'Mode' },
+    { audioFeature: 'speechiness', name: 'Speechiness' },
+    { audioFeature: 'tempo', name: 'Tempo' },
+    { audioFeature: 'time_signature', name: 'Time Signature' },
+    { audioFeature: 'valence', name: 'Valence' }
+];
+const available_track_sorting_algorithms: SortingMethodNamePair[] = [
+    { method: originDistance, name: 'Distance From Origin' },
+    { method: nearestNeighbourFromOrigin, name: 'Nearest Neighbour' }
+];
 
 interface IProps {
     token: Token | null,
@@ -30,7 +51,12 @@ interface IState {
     tracks: {
         [key: string]: TrackWithAudioFeatures
     }
-    selectedPlaylist: string | null
+    selectedPlaylist: string | null,
+    selectedAxis: {
+        x: AudioFeatureNamePair,
+        y: AudioFeatureNamePair
+    },
+    selectedSortingMethod: SortingMethodNamePair
 }
 
 interface PlaylistWithTracks extends SpotifyApi.PlaylistObjectSimplified {
@@ -51,7 +77,12 @@ let blank_state: IState = {
     requestingTracks: false,
     playlists: {},
     tracks: {},
-    selectedPlaylist: null
+    selectedPlaylist: null,
+    selectedAxis: {
+        x: { audioFeature: 'energy', name: 'Energy' },
+        y: { audioFeature: 'valence', name: 'Valence' },
+    },
+    selectedSortingMethod: { method: originDistance, name: 'Distance From Origin' }
 }
 
 class Sort extends React.Component<IProps, IState> {
@@ -70,6 +101,9 @@ class Sort extends React.Component<IProps, IState> {
         }
 
         this.onPlaylistSelected = this.onPlaylistSelected.bind(this);
+        this.onXAxisSelect = this.onXAxisSelect.bind(this);
+        this.onYAxisSelect = this.onYAxisSelect.bind(this);
+        this.onSortMethodSelect = this.onSortMethodSelect.bind(this);
         this.logout = this.logout.bind(this);
     }
 
@@ -178,6 +212,18 @@ class Sort extends React.Component<IProps, IState> {
         }
     }
 
+    onXAxisSelect(selection: AudioFeatureNamePair): void {
+        this.setState({ selectedAxis: {...this.state.selectedAxis, x: selection} });
+    }
+
+    onYAxisSelect(selection: AudioFeatureNamePair): void {
+        this.setState({ selectedAxis: {...this.state.selectedAxis, y: selection} });
+    }
+
+    onSortMethodSelect(selection: SortingMethodNamePair): void {
+        this.setState({ selectedSortingMethod: selection });
+    }
+
     logout(): void {
         this.deleteStoredState();
         this.setState(blank_state);
@@ -212,11 +258,11 @@ class Sort extends React.Component<IProps, IState> {
             </>)
         }
 
-        const { playlists, selectedPlaylist, requestingPlaylists, requestingTracks } = this.state;
+        const { playlists, selectedPlaylist, requestingPlaylists, requestingTracks, selectedAxis, selectedSortingMethod } = this.state;
         const { user } = this.props;
 
         let selected_playlist_tracks: TrackWithAudioFeatures[] = [];
-        if (selectedPlaylist !== null) {
+        if (selectedPlaylist !== null) { // TODO: Fix: There is a bug here when selecting the "Liked from Radio" playlist
             let selected_playlist_track_ids: string[] = this.state.playlists[selectedPlaylist].track_ids;
             selected_playlist_tracks = Object.values(this.state.tracks).filter(t => selected_playlist_track_ids.indexOf(t.id) !== -1);
         }
@@ -237,9 +283,23 @@ class Sort extends React.Component<IProps, IState> {
                 <hr />
 
                 {selectedPlaylist !== null && <>
-                    <div className="mb-3">
+                    <div className="mb-2">
                         <SelectedPlaylist playlist={playlists[selectedPlaylist]} />
                     </div>
+
+                    <div className="mb-3">
+                        <TrackSortControl 
+                            available_audio_features={available_audio_features} 
+                            available_track_sorting_methods={available_track_sorting_algorithms}
+                            selected_x_axis={selectedAxis.x}
+                            selected_y_axis={selectedAxis.y}
+                            selected_sorting_method={selectedSortingMethod}
+                            onXAxisSelect={this.onXAxisSelect}
+                            onYAxisSelect={this.onYAxisSelect}
+                            onSortMethodSelect={this.onSortMethodSelect}
+                        />
+                    </div>
+                    
 
                     {requestingTracks && <Spinner animation="border" className="my-3" />}
                     <div className="mb-3">
@@ -251,7 +311,12 @@ class Sort extends React.Component<IProps, IState> {
                             <Accordion.Toggle as={Card.Header} eventKey="songs">Songs in Playlist</Accordion.Toggle>
                             <Accordion.Collapse eventKey="songs">
                                 <Accordion.Toggle as={Card.Body} eventKey="songs" className="p-0" style={{ cursor: 'padding' }}>
-                                    <TrackTable tracks={selected_playlist_tracks}/>
+                                    <TrackTable 
+                                        tracks={selected_playlist_tracks}
+                                        selected_x_axis={selectedAxis.x}
+                                        selected_y_axis={selectedAxis.y}
+                                        selected_sorting_method={selectedSortingMethod}
+                                    />
                                 </Accordion.Toggle>
                             </Accordion.Collapse>
                         </Card>

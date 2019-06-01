@@ -2,16 +2,19 @@ import React from 'react';
 import Table from 'react-bootstrap/Table';
 import { TrackWithAudioFeatures } from './index';
 import { millisecondsToMinSec } from '../../logic/Utils';
-import { SortablePoint, originDistance as sortedByOriginDistance } from '../../logic/PointSorting';
+import { SortablePoint } from '../../logic/PointSorting';
+import { AudioFeatureNamePair, SortingMethodNamePair } from './TrackSortControl';
 
 /*
 * TODO:
-*   - Add support for different x and y names
 *   - Don't close when clicked (can I think of something better? - per row that is)
 */
 
 interface TrackTableProps {
-    tracks: TrackWithAudioFeatures[] // These are ordered when the come in
+    tracks: TrackWithAudioFeatures[], // These are ordered when the come in
+    selected_x_axis: AudioFeatureNamePair,
+    selected_y_axis: AudioFeatureNamePair,
+    selected_sorting_method: SortingMethodNamePair,
 }
 
 interface TrackWithAudioFeaturesAndPlaylistIndex extends TrackWithAudioFeatures {
@@ -28,14 +31,49 @@ const TrackTable: React.SFC<TrackTableProps> = (props: TrackTableProps) => {
     });
 
     // Sort points
+    const isValidAudioFeature = (audioFeatures: SpotifyApi.AudioFeaturesObject, audioFeature: string): audioFeature is keyof SpotifyApi.AudioFeaturesObject => {
+        return audioFeature in audioFeatures;
+    };
+    const isNumber = (value: any): value is number => {
+        return typeof value === "number";
+    };
     let tracks_as_sp: SortablePoint[] = props.tracks.map(t => {
-        return {
-            id: t.id, 
-            x: t.audioFeatures !== null ? t.audioFeatures.valence : 0, 
-            y: t.audioFeatures !== null ? t.audioFeatures.energy : 0
+        if (t.audioFeatures !== null 
+            && isValidAudioFeature(t.audioFeatures, props.selected_x_axis.audioFeature) 
+            && isValidAudioFeature(t.audioFeatures, props.selected_y_axis.audioFeature)
+            && isNumber(t.audioFeatures[props.selected_x_axis.audioFeature])
+            && isNumber(t.audioFeatures[props.selected_y_axis.audioFeature])
+        ) {
+
+            let x = t.audioFeatures[props.selected_x_axis.audioFeature];
+            let y = t.audioFeatures[props.selected_y_axis.audioFeature];
+
+            if (isNumber(x) && isNumber(y)) {
+                return {
+                    id: t.id, 
+                    x: x,
+                    y: y
+                }
+            } else {
+                console.error('TrackTable/tracks_as_sp: Audio feature is a string for (' + props.selected_x_axis.audioFeature + ', ' + props.selected_y_axis.audioFeature + ') from ' + t.id);
+                return {
+                    id: t.id, 
+                    x: 0,
+                    y: 0
+                }
+            }
+
+            
+        } else {
+            console.error('TrackTable/tracks_as_sp: Cannot get the audio features (' + props.selected_x_axis.audioFeature + ', ' + props.selected_y_axis.audioFeature + ') from ' + t.id);
+            return {
+                id: t.id, 
+                x: 0,
+                y: 0
+            }
         }
     });
-    let tracks_as_sp_sorted: SortablePoint[] = sortedByOriginDistance(tracks_as_sp);
+    let tracks_as_sp_sorted: SortablePoint[] = props.selected_sorting_method.method(tracks_as_sp);
 
     // Calculate new indexes using the sorted points
     let tracks_with_sorted_indexes: TrackWithAudioFeaturesAndPlaylistIndex[] = tracks_as_sp_sorted.map((sp, i) => {
@@ -66,7 +104,9 @@ const TrackTable: React.SFC<TrackTableProps> = (props: TrackTableProps) => {
             <tbody>
                 {tracks_sorted.map(
                     track => (<tr key={track.id}>
-                        <td style={track.index.after - track.index.before === 0 ? {color: 'black'} : track.index.after - track.index.before < 0 ? {color: 'green'} : {color: 'red'}}>{track.index.before - track.index.after}</td>
+                        <td style={track.index.after - track.index.before === 0 ? {color: 'black'} : track.index.after - track.index.before < 0 ? {color: 'green'} : {color: 'red'}}>
+                            {track.index.before - track.index.after}
+                        </td>
                         <td>{track.name}</td>
                         <td className="d-none d-md-table-cell">{track.artists.map(a => a.name).join(', ')}</td>
                         <td className="d-none d-lg-table-cell">{millisecondsToMinSec(track.duration_ms)}</td>

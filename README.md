@@ -1,6 +1,11 @@
 # Emotionify
 Create an emotion gradiented Spotify playlist
 
+## Current TODO
+- Use IProps / IState in components (they do not need to be used externally)
+- Make all objects stored / passed from the Spotify API smaller (only take what we needs)
+- The graph
+
 ## Simple Idea
 - Login
 - Select a playlist

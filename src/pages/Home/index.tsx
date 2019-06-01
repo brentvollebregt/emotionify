@@ -27,6 +27,7 @@ const Home: React.SFC<HomeProps> = (props: HomeProps) => {
                 <p>Token: {props.token !== null ? props.token.value : ''} (expires: {props.token !== null ? props.token.expiry.toLocaleString() : ''})</p>
                 <p>User: {props.user !== null ? props.user.display_name : 'N/A'}</p>
                 <Link to="/spotify-authorization"><Button>/spotify-authorization</Button></Link>
+                <Button onClick={() => {localStorage.clear(); window.location.reload(true);}}>Clean and refresh</Button>
             </Container>
         </section>
     </>
