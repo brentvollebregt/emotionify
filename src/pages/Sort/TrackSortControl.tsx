@@ -2,24 +2,14 @@ import React from 'react';
 import Dropdown from 'react-bootstrap/Dropdown';
 
 interface IProps {
-    available_audio_features: AudioFeatureNamePair[],
-    available_track_sorting_methods: SortingMethodNamePair[],
-    selected_x_axis: AudioFeatureNamePair,
-    selected_y_axis: AudioFeatureNamePair,
-    selected_sorting_method: SortingMethodNamePair,
-    onXAxisSelect: (selection: AudioFeatureNamePair) => void,
-    onYAxisSelect: (selection: AudioFeatureNamePair) => void,
-    onSortMethodSelect: (selection: SortingMethodNamePair) => void
-}
-
-export interface AudioFeatureNamePair {
-    audioFeature: string,
-    name: string
-}
-
-export interface SortingMethodNamePair {
-    method: Function,
-    name: string
+    available_audio_features: string[],
+    available_track_sorting_methods: string[],
+    selected_x_axis: string,
+    selected_y_axis: string,
+    selected_sorting_method: string,
+    onXAxisSelect: (selection: string) => void,
+    onYAxisSelect: (selection: string) => void,
+    onSortMethodSelect: (selection: string) => void
 }
 
 const TrackSortControl: React.SFC<IProps> = (props: IProps) => {
@@ -27,10 +17,10 @@ const TrackSortControl: React.SFC<IProps> = (props: IProps) => {
         <div style={{display: 'inline-block', marginRight: 20, marginTop: 5}}>
             <span>X-Axis: </span>
             <Dropdown style={{display: 'inline'}}>
-                <Dropdown.Toggle size="sm" id="X-Axis">{props.selected_x_axis.name}</Dropdown.Toggle>
+                <Dropdown.Toggle size="sm" id="X-Axis">{props.selected_x_axis}</Dropdown.Toggle>
                 <Dropdown.Menu>
-                    {props.available_audio_features.map(af =>
-                        <Dropdown.Item key={af.name} onClick={() => props.onXAxisSelect(af)}>{af.name}</Dropdown.Item>
+                    {props.available_audio_features.map(audio_feature =>
+                        <Dropdown.Item key={audio_feature} onClick={() => props.onXAxisSelect(audio_feature)}>{audio_feature}</Dropdown.Item>
                     )}
                 </Dropdown.Menu>
             </Dropdown>
@@ -39,10 +29,10 @@ const TrackSortControl: React.SFC<IProps> = (props: IProps) => {
         <div style={{display: 'inline-block', marginRight: 20, marginTop: 5}}>
             <span>Y-Axis: </span>
             <Dropdown style={{display: 'inline'}}>
-                <Dropdown.Toggle size="sm" id="Y-Axis">{props.selected_y_axis.name}</Dropdown.Toggle>
+                <Dropdown.Toggle size="sm" id="Y-Axis">{props.selected_y_axis}</Dropdown.Toggle>
                 <Dropdown.Menu>
-                    {props.available_audio_features.map(af =>
-                        <Dropdown.Item key={af.name} onClick={() => props.onYAxisSelect(af)}>{af.name}</Dropdown.Item>
+                    {props.available_audio_features.map(audio_feature =>
+                        <Dropdown.Item key={audio_feature} onClick={() => props.onYAxisSelect(audio_feature)}>{audio_feature}</Dropdown.Item>
                     )}
                 </Dropdown.Menu>
             </Dropdown>
@@ -51,10 +41,10 @@ const TrackSortControl: React.SFC<IProps> = (props: IProps) => {
         <div style={{display: 'inline-block', marginRight: 20, marginTop: 5}}>
             <span>Sort Method: </span>
             <Dropdown style={{display: 'inline'}}>
-                <Dropdown.Toggle size="sm" id="Sort Method">{props.selected_sorting_method.name}</Dropdown.Toggle>
+                <Dropdown.Toggle size="sm" id="Sort Method">{props.selected_sorting_method}</Dropdown.Toggle>
                 <Dropdown.Menu>
-                    {props.available_track_sorting_methods.map(tsm =>
-                        <Dropdown.Item key={tsm.name} onClick={() => props.onSortMethodSelect(tsm)}>{tsm.name}</Dropdown.Item>
+                    {props.available_track_sorting_methods.map(sorting_method =>
+                        <Dropdown.Item key={sorting_method} onClick={() => props.onSortMethodSelect(sorting_method)}>{sorting_method}</Dropdown.Item>
                     )}
                 </Dropdown.Menu>
             </Dropdown>

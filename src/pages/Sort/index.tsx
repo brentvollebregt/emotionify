@@ -13,29 +13,25 @@ import PlaylistSelection from './PlaylistSelectionTable';
 import SelectedPlaylist from './SelectedPlaylist';
 import Plot from './Plot';
 import TrackTable from './TrackTable';
-import TrackSortControl, { AudioFeatureNamePair, SortingMethodNamePair } from './TrackSortControl';
-import { originDistance, nearestNeighbourFromOrigin } from '../../logic/PointSorting';
+import TrackSortControl from './TrackSortControl';
+import { availableSortingMethods } from '../../logic/PointSorting';
 
 const local_storage_sort_component_state_key: string = 'emotionify-sort-component-state';
-const available_audio_features: AudioFeatureNamePair[] = [
-    { audioFeature: 'acousticness', name: 'Acousticness' },
-    { audioFeature: 'danceability', name: 'Danceability' },
-    { audioFeature: 'duration_ms', name: 'Duration' },
-    { audioFeature: 'energy', name: 'Energy' },
-    { audioFeature: 'instrumentalness', name: 'Instrumentalness' },
-    { audioFeature: 'key', name: 'Key' },
-    { audioFeature: 'liveness', name: 'Liveness' },
-    { audioFeature: 'loudness', name: 'Loudness' },
-    { audioFeature: 'mode', name: 'Mode' },
-    { audioFeature: 'speechiness', name: 'Speechiness' },
-    { audioFeature: 'tempo', name: 'Tempo' },
-    { audioFeature: 'time_signature', name: 'Time Signature' },
-    { audioFeature: 'valence', name: 'Valence' }
-];
-const available_track_sorting_algorithms: SortingMethodNamePair[] = [
-    { method: originDistance, name: 'Distance From Origin' },
-    { method: nearestNeighbourFromOrigin, name: 'Nearest Neighbour' }
-];
+const available_audio_features: {[key: string]: string} = {
+    'Acousticness': 'acousticness',
+    'Danceability': 'danceability',
+    'Duration': 'duration_ms',
+    'Energy': 'energy',
+    'Instrumentalness': 'instrumentalness',
+    'Key': 'key',
+    'Liveness': 'liveness',
+    'Loudness': 'loudness',
+    'Mode': 'mode',
+    'Speechiness': 'speechiness',
+    'Tempo': 'tempo',
+    'Time Signature' : 'time_signature',
+    'Valence': 'valence'
+};
 
 interface IProps {
     token: Token | null,
@@ -54,10 +50,10 @@ interface IState {
     }
     selectedPlaylist: string | null,
     selectedAxis: {
-        x: AudioFeatureNamePair,
-        y: AudioFeatureNamePair
+        x: string,
+        y: string
     },
-    selectedSortingMethod: SortingMethodNamePair
+    selectedSortingMethod: string
 }
 
 interface PlaylistWithTracks extends SpotifyApi.PlaylistObjectSimplified {
@@ -80,10 +76,10 @@ let blank_state: IState = {
     tracks: {},
     selectedPlaylist: null,
     selectedAxis: {
-        x: { audioFeature: 'energy', name: 'Energy' },
-        y: { audioFeature: 'valence', name: 'Valence' },
+        x: 'Energy',
+        y: 'Valence',
     },
-    selectedSortingMethod: { method: originDistance, name: 'Distance From Origin' }
+    selectedSortingMethod: 'Distance From Origin'
 }
 
 class Sort extends React.Component<IProps, IState> {
@@ -150,8 +146,6 @@ class Sort extends React.Component<IProps, IState> {
         } else {
             let stored_data_parsed: SortStorage = JSON.parse(stored_data);
             if (stored_data_parsed.user_id === user_id) { // Only get a stored state if it relates to the current user
-                // TODO: Don't keep the function in the state
-                stored_data_parsed.state.selectedSortingMethod = { method: originDistance, name: 'Distance From Origin' }; // Can't store functions
                 return stored_data_parsed.state;
             } else {
                 return null;
@@ -215,15 +209,15 @@ class Sort extends React.Component<IProps, IState> {
         }
     }
 
-    onXAxisSelect(selection: AudioFeatureNamePair): void {
+    onXAxisSelect(selection: string): void {
         this.setState({ selectedAxis: {...this.state.selectedAxis, x: selection} });
     }
 
-    onYAxisSelect(selection: AudioFeatureNamePair): void {
+    onYAxisSelect(selection: string): void {
         this.setState({ selectedAxis: {...this.state.selectedAxis, y: selection} });
     }
 
-    onSortMethodSelect(selection: SortingMethodNamePair): void {
+    onSortMethodSelect(selection: string): void {
         this.setState({ selectedSortingMethod: selection });
     }
 
@@ -292,8 +286,8 @@ class Sort extends React.Component<IProps, IState> {
 
                     <div className="mb-3">
                         <TrackSortControl 
-                            available_audio_features={available_audio_features} 
-                            available_track_sorting_methods={available_track_sorting_algorithms}
+                            available_audio_features={Object.keys(available_audio_features)} 
+                            available_track_sorting_methods={Object.keys(availableSortingMethods)}
                             selected_x_axis={selectedAxis.x}
                             selected_y_axis={selectedAxis.y}
                             selected_sorting_method={selectedSortingMethod}
@@ -321,9 +315,9 @@ class Sort extends React.Component<IProps, IState> {
                                 <Accordion.Toggle as={Card.Body} eventKey="songs" className="p-0" style={{ cursor: 'padding' }}>
                                     <TrackTable 
                                         tracks={selected_playlist_tracks}
-                                        selected_x_axis={selectedAxis.x}
-                                        selected_y_axis={selectedAxis.y}
-                                        selected_sorting_method={selectedSortingMethod}
+                                        x_audio_feature={available_audio_features[selectedAxis.x]}
+                                        y_audio_feature={available_audio_features[selectedAxis.y]}
+                                        sorting_method={availableSortingMethods[selectedSortingMethod]}
                                     />
                                 </Accordion.Toggle>
                             </Accordion.Collapse>

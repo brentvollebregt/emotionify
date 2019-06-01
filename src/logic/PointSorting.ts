@@ -8,6 +8,11 @@ export interface SortablePoint {
     y: number
 }
 
+export const availableSortingMethods: {[key: string]: Function} = {
+    'Distance From Origin': originDistance,
+    'Nearest Neighbour': nearestNeighbourFromOrigin
+}
+
 function distanceToPoint(xOrigin: number, yOrigin: number, x: number, y: number): number {
     let a = xOrigin - x;
     let b = yOrigin - y;

@@ -3,13 +3,12 @@ import Table from 'react-bootstrap/Table';
 import { TrackWithAudioFeatures } from './index';
 import { millisecondsToMinSec } from '../../logic/Utils';
 import { SortablePoint } from '../../logic/PointSorting';
-import { AudioFeatureNamePair, SortingMethodNamePair } from './TrackSortControl';
 
 interface IProps {
     tracks: TrackWithAudioFeatures[], // These are ordered when they come in
-    selected_x_axis: AudioFeatureNamePair,
-    selected_y_axis: AudioFeatureNamePair,
-    selected_sorting_method: SortingMethodNamePair
+    x_audio_feature: string,
+    y_audio_feature: string,
+    sorting_method: Function
 }
 
 interface TrackWithAudioFeaturesAndPlaylistIndex extends TrackWithAudioFeatures {
@@ -34,14 +33,14 @@ const TrackTable: React.SFC<IProps> = (props: IProps) => {
     };
     let tracks_as_sp: SortablePoint[] = props.tracks.map(t => {
         if (t.audioFeatures !== null 
-            && isValidAudioFeature(t.audioFeatures, props.selected_x_axis.audioFeature) 
-            && isValidAudioFeature(t.audioFeatures, props.selected_y_axis.audioFeature)
-            && isNumber(t.audioFeatures[props.selected_x_axis.audioFeature])
-            && isNumber(t.audioFeatures[props.selected_y_axis.audioFeature])
+            && isValidAudioFeature(t.audioFeatures, props.x_audio_feature) 
+            && isValidAudioFeature(t.audioFeatures, props.y_audio_feature)
+            && isNumber(t.audioFeatures[props.x_audio_feature])
+            && isNumber(t.audioFeatures[props.y_audio_feature])
         ) {
 
-            let x = t.audioFeatures[props.selected_x_axis.audioFeature];
-            let y = t.audioFeatures[props.selected_y_axis.audioFeature];
+            let x = t.audioFeatures[props.x_audio_feature];
+            let y = t.audioFeatures[props.y_audio_feature];
             if (isNumber(x) && isNumber(y)) {
                 return {
                     id: t.id, 
@@ -49,7 +48,7 @@ const TrackTable: React.SFC<IProps> = (props: IProps) => {
                     y: y
                 }
             } else {
-                console.error('TrackTable/tracks_as_sp: Audio feature is a string for (' + props.selected_x_axis.audioFeature + ', ' + props.selected_y_axis.audioFeature + ') from ' + t.id);
+                console.error('TrackTable/tracks_as_sp: Audio feature is a string for (' + props.x_audio_feature + ', ' + props.y_audio_feature + ') from ' + t.id);
                 return {
                     id: t.id, 
                     x: 0,
@@ -58,7 +57,7 @@ const TrackTable: React.SFC<IProps> = (props: IProps) => {
             }
 
         } else {
-            console.error('TrackTable/tracks_as_sp: Cannot get the audio features (' + props.selected_x_axis.audioFeature + ', ' + props.selected_y_axis.audioFeature + ') from ' + t.id);
+            console.error('TrackTable/tracks_as_sp: Cannot get the audio features (' + props.x_audio_feature + ', ' + props.y_audio_feature + ') from ' + t.id);
             return {
                 id: t.id, 
                 x: 0,
@@ -66,7 +65,7 @@ const TrackTable: React.SFC<IProps> = (props: IProps) => {
             }
         }
     });
-    let tracks_as_sp_sorted: SortablePoint[] = props.selected_sorting_method.method(tracks_as_sp);
+    let tracks_as_sp_sorted: SortablePoint[] = props.sorting_method(tracks_as_sp);
 
     // Calculate new indexes using the sorted points
     let tracks_with_sorted_indexes: TrackWithAudioFeaturesAndPlaylistIndex[] = tracks_as_sp_sorted.map((sp, i) => {
