@@ -3,10 +3,11 @@ import { Link } from "react-router-dom";
 import Container from 'react-bootstrap/Container';
 import Button from 'react-bootstrap/Button';
 import Spinner from 'react-bootstrap/Spinner';
-import Badge from 'react-bootstrap/Badge';
 import { getUserPlaylists, getPlaylistTracks, getFeaturesForTracks } from '../../Spotify';
 import { Token } from '../../Models';
 import PlaylistSelection from './PlaylistSelection'
+import SelectedPlaylist from './SelectedPlaylist'
+import Plot, { Point } from './Plot'
 
 const local_storage_sort_component_state_key = 'emotionify-sort-component-state';
 
@@ -24,7 +25,8 @@ interface IState {
     playlistTracks: {
         [key: string]: SpotifyApi.TrackObjectFull[]
     }
-    audioFeatures: SpotifyApi.AudioFeaturesObject[]
+    audioFeatures: SpotifyApi.AudioFeaturesObject[],
+    plotData: Point[]
 }
 
 let blank_state: IState = {
@@ -33,7 +35,8 @@ let blank_state: IState = {
     playlists: [],
     selectedPlaylist: null,
     playlistTracks: {},
-    audioFeatures: []
+    audioFeatures: [],
+    plotData: []
 }
 
 class Sort extends React.Component<IProps, IState> {
@@ -97,8 +100,8 @@ class Sort extends React.Component<IProps, IState> {
             if (playlist !== undefined) {
                 const non_undefined_playlist = playlist; // To keep the TS compiler happy
                 this.setState({ 
-                    selectedPlaylist: non_undefined_playlist
-                    // TODO Clear plot data
+                    selectedPlaylist: non_undefined_playlist,
+                    plotData: []
                 }, () => this.getPlaylistTracks(non_undefined_playlist));
                 this.setPlotData(); // Attempt to set plot data with what we already know
             }
@@ -137,7 +140,11 @@ class Sort extends React.Component<IProps, IState> {
     }
 
     setPlotData(): void {
+        const { selectedPlaylist } = this.state
 
+        if (selectedPlaylist !== null) {
+            
+        }
     }
 
     logout(): void {
@@ -147,69 +154,58 @@ class Sort extends React.Component<IProps, IState> {
     }
 
     render() {
-        const header = <Container className="mb-4">
-            <h1 className="text-center">Playlist Sort</h1>
+        const header = <Container className="mt-3 mb-4">
+            <h1 className="text-center" onClick={() => {console.warn(this.state)}}>Playlist Sort</h1>
             <p className="text-center lead col-md-7 mx-auto">Here you can select a playlist and look at how the new playlist is sorted. You can then create the new playlist or select a different playlist.</p>
         </Container>;
 
         if (this.props.token === null) { // Check if token exists
-            return (
-                <>
+            return (<>
                     {header}
                     <Container className="text-center">
                         <h2>Login to Spotify</h2>
                         <p>To get access to your playlists and the ability to create playlists, you need to sign into Spotify.</p>
                         <Link to="/spotify-authorization"><Button>Sign Into Spotify</Button></Link>
                     </Container>
-                </>
-            )
+            </>)
         }
 
         if (this.props.token.expiry <= new Date()) { // Check if token hasn't expired
-            return (
-                <>
+            return (<>
                     {header}
                     <Container className="text-center">
                         <h2 className="text-center">Login to Spotify</h2>
                         <p className="text-center">A previously stored token has now expired; these tokens last for an hour. Please sign back into Spotify to get a new token and continue with sorting playlists.</p>
                         <Link to="/spotify-authorization"><Button>Sign Into Spotify</Button></Link>
                     </Container>
-                </>
-            )
+            </>)
         }
 
-        const { playlists, selectedPlaylist, requestingPlaylists } = this.state;
+        const { playlists, selectedPlaylist, requestingPlaylists, plotData } = this.state;
         const { user } = this.props;
 
-        return (
-            <>
-                {header}
-                <Container className="text-center mb-5">
-                    <p>
-                        Logged in as: {user !== null ? user.display_name : ''}
-                        <Button size="sm" className="ml-3" onClick={this.logout}>Logout</Button>
-                    </p>
+        return (<>
+            {header}
+            <Container className="text-center mb-5">
+                <p>
+                    Logged in as: {user !== null ? user.display_name : ''}
+                    <Button size="sm" className="ml-3" onClick={this.logout}>Logout</Button>
+                </p>
 
-                    <hr />
+                <hr />
 
-                    {playlists && <PlaylistSelection playlists={playlists} onPlaylistSelected={this.playlistSelected} />}
-                    {requestingPlaylists && <Spinner animation="border" />}
+                {playlists && <PlaylistSelection playlists={playlists} onPlaylistSelected={this.playlistSelected} />}
+                {requestingPlaylists && <Spinner animation="border" />}
 
-                    <hr />
+                <hr />
 
-                    {selectedPlaylist && <div>
-                        <h3 className="mt-4 mb-0">{selectedPlaylist.name}</h3>
-                        <div>
-                            <a href={selectedPlaylist.owner.href}><Badge variant="primary">{selectedPlaylist.owner.display_name}</Badge></a>
-                            <Badge variant="dark" className="ml-1">Tracks: {selectedPlaylist.tracks.total}</Badge>
-                            <a href={selectedPlaylist.external_urls.spotify} className="ml-1"><Badge variant="success">Spotify</Badge></a>
-                            <Badge variant="danger" className="ml-1">{selectedPlaylist.public ? 'Public' : 'Private'}</Badge>
-                        </div>
-                    </div>}
+                {selectedPlaylist !== null && <>
+                    <SelectedPlaylist playlist={selectedPlaylist}/>
+                    <Plot points={plotData}/>
+                </>}
 
-                </Container>
-            </>
-        )
+            </Container>
+        </>)
     }
 }
 

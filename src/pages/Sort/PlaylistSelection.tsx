@@ -34,8 +34,4 @@ const PlaylistSelection: React.SFC<PlaylistSelectionProps> = (props: PlaylistSel
     </>
 }
 
-PlaylistSelection.defaultProps = {
-    playlists: []
-}
-
 export default PlaylistSelection;
