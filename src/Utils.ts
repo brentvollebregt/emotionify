@@ -32,3 +32,10 @@ export function arrayToObject<T>(array: T[], keyField: string): {[key: string]: 
         return obj;
     }, {});
 }
+
+export function millisecondsToMinSec(milliseconds: number): string {
+    let total_seconds = milliseconds / 1000;
+    let minutes = Math.floor(total_seconds / 60);
+    let seconds = total_seconds - minutes * 60;
+    return minutes + ':' + seconds;
+}

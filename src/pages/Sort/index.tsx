@@ -5,7 +5,7 @@ import Button from 'react-bootstrap/Button';
 import Spinner from 'react-bootstrap/Spinner';
 import { getUserPlaylists, getPlaylistTracks, getFeaturesForTracks } from '../../Spotify';
 import { Token } from '../../Models';
-import { arrayToObject } from '../../Utils';
+import { arrayToObject, millisecondsToMinSec } from '../../Utils';
 import PlaylistSelection from './PlaylistSelection'
 import SelectedPlaylist from './SelectedPlaylist'
 import Plot, { Point } from './Plot'
@@ -131,8 +131,10 @@ class Sort extends React.Component<IProps, IState> {
             this.setState({
                 selectedPlaylist: playlist_id,
                 plotData: []
-            }, () => this.getPlaylistTracks(playlist));
-            this.setPlotData(); // Attempt to set plot data with what we already know
+            }, () => {
+                this.getPlaylistTracks(playlist);
+                this.setPlotData(); // Attempt to set plot data with what we already know
+            });
         }
     }
 
@@ -181,10 +183,23 @@ class Sort extends React.Component<IProps, IState> {
     }
 
     setPlotData(): void {
-        const { selectedPlaylist } = this.state
+        const { selectedPlaylist } = this.state;
 
         if (selectedPlaylist !== null) {
-
+            let selected_playlist_track_ids: string[] = this.state.playlists[selectedPlaylist].track_ids;
+            let tracks = Object.values(this.state.tracks).filter(t => selected_playlist_track_ids.indexOf(t.id) !== -1);
+            let points: Point[] = tracks.map(t => {
+                return {
+                    x: t.audioFeatures !== null ? t.audioFeatures.energy : 0,
+                    y: t.audioFeatures !== null ? t.audioFeatures.valence : 0,
+                    track: {
+                        title: t.name,
+                        artist: t.artists.map(a => a.name).join(', '),
+                        length: t.duration_ms
+                    }
+                }
+            });
+            this.setState({ plotData: points });
         }
     }
 
@@ -222,7 +237,7 @@ class Sort extends React.Component<IProps, IState> {
             </>)
         }
 
-        const { playlists, selectedPlaylist, requestingPlaylists, plotData } = this.state;
+        const { playlists, selectedPlaylist, requestingPlaylists, requestingTracks, plotData } = this.state;
         const { user } = this.props;
 
         return (<>
@@ -242,6 +257,7 @@ class Sort extends React.Component<IProps, IState> {
 
                 {selectedPlaylist !== null && <>
                     <SelectedPlaylist playlist={playlists[selectedPlaylist]}/>
+                    {requestingTracks && <Spinner animation="border" className="my-3" />}
                     <Plot points={plotData}/>
                 </>}
 
