@@ -64,7 +64,7 @@ export interface TrackWithAudioFeatures extends SpotifyApi.TrackObjectFull {
     audioFeatures: SpotifyApi.AudioFeaturesObject | null
 }
 
-interface SortStorage {
+interface IStorage {
     user_id: string,
     state: IState
 }
@@ -131,7 +131,7 @@ class Sort extends React.Component<IProps, IState> {
 
     storeState(): void {
         if (this.props.user !== null) {
-            let data_to_store: SortStorage = {
+            let data_to_store: IStorage = {
                 user_id: this.props.user.id,
                 state: this.state
             }
@@ -144,7 +144,7 @@ class Sort extends React.Component<IProps, IState> {
         if (stored_data === null) {
             return null;
         } else {
-            let stored_data_parsed: SortStorage = JSON.parse(stored_data);
+            let stored_data_parsed: IStorage = JSON.parse(stored_data);
             if (stored_data_parsed.user_id === user_id) { // Only get a stored state if it relates to the current user
                 return stored_data_parsed.state;
             } else {
@@ -296,7 +296,6 @@ class Sort extends React.Component<IProps, IState> {
                             onSortMethodSelect={this.onSortMethodSelect}
                         />
                     </div>
-                    
 
                     {requestingTracks && <Spinner animation="border" className="my-3" />}
                     <div className="mb-3">
@@ -316,7 +315,9 @@ class Sort extends React.Component<IProps, IState> {
                                     <TrackTable 
                                         tracks={selected_playlist_tracks}
                                         x_audio_feature={available_audio_features[selectedAxis.x]}
+                                        x_audio_feature_name={selectedAxis.x}
                                         y_audio_feature={available_audio_features[selectedAxis.y]}
+                                        y_audio_feature_name={selectedAxis.y}
                                         sorting_method={availableSortingMethods[selectedSortingMethod]}
                                     />
                                 </Accordion.Toggle>

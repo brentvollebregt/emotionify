@@ -7,7 +7,9 @@ import { SortablePoint } from '../../logic/PointSorting';
 interface IProps {
     tracks: TrackWithAudioFeatures[], // These are ordered when they come in
     x_audio_feature: string,
+    x_audio_feature_name: string,
     y_audio_feature: string,
+    y_audio_feature_name: string,
     sorting_method: Function
 }
 
@@ -89,8 +91,8 @@ const TrackTable: React.SFC<IProps> = (props: IProps) => {
                     <th>Title</th>
                     <th className="d-none d-md-table-cell">Artists</th>
                     <th className="d-none d-lg-table-cell">Length</th>
-                    <th>Energy</th>
-                    <th>Valence</th>
+                    <th>{props.x_audio_feature_name}</th>
+                    <th>{props.y_audio_feature_name}</th>
                 </tr>
             </thead>
             <tbody>
