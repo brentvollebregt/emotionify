@@ -14,9 +14,9 @@ const PlaylistSelection: React.SFC<PlaylistSelectionProps> = (props: PlaylistSel
                 <tr>
                     <th></th>
                     <th>Name</th>
-                    <th className="d-none d-md-block">Owner</th>
+                    <th className="d-none d-md-table-cell">Owner</th>
                     <th>Tracks</th>
-                    <th className="d-none d-lg-block">Public</th>
+                    <th className="d-none d-lg-table-cell">Public</th>
                 </tr>
             </thead>
             <tbody>
@@ -24,9 +24,9 @@ const PlaylistSelection: React.SFC<PlaylistSelectionProps> = (props: PlaylistSel
                     playlist => (<tr key={playlist.id} onClick={e => props.onPlaylistSelected(playlist.id)} style={{ cursor: 'pointer' }}>
                         <td style={{ padding: 2 }}><img src={playlist.images[0].url} style={{ height: 43 }} alt={'Artwork for: ' + playlist.name}/></td>
                         <td>{playlist.name}</td>
-                        <td title={playlist.owner.uri} className="d-none d-md-block">{playlist.owner.display_name}</td>
+                        <td title={playlist.owner.uri} className="d-none d-md-table-cell">{playlist.owner.display_name}</td>
                         <td>{playlist.tracks.total}</td>
-                        <td className="d-none d-lg-block">{playlist.public ? 'Yes' : 'No'}</td>
+                        <td className="d-none d-lg-table-cell">{playlist.public ? 'Yes' : 'No'}</td>
                     </tr>)
                 )}
             </tbody>

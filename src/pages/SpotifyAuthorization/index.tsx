@@ -1,6 +1,6 @@
 import React from 'react';
 import { Redirect, RouteComponentProps, withRouter } from "react-router-dom";
-import { encodeData, randomString } from '../../Utils';
+import { encodeData, randomString } from '../../logic/Utils';
 import Container from 'react-bootstrap/Container';
 import SpotifyWebApi from 'spotify-web-api-js';
 import Spinner from 'react-bootstrap/Spinner';

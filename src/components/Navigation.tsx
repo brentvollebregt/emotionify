@@ -1,5 +1,5 @@
 import React from 'react';
-import banner from './img/banner.png';
+import banner from '../img/banner.png';
 import Navbar from 'react-bootstrap/Navbar';
 import Nav from 'react-bootstrap/Nav';
 import Container from 'react-bootstrap/Container';

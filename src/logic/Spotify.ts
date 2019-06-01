@@ -1,6 +1,6 @@
 import SpotifyWebApi from 'spotify-web-api-js';
 import { chunkList } from './Utils';
-import { OffsetLimit } from './Models';
+import { OffsetLimit } from '../Models';
 
 const playlistRequestLimit = 20;
 const playlistTrackRequestLimit = 100;

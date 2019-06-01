@@ -5,9 +5,9 @@ import Button from 'react-bootstrap/Button';
 import Spinner from 'react-bootstrap/Spinner';
 import Accordion from 'react-bootstrap/Accordion';
 import Card from 'react-bootstrap/Card';
-import { getUserPlaylists, getPlaylistTracks, getFeaturesForTracks } from '../../Spotify';
+import { getUserPlaylists, getPlaylistTracks, getFeaturesForTracks } from '../../logic/Spotify';
 import { Token } from '../../Models';
-import { arrayToObject } from '../../Utils';
+import { arrayToObject } from '../../logic/Utils';
 import PlaylistSelection from './PlaylistSelectionTable'
 import SelectedPlaylist from './SelectedPlaylist'
 import Plot from './Plot'

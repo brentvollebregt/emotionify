@@ -37,5 +37,5 @@ export function millisecondsToMinSec(milliseconds: number): string {
     let total_seconds = milliseconds / 1000;
     let minutes = Math.floor(total_seconds / 60);
     let seconds = Math.round(total_seconds - minutes * 60);
-    return minutes + ':' + seconds;
+    return minutes + ':' + ('0' + seconds).substr(('0' + seconds).length - 2); // Zero padding on the seconds
 }

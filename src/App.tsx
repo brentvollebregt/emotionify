@@ -1,5 +1,5 @@
 import React from 'react';
-import Navigation from './Navigation';
+import Navigation from './components/Navigation';
 import { BrowserRouter, Switch, Route, Redirect } from "react-router-dom";
 import SpotifyAuthorization from './pages/SpotifyAuthorization';
 import Home from './pages/Home';

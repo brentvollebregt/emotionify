@@ -5,7 +5,7 @@ interface PlotProps {
     tracks: TrackWithAudioFeatures[]
 }
 
-export interface Point {
+interface Point {
     x: number,
     y: number,
     track: {
