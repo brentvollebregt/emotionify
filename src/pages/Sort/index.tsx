@@ -264,7 +264,7 @@ class Sort extends React.Component<IProps, IState> {
         const { user } = this.props;
 
         let selected_playlist_tracks: TrackWithAudioFeatures[] = [];
-        if (selectedPlaylist !== null) { // TODO: Fix: There is a bug here when selecting the "Liked from Radio" playlist
+        if (selectedPlaylist !== null) {
             let selected_playlist_track_ids: string[] = this.state.playlists[selectedPlaylist].track_ids;
             selected_playlist_tracks = Object.values(this.state.tracks).filter(t => selected_playlist_track_ids.indexOf(t.id) !== -1);
         }

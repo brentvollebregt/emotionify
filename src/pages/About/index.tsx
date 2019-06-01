@@ -12,6 +12,8 @@ const About: React.SFC<IProps> = (props: IProps) => {
         <h2>FAQ</h2>
         <h5>Why is this a thing?</h5>
         <p>Because I wanted it to be.</p>
+        <h5>Will this remove duplicates?</h5>
+        <p>Yes, if we didn't then the duplicate songs would be bunched up by each other. Removing these allows for proper transitions into a different song.</p>
     </Container>
 }
 
