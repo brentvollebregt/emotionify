@@ -311,7 +311,7 @@ class Sort extends React.Component<IProps, IState> {
                         <Card>
                             <Accordion.Toggle as={Card.Header} eventKey="songs">Songs in Playlist</Accordion.Toggle>
                             <Accordion.Collapse eventKey="songs">
-                                <Accordion.Toggle as={Card.Body} eventKey="songs" className="p-0" style={{ cursor: 'padding' }}>
+                                <Card.Body className="p-0" style={{ cursor: 'padding' }}>
                                     <TrackTable 
                                         tracks={selected_playlist_tracks}
                                         x_audio_feature={available_audio_features[selectedAxis.x]}
@@ -320,7 +320,7 @@ class Sort extends React.Component<IProps, IState> {
                                         y_audio_feature_name={selectedAxis.y}
                                         sorting_method={availableSortingMethods[selectedSortingMethod]}
                                     />
-                                </Accordion.Toggle>
+                                </Card.Body>
                             </Accordion.Collapse>
                         </Card>
                     </Accordion>

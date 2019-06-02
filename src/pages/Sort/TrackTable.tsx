@@ -83,16 +83,23 @@ const TrackTable: React.SFC<IProps> = (props: IProps) => {
     // Sort tracks by the new indexes
     let tracks_sorted: TrackWithAudioFeaturesAndPlaylistIndex[] = tracks_with_sorted_indexes.sort((a, b) => a.index.after - b.index.after);
 
-    return <>
-        <Table responsive striped bordered size="sm">
+    const header_cell_style: React.CSSProperties = {
+        position: 'sticky',
+        top: 0,
+        background: 'white',
+        borderTop: 0
+    }
+
+    return <div style={{maxHeight: 400, overflowY: 'auto', borderTop: '1px solid #dee2e6'}}>
+        <Table bordered striped size="sm" style={{borderTop: 0}}>
             <thead>
                 <tr>
-                    <th>Moved</th>
-                    <th>Title</th>
-                    <th className="d-none d-md-table-cell">Artists</th>
-                    <th className="d-none d-lg-table-cell">Length</th>
-                    <th>{props.x_audio_feature_name}</th>
-                    <th>{props.y_audio_feature_name}</th>
+                    <th style={header_cell_style}>Moved</th>
+                    <th style={header_cell_style}>Title</th>
+                    <th style={header_cell_style} className="d-none d-md-table-cell">Artists</th>
+                    <th style={header_cell_style} className="d-none d-lg-table-cell">Length</th>
+                    <th style={header_cell_style}>{props.x_audio_feature_name}</th>
+                    <th style={header_cell_style}>{props.y_audio_feature_name}</th>
                 </tr>
             </thead>
             <tbody>
@@ -110,7 +117,7 @@ const TrackTable: React.SFC<IProps> = (props: IProps) => {
                 )}
             </tbody>
         </Table>
-    </>
+    </div>
 }
 
 export default TrackTable;
