@@ -1,11 +1,15 @@
 import SpotifyWebApi from 'spotify-web-api-js';
 import { chunkList } from './Utils';
-import { OffsetLimit } from '../Models';
 
 const playlistRequestLimit = 20;
 const playlistTrackRequestLimit = 100;
 const trackFeaturesRequestLimit = 100;
 const maxRequestsSentAtOnce = 10;
+
+export interface OffsetLimit {
+    offset: number,
+    limit: number
+}
 
 function offsetCalculation(limit: number, total: number): OffsetLimit[] {
     // Calculate request offsets needed to be performed
