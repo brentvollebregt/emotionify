@@ -37,32 +37,6 @@ export function getUser(token: string): Promise<SpotifyUser> {
         .then(r => ReduceCurrentUsersProfile(r));
 }
 
-export function getUserPlaylistsRecursive(token: string, user: SpotifyApi.CurrentUsersProfileResponse): Promise<SpotifyApi.PlaylistObjectSimplified[]> {
-    // Gets all playlists for a user. Slow as it waits for each request before making the next.
-    return new Promise((resolve, reject) => {
-        const spotifyApi = new SpotifyWebApi();
-        spotifyApi.setAccessToken(token);
-
-        let playlists: SpotifyApi.PlaylistObjectSimplified[] = [];
-
-        const requestPlaylists = (offset: number, limit: number) => {
-            spotifyApi.getUserPlaylists(user.id, { offset, limit })
-                .then(data => {
-                    playlists = [...playlists, ...data.items];
-                    if (data.total > offset + limit) { // Need to request more
-                        requestPlaylists(offset + limit, limit);
-                    } else {
-                        resolve(playlists);
-                    }
-                }, err => {
-                    reject(err);
-                });
-        }
-
-        requestPlaylists(0, playlistRequestLimit);
-    });
-}
-
 export function getUserPlaylists(token: string, user: SpotifyUser): Promise<SpotifyPlaylist[]> {
     // Gets all playlists for a user. Fast as it makes more than one request a time.
     return new Promise((resolve, reject) => {
@@ -100,32 +74,6 @@ export function getUserPlaylists(token: string, user: SpotifyUser): Promise<Spot
     });
 }
 
-export function getPlaylistTracksRecursive(token: string, playlist: SpotifyApi.PlaylistObjectSimplified): Promise<SpotifyApi.TrackObjectFull[]> {
-    // Gets all tracks in a playlist. Slow as it waits for each request before making the next.
-    return new Promise((resolve, reject) => {
-        let spotifyApi = new SpotifyWebApi();
-        spotifyApi.setAccessToken(token);
-
-        let tracks: SpotifyApi.TrackObjectFull[] = [];
-
-        const requestSongs = (offset: number, limit: number) => {
-            spotifyApi.getPlaylistTracks(playlist.id, { offset, limit })
-                .then(data => {
-                    tracks = [ ...tracks, ...(data.items.map(i => i.track)) ];
-                    if (data.total > offset + limit) { // Need to request more
-                        requestSongs(offset + limit, limit);
-                    } else { // End of recursion
-                        resolve(tracks);
-                    }
-                }, err => {
-                    reject(err);
-                });
-        }
-
-        requestSongs(0, playlistTrackRequestLimit);
-    });
-}
-
 export function getPlaylistTracks(token: string, playlist: SpotifyPlaylist): Promise<SpotifyTrack[]> {
     // Gets all tracks in a playlist. Fast as it makes more than one request a time.
     return new Promise((resolve, reject) => {
@@ -160,35 +108,6 @@ export function getPlaylistTracks(token: string, playlist: SpotifyPlaylist): Pro
                 }, err => {
                     reject(err);
                 });
-    });
-}
-
-export function getFeaturesForTracksRecursive(token: string, track_ids: string[]): Promise<SpotifyApi.AudioFeaturesObject[]> {
-    // Gets all the audio features for a list of tracks. Slow as it waits for each request before making the next.
-    return new Promise((resolve, reject) => {
-        let spotifyApi = new SpotifyWebApi();
-        spotifyApi.setAccessToken(token);
-
-        let features: SpotifyApi.AudioFeaturesObject[] = [];
-        let tracks_chunked = chunkList(track_ids, trackFeaturesRequestLimit);
-
-        const requestFeatures = () => {
-            let chunk = tracks_chunked.pop();
-            if (chunk !== undefined) {
-                spotifyApi.getAudioFeaturesForTracks(chunk)
-                    .then(data => {
-                        features = [...features, ...(data.audio_features)]
-                        requestFeatures();
-                    }, err => {
-                        reject(err);
-                    });
-
-            } else {
-                resolve(features);
-            }
-        }
-
-        requestFeatures();
     });
 }
 
