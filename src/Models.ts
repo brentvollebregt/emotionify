@@ -8,19 +8,20 @@ export interface ReducedSpotifyUser {
     id: string,
     uri: string,
     display_name: string | undefined,
+    href: string
     // birthdate: string,
     // country: string,
     // email: string,
     // product: string
     // external_urls: SpotifyApi.ExternalUrlObject,
     // followers?: SpotifyApi.FollowersObject,
-    // href: string,
     // images?: SpotifyApi.ImageObject[],
     // type: "user",
 }
 
 // Model to reduce SpotifyApi.PlaylistObjectSimplified from SpotifyApi.getUserPlaylists()
 export interface ReducedSpotifyPlaylist {
+    track_ids: string[] // To hold ids of tracks in this playlist
     id: string,
     uri: string,
     tracks: {
@@ -30,10 +31,12 @@ export interface ReducedSpotifyPlaylist {
     images: string[], // From {height?: number, url: string, width?: number}[]
     name: string,
     owner: ReducedSpotifyUser, // From SpotifyApi.UserObjectPublic
-    public: boolean
+    public: boolean,
+    href: string,
+    external_urls: {
+        spotify: string
+    }
     // collaborative: boolean,
-    // external_urls: SpotifyApi.ExternalUrlObject,
-    // href: string,
     // snapshot_id: string,
     // type: "playlist",
 }

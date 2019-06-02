@@ -3,12 +3,8 @@ import { Link } from "react-router-dom";
 import Container from 'react-bootstrap/Container';
 import Button from 'react-bootstrap/Button';
 import banner from '../../img/banner.png';
-import { Token } from '../../Models';
 
-interface IProps {
-    token: Token | null,
-    user: SpotifyApi.CurrentUsersProfileResponse | null
-}
+interface IProps { }
 
 const Home: React.SFC<IProps> = (props: IProps) => {
     return <>
@@ -24,8 +20,6 @@ const Home: React.SFC<IProps> = (props: IProps) => {
         <section>
             <Container>
                 <h2 className="text-center">Testing</h2>
-                <p>Token: {props.token !== null ? props.token.value : ''} (expires: {props.token !== null ? props.token.expiry.toLocaleString() : ''})</p>
-                <p>User: {props.user !== null ? props.user.display_name : 'N/A'}</p>
                 <Link to="/spotify-authorization"><Button>/spotify-authorization</Button></Link>
                 <Button onClick={() => {localStorage.clear(); window.location.reload(true);}}>Clean and refresh</Button>
             </Container>

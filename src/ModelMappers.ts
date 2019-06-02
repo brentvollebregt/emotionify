@@ -5,13 +5,15 @@ export function ReduceCurrentUsersProfile(user: SpotifyApi.UserObjectPublic): Re
     return {
         display_name: user.display_name,
         id: user.id,
-        uri: user.uri
+        uri: user.uri,
+        href: user.href
     }
 }
 
 // Reduce SpotifyApi.PlaylistObjectSimplified.
 export function ReducePlaylistObjectSimplified(playlist: SpotifyApi.PlaylistObjectSimplified): ReducedSpotifyPlaylist {
     return {
+        track_ids: [],
         id: playlist.id,
         uri: playlist.uri,
         tracks: {
@@ -21,6 +23,10 @@ export function ReducePlaylistObjectSimplified(playlist: SpotifyApi.PlaylistObje
         name: playlist.name,
         owner: ReduceCurrentUsersProfile(playlist.owner),
         public: playlist.public,
+        href: playlist.href,
+        external_urls: {
+            spotify: playlist.external_urls.spotify
+        }
     }
 }
 

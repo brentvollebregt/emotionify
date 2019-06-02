@@ -1,8 +1,9 @@
 import React from 'react';
 import Badge from 'react-bootstrap/Badge';
+import { ReducedSpotifyPlaylist } from '../../Models';
 
 interface IProps {
-    playlist: SpotifyApi.PlaylistObjectSimplified
+    playlist: ReducedSpotifyPlaylist
 }
 
 const SelectedPlaylist: React.SFC<IProps> = (props: IProps) => {

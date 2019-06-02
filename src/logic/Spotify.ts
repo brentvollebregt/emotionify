@@ -1,5 +1,7 @@
 import SpotifyWebApi from 'spotify-web-api-js';
 import { chunkList } from './Utils';
+import { ReducedSpotifyUser, ReducedSpotifyPlaylist, ReducedSpotifyTrack, ReducedSpotifyTrackAudioFeatures } from './../Models';
+import { ReduceCurrentUsersProfile, ReducePlaylistObjectSimplified, ReduceTrackObjectFull, ReduceAudioFeaturesObject } from './../ModelMappers';
 
 const playlistRequestLimit = 20;
 const playlistTrackRequestLimit = 100;
@@ -27,11 +29,12 @@ export function tokenValid(token: string | null, expiry: Date): token is string 
     return token !== null && expiry > new Date();
 }
 
-export function getUser(token: string): Promise<SpotifyApi.CurrentUsersProfileResponse> {
+export function getUser(token: string): Promise<ReducedSpotifyUser> {
     // Gets the user associated with a provided token
     const spotifyApi = new SpotifyWebApi();
     spotifyApi.setAccessToken(token);
-    return spotifyApi.getMe();
+    return spotifyApi.getMe()
+        .then(r => ReduceCurrentUsersProfile(r));
 }
 
 export function getUserPlaylistsRecursive(token: string, user: SpotifyApi.CurrentUsersProfileResponse): Promise<SpotifyApi.PlaylistObjectSimplified[]> {
@@ -60,7 +63,7 @@ export function getUserPlaylistsRecursive(token: string, user: SpotifyApi.Curren
     });
 }
 
-export function getUserPlaylists(token: string, user: SpotifyApi.CurrentUsersProfileResponse): Promise<SpotifyApi.PlaylistObjectSimplified[]> {
+export function getUserPlaylists(token: string, user: ReducedSpotifyUser): Promise<ReducedSpotifyPlaylist[]> {
     // Gets all playlists for a user. Fast as it makes more than one request a time.
     return new Promise((resolve, reject) => {
         const spotifyApi = new SpotifyWebApi();
@@ -89,7 +92,7 @@ export function getUserPlaylists(token: string, user: SpotifyApi.CurrentUsersPro
                     playlists = [...playlists, ...promise_data.map(i => i.items).flat()];
                 }
 
-                resolve(playlists);
+                resolve(playlists.map(p => ReducePlaylistObjectSimplified(p)));
 
                 }, err => {
                     reject(err);
@@ -123,7 +126,7 @@ export function getPlaylistTracksRecursive(token: string, playlist: SpotifyApi.P
     });
 }
 
-export function getPlaylistTracks(token: string, playlist: SpotifyApi.PlaylistObjectSimplified): Promise<SpotifyApi.TrackObjectFull[]> {
+export function getPlaylistTracks(token: string, playlist: ReducedSpotifyPlaylist): Promise<ReducedSpotifyTrack[]> {
     // Gets all tracks in a playlist. Fast as it makes more than one request a time.
     return new Promise((resolve, reject) => {
         const spotifyApi = new SpotifyWebApi();
@@ -152,7 +155,7 @@ export function getPlaylistTracks(token: string, playlist: SpotifyApi.PlaylistOb
                     tracks = [...tracks, ...promise_data.map(i => i.items).flat().map(i => i.track)];
                 }
 
-                resolve(tracks);
+                resolve(tracks.map(t => ReduceTrackObjectFull(t)));
 
                 }, err => {
                     reject(err);
@@ -189,7 +192,7 @@ export function getFeaturesForTracksRecursive(token: string, track_ids: string[]
     });
 }
 
-export function getFeaturesForTracks(token: string, track_ids: string[]): Promise<SpotifyApi.AudioFeaturesObject[]> {
+export function getFeaturesForTracks(token: string, track_ids: string[]): Promise<ReducedSpotifyTrackAudioFeatures[]> {
     // Gets all the audio features for a list of tracks. Fast as it makes more than one request a time.
     return new Promise(async (resolve, reject) => {
         let spotifyApi = new SpotifyWebApi();
@@ -210,7 +213,7 @@ export function getFeaturesForTracks(token: string, track_ids: string[]): Promis
             features = [...features, ...promise_data.map(i => i.audio_features).flat()];
         }
 
-        resolve(features);
+        resolve(features.map(af => ReduceAudioFeaturesObject(af)));
 
     });
 }

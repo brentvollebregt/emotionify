@@ -2,10 +2,12 @@ import React from 'react';
 import { Redirect, RouteComponentProps, withRouter } from "react-router-dom";
 import { encodeData, randomString } from '../../logic/Utils';
 import Container from 'react-bootstrap/Container';
-import SpotifyWebApi from 'spotify-web-api-js';
 import Spinner from 'react-bootstrap/Spinner';
 import settings from '../../settings.json';
 import { Token } from '../../Models';
+import { ReducedSpotifyUser } from '../../Models';
+import { getUser } from '../../logic/Spotify';
+
 
 /**
  * Based off https://developer.spotify.com/documentation/general/guides/authorization-guide/#implicit-grant-flow
@@ -25,7 +27,7 @@ enum SubState {
 
 interface IProps extends RouteComponentProps<{}> {
     token: Token | null,
-    onUserChange: (token: Token, user: SpotifyApi.CurrentUsersProfileResponse) => void,
+    onUserChange: (token: Token, user: ReducedSpotifyUser) => void,
     redirectToOnCompletion: string
 }
 
@@ -102,9 +104,7 @@ class SpotifyAuthorization extends React.Component<IProps, IState> {
     }
 
     getUser(token: string, expires_in: number): void {
-        let spotifyApi = new SpotifyWebApi();
-        spotifyApi.setAccessToken(token);
-        spotifyApi.getMe()
+        getUser(token)
             .then(user => {
                 let expiryDate = new Date();
                 expiryDate.setSeconds(expiryDate.getSeconds() + expires_in);

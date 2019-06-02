@@ -1,8 +1,8 @@
 import React from 'react';
-import { TrackWithAudioFeatures } from './index';
+import { ReducedSpotifyTrack } from '../../Models';
 
 interface IProps {
-    tracks: TrackWithAudioFeatures[]
+    tracks: ReducedSpotifyTrack[]
 }
 
 interface Point {
@@ -19,8 +19,8 @@ interface Point {
 const Plot: React.SFC<IProps> = (props: IProps) => {
     const points: Point[] = props.tracks.map(t => {
         return {
-            x: t.audioFeatures !== null ? t.audioFeatures.energy : 0,
-            y: t.audioFeatures !== null ? t.audioFeatures.valence : 0,
+            x: t.audio_features !== null ? t.audio_features.energy : 0,
+            y: t.audio_features !== null ? t.audio_features.valence : 0,
             track: {
                 id: t.id,
                 title: t.name,

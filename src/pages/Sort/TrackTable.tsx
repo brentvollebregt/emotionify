@@ -1,11 +1,11 @@
 import React from 'react';
 import Table from 'react-bootstrap/Table';
-import { TrackWithAudioFeatures } from './index';
 import { millisecondsToMinSec } from '../../logic/Utils';
 import { SortablePoint } from '../../logic/PointSorting';
+import { ReducedSpotifyTrack, ReducedSpotifyTrackAudioFeatures } from '../../Models';
 
 interface IProps {
-    tracks: TrackWithAudioFeatures[], // These are ordered when they come in
+    tracks: ReducedSpotifyTrack[], // These are ordered when they come in
     x_audio_feature: string,
     x_audio_feature_name: string,
     y_audio_feature: string,
@@ -13,7 +13,7 @@ interface IProps {
     sorting_method: Function
 }
 
-interface TrackWithAudioFeaturesAndPlaylistIndex extends TrackWithAudioFeatures {
+interface ReducedSpotifyTrackAndPlaylistIndex extends ReducedSpotifyTrack {
     index: {
         before: number,
         after: number
@@ -22,27 +22,27 @@ interface TrackWithAudioFeaturesAndPlaylistIndex extends TrackWithAudioFeatures 
 
 const TrackTable: React.SFC<IProps> = (props: IProps) => {
     // Get points initial indexes (to calculate movement)
-    let tracks_with_playlist_indexes: TrackWithAudioFeaturesAndPlaylistIndex[] = props.tracks.map((t, i) => {
+    let tracks_with_playlist_indexes: ReducedSpotifyTrackAndPlaylistIndex[] = props.tracks.map((t, i) => {
         return { ...t, index: { before: i, after: 0 } };
     });
 
     // Sort points
-    const isValidAudioFeature = (audioFeatures: SpotifyApi.AudioFeaturesObject, audioFeature: string): audioFeature is keyof SpotifyApi.AudioFeaturesObject => {
+    const isValidAudioFeature = (audioFeatures: ReducedSpotifyTrackAudioFeatures, audioFeature: string): audioFeature is keyof ReducedSpotifyTrackAudioFeatures => {
         return audioFeature in audioFeatures;
     };
     const isNumber = (value: any): value is number => {
         return typeof value === "number";
     };
     let tracks_as_sp: SortablePoint[] = props.tracks.map(t => {
-        if (t.audioFeatures !== null 
-            && isValidAudioFeature(t.audioFeatures, props.x_audio_feature) 
-            && isValidAudioFeature(t.audioFeatures, props.y_audio_feature)
-            && isNumber(t.audioFeatures[props.x_audio_feature])
-            && isNumber(t.audioFeatures[props.y_audio_feature])
+        if (t.audio_features !== null 
+            && isValidAudioFeature(t.audio_features, props.x_audio_feature) 
+            && isValidAudioFeature(t.audio_features, props.y_audio_feature)
+            && isNumber(t.audio_features[props.x_audio_feature])
+            && isNumber(t.audio_features[props.y_audio_feature])
         ) {
 
-            let x = t.audioFeatures[props.x_audio_feature];
-            let y = t.audioFeatures[props.y_audio_feature];
+            let x = t.audio_features[props.x_audio_feature];
+            let y = t.audio_features[props.y_audio_feature];
             if (isNumber(x) && isNumber(y)) {
                 return {
                     id: t.id, 
@@ -70,7 +70,7 @@ const TrackTable: React.SFC<IProps> = (props: IProps) => {
     let tracks_as_sp_sorted: SortablePoint[] = props.sorting_method(tracks_as_sp);
 
     // Calculate new indexes using the sorted points
-    let tracks_with_sorted_indexes: TrackWithAudioFeaturesAndPlaylistIndex[] = tracks_as_sp_sorted.map((sp, i) => {
+    let tracks_with_sorted_indexes: ReducedSpotifyTrackAndPlaylistIndex[] = tracks_as_sp_sorted.map((sp, i) => {
         let track = tracks_with_playlist_indexes.find(t => t.id === sp.id);
         if (track !== undefined) {
             return { ...track, index: { before: track.index.before, after: i } };
@@ -78,10 +78,10 @@ const TrackTable: React.SFC<IProps> = (props: IProps) => {
             console.error('[TrackTable:tracks_with_sorted_indexes] Cannot find match for: ' + sp.id);
             return null;
         }
-    }).filter((t: TrackWithAudioFeaturesAndPlaylistIndex | null): t is TrackWithAudioFeaturesAndPlaylistIndex => t !== null);
+    }).filter((t: ReducedSpotifyTrackAndPlaylistIndex | null): t is ReducedSpotifyTrackAndPlaylistIndex => t !== null);
 
     // Sort tracks by the new indexes
-    let tracks_sorted: TrackWithAudioFeaturesAndPlaylistIndex[] = tracks_with_sorted_indexes.sort((a, b) => a.index.after - b.index.after);
+    let tracks_sorted: ReducedSpotifyTrackAndPlaylistIndex[] = tracks_with_sorted_indexes.sort((a, b) => a.index.after - b.index.after);
 
     const header_cell_style: React.CSSProperties = {
         position: 'sticky',
@@ -111,8 +111,8 @@ const TrackTable: React.SFC<IProps> = (props: IProps) => {
                         <td>{track.name}</td>
                         <td className="d-none d-md-table-cell">{track.artists.map(a => a.name).join(', ')}</td>
                         <td className="d-none d-lg-table-cell">{millisecondsToMinSec(track.duration_ms)}</td>
-                        <td>{track.audioFeatures !== null ? track.audioFeatures.energy : 0}</td>
-                        <td>{track.audioFeatures !== null ? track.audioFeatures.valence : 0}</td>
+                        <td>{track.audio_features !== null && isValidAudioFeature(track.audio_features, props.x_audio_feature) ? track.audio_features[props.x_audio_feature] : 0}</td>
+                        <td>{track.audio_features !== null && isValidAudioFeature(track.audio_features, props.y_audio_feature) ? track.audio_features[props.y_audio_feature] : 0}</td>
                     </tr>)
                 )}
             </tbody>

@@ -5,7 +5,8 @@ import SpotifyAuthorization from './pages/SpotifyAuthorization';
 import Home from './pages/Home';
 import About from './pages/About';
 import Sort from './pages/Sort';
-import { Token } from './Models'
+import { Token } from './Models';
+import { ReducedSpotifyUser } from './Models';
 
 const local_storage_token_key = 'spotify-token';
 
@@ -13,7 +14,7 @@ interface IProps { }
 
 interface IState {
   token: Token | null
-  user: SpotifyApi.CurrentUsersProfileResponse | null
+  user: ReducedSpotifyUser | null
 }
 
 let blank_state: IState = {
@@ -36,7 +37,7 @@ class App extends React.Component<IProps, IState> {
     this.onLogout = this.onLogout.bind(this)
   }
 
-  onUserChange(token: Token, user: SpotifyApi.CurrentUsersProfileResponse) {
+  onUserChange(token: Token, user: ReducedSpotifyUser) {
     this.setState({
       token: token,
       user: user
@@ -88,7 +89,7 @@ class App extends React.Component<IProps, IState> {
       <BrowserRouter>
         <Navigation />
         <Switch>
-          <Route exact path='/' render={() => <Home token={token} user={user} />} />
+          <Route exact path='/' component={Home} />
           <Route exact path='/sort' render={() => <Sort token={token} user={user} onLogout={this.onLogout} />} />
           <Route exact path='/about' component={About} />
           <Route exact path='/spotify-authorization' render={() => <SpotifyAuthorization token={token} onUserChange={this.onUserChange} redirectToOnCompletion={'/sort'} />} />

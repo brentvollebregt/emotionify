@@ -15,6 +15,7 @@ import Plot from './Plot';
 import TrackTable from './TrackTable';
 import TrackSortControl from './TrackSortControl';
 import { availableSortingMethods } from '../../logic/PointSorting';
+import { ReducedSpotifyUser, ReducedSpotifyPlaylist, ReducedSpotifyTrack } from '../../Models';
 
 const local_storage_sort_component_state_key: string = 'emotionify-sort-component-state';
 const available_audio_features: {[key: string]: string} = {
@@ -35,7 +36,7 @@ const available_audio_features: {[key: string]: string} = {
 
 interface IProps {
     token: Token | null,
-    user: SpotifyApi.CurrentUsersProfileResponse | null,
+    user: ReducedSpotifyUser | null,
     onLogout: () => void
 }
 
@@ -43,10 +44,10 @@ interface IState {
     requestingPlaylists: boolean,
     requestingTracks: boolean,
     playlists: {
-        [key: string]: PlaylistWithTracks
+        [key: string]: ReducedSpotifyPlaylist
     },
     tracks: {
-        [key: string]: TrackWithAudioFeatures
+        [key: string]: ReducedSpotifyTrack
     }
     selectedPlaylist: string | null,
     selectedAxis: {
@@ -54,14 +55,6 @@ interface IState {
         y: string
     },
     selectedSortingMethod: string
-}
-
-interface PlaylistWithTracks extends SpotifyApi.PlaylistObjectSimplified {
-    track_ids: string[]
-}
-
-export interface TrackWithAudioFeatures extends SpotifyApi.TrackObjectFull {
-    audioFeatures: SpotifyApi.AudioFeaturesObject | null
 }
 
 interface IStorage {
@@ -115,8 +108,8 @@ class Sort extends React.Component<IProps, IState> {
     
                 getUserPlaylists(token.value, user)
                     .then(playlists => {
-                        let playlists_with_tracks: PlaylistWithTracks[] = playlists.map(p => {return {...p, track_ids: []}});
-                        let playlists_with_tracks_indexed: {[key: string]: PlaylistWithTracks} = arrayToObject(playlists_with_tracks, 'id');
+                        let playlists_with_tracks: ReducedSpotifyPlaylist[] = playlists.map(p => {return {...p, track_ids: []}});
+                        let playlists_with_tracks_indexed: {[key: string]: ReducedSpotifyPlaylist} = arrayToObject(playlists_with_tracks, 'id');
                         this.setState({ 
                             requestingPlaylists: false, 
                             playlists: playlists_with_tracks_indexed
@@ -168,14 +161,14 @@ class Sort extends React.Component<IProps, IState> {
         }
     }
 
-    getPlaylistTracks(playlist: PlaylistWithTracks): void {
+    getPlaylistTracks(playlist: ReducedSpotifyPlaylist): void {
         if (this.props.token !== null && playlist.tracks.total !== playlist.track_ids.length) { // Check if we already have the data
             this.setState({ requestingTracks: true });
             getPlaylistTracks(this.props.token.value, playlist)
                 .then(tracks => {
                     let track_ids: string[] = tracks.map(t => t.id);
-                    let tracks_with_audio_features: TrackWithAudioFeatures[] = tracks.map(t => {return {...t, audioFeatures: null}});
-                    let tracks_with_audio_features_indexed: {[key: string]: TrackWithAudioFeatures} = arrayToObject(tracks_with_audio_features, 'id');
+                    let tracks_with_audio_features: ReducedSpotifyTrack[] = tracks.map(t => {return {...t, audioFeatures: null}});
+                    let tracks_with_audio_features_indexed: {[key: string]: ReducedSpotifyTrack} = arrayToObject(tracks_with_audio_features, 'id');
                     this.setState({ 
                         playlists: { ...this.state.playlists, [playlist.id]: {...this.state.playlists[playlist.id], track_ids: track_ids} }, // Put track ids in this playlist
                         tracks: { ...this.state.tracks, ...tracks_with_audio_features_indexed } // Insert tracks
@@ -188,16 +181,16 @@ class Sort extends React.Component<IProps, IState> {
 
     getTrackFeatures(track_ids: string[]): void {
         if (this.props.token !== null) {
-            const currently_sotred_track_ids_with_features = Object.values(this.state.tracks).filter(t => t.audioFeatures !== null).map(af => af.id);
+            const currently_sotred_track_ids_with_features = Object.values(this.state.tracks).filter(t => t.audio_features !== null).map(af => af.id);
             const track_ids_not_requested = track_ids.filter(t => !(t in currently_sotred_track_ids_with_features));
 
             getFeaturesForTracks(this.props.token.value, track_ids_not_requested)
                 .then(data => {
                     const { tracks } = this.state;
-                    let features_merged_with_tracks: TrackWithAudioFeatures[] = data.map(f => {
-                        return { ...tracks[f.id], audioFeatures: f}
+                    let features_merged_with_tracks: ReducedSpotifyTrack[] = data.map(f => {
+                        return { ...tracks[f.id], audio_features: f}
                     });
-                    let features_merged_with_tracks_indexed: {[key: string]: TrackWithAudioFeatures} = arrayToObject(features_merged_with_tracks, 'id');
+                    let features_merged_with_tracks_indexed: {[key: string]: ReducedSpotifyTrack} = arrayToObject(features_merged_with_tracks, 'id');
 
                     this.setState({ 
                         tracks: {...this.state.tracks, ...features_merged_with_tracks_indexed},
@@ -258,7 +251,7 @@ class Sort extends React.Component<IProps, IState> {
         const { playlists, tracks, selectedPlaylist, requestingPlaylists, requestingTracks, selectedAxis, selectedSortingMethod } = this.state;
         const { user } = this.props;
 
-        let selected_playlist_tracks: TrackWithAudioFeatures[] = [];
+        let selected_playlist_tracks: ReducedSpotifyTrack[] = [];
         if (selectedPlaylist !== null) {
             let selected_playlist_track_ids: string[] = playlists[selectedPlaylist].track_ids;
             selected_playlist_tracks = Object.values(tracks).filter(t => selected_playlist_track_ids.indexOf(t.id) !== -1);
