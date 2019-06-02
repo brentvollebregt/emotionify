@@ -1,9 +1,9 @@
 import React from 'react';
 import Table from 'react-bootstrap/Table';
-import { ReducedSpotifyPlaylist } from '../../Models';
+import { SpotifyPlaylist } from '../../Models';
 
 interface IProps {
-    playlists: ReducedSpotifyPlaylist[]
+    playlists: SpotifyPlaylist[]
     onPlaylistSelected: (id: string) => void
 }
 

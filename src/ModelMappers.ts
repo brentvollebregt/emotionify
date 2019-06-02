@@ -1,7 +1,7 @@
-import { ReducedSpotifyUser, ReducedSpotifyPlaylist, ReducedSpotifyTrack, ReducedSpotifyTrackAudioFeatures } from './Models'
+import { SpotifyUser, SpotifyPlaylist, SpotifyTrack, SpotifyTrackAudioFeatures } from './Models'
 
 // Reduce SpotifyApi.CurrentUsersProfileResponse. Take in the sub-class SpotifyApi.UserObjectPublic as all required fields are in this.
-export function ReduceCurrentUsersProfile(user: SpotifyApi.UserObjectPublic): ReducedSpotifyUser {
+export function ReduceCurrentUsersProfile(user: SpotifyApi.UserObjectPublic): SpotifyUser {
     return {
         display_name: user.display_name,
         id: user.id,
@@ -11,7 +11,7 @@ export function ReduceCurrentUsersProfile(user: SpotifyApi.UserObjectPublic): Re
 }
 
 // Reduce SpotifyApi.PlaylistObjectSimplified.
-export function ReducePlaylistObjectSimplified(playlist: SpotifyApi.PlaylistObjectSimplified): ReducedSpotifyPlaylist {
+export function ReducePlaylistObjectSimplified(playlist: SpotifyApi.PlaylistObjectSimplified): SpotifyPlaylist {
     return {
         track_ids: [],
         id: playlist.id,
@@ -31,7 +31,7 @@ export function ReducePlaylistObjectSimplified(playlist: SpotifyApi.PlaylistObje
 }
 
 // Reduce SpotifyApi.TrackObjectFull.
-export function ReduceTrackObjectFull(track: SpotifyApi.TrackObjectFull): ReducedSpotifyTrack {
+export function ReduceTrackObjectFull(track: SpotifyApi.TrackObjectFull): SpotifyTrack {
     return {
         audio_features: null,
         id: track.id,
@@ -48,7 +48,7 @@ export function ReduceTrackObjectFull(track: SpotifyApi.TrackObjectFull): Reduce
 }
 
 // Reduce SpotifyApi.AudioFeaturesObject.
-export function ReduceAudioFeaturesObject(audio_featues: SpotifyApi.AudioFeaturesObject): ReducedSpotifyTrackAudioFeatures {
+export function ReduceAudioFeaturesObject(audio_featues: SpotifyApi.AudioFeaturesObject): SpotifyTrackAudioFeatures {
     return {
         id: audio_featues.id,
         uri: audio_featues.uri,

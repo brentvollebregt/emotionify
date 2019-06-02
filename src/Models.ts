@@ -4,7 +4,7 @@ export interface Token {
 }
 
 // Model to reduce SpotifyApi.CurrentUsersProfileResponse from SpotifyApi.getMe()
-export interface ReducedSpotifyUser {
+export interface SpotifyUser {
     id: string,
     uri: string,
     display_name: string | undefined,
@@ -20,7 +20,7 @@ export interface ReducedSpotifyUser {
 }
 
 // Model to reduce SpotifyApi.PlaylistObjectSimplified from SpotifyApi.getUserPlaylists()
-export interface ReducedSpotifyPlaylist {
+export interface SpotifyPlaylist {
     track_ids: string[] // To hold ids of tracks in this playlist
     id: string,
     uri: string,
@@ -30,7 +30,7 @@ export interface ReducedSpotifyPlaylist {
     },
     images: string[], // From {height?: number, url: string, width?: number}[]
     name: string,
-    owner: ReducedSpotifyUser, // From SpotifyApi.UserObjectPublic
+    owner: SpotifyUser, // From SpotifyApi.UserObjectPublic
     public: boolean,
     href: string,
     external_urls: {
@@ -42,8 +42,8 @@ export interface ReducedSpotifyPlaylist {
 }
 
 // Model to reduce SpotifyApi.TrackObjectFull from SpotifyApi.getPlaylistTracks()
-export interface ReducedSpotifyTrack {
-    audio_features: ReducedSpotifyTrackAudioFeatures | null // To hold audio features with the track
+export interface SpotifyTrack {
+    audio_features: SpotifyTrackAudioFeatures | null // To hold audio features with the track
     id: string,
     uri: string,
     album: { // From SpotifyApi.AlbumObjectSimplified
@@ -73,7 +73,7 @@ export interface ReducedSpotifyTrack {
 }
 
 // Model to reduce SpotifyApi.AudioFeaturesObject from SpotifyApi.getAudioFeaturesForTracks()
-export interface ReducedSpotifyTrackAudioFeatures {
+export interface SpotifyTrackAudioFeatures {
     id: string,
     uri: string,
     acousticness: number,

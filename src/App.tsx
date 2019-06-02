@@ -6,7 +6,7 @@ import Home from './pages/Home';
 import About from './pages/About';
 import Sort from './pages/Sort';
 import { Token } from './Models';
-import { ReducedSpotifyUser } from './Models';
+import { SpotifyUser } from './Models';
 
 const local_storage_token_key = 'spotify-token';
 
@@ -14,7 +14,7 @@ interface IProps { }
 
 interface IState {
   token: Token | null
-  user: ReducedSpotifyUser | null
+  user: SpotifyUser | null
 }
 
 let blank_state: IState = {
@@ -37,7 +37,7 @@ class App extends React.Component<IProps, IState> {
     this.onLogout = this.onLogout.bind(this)
   }
 
-  onUserChange(token: Token, user: ReducedSpotifyUser) {
+  onUserChange(token: Token, user: SpotifyUser) {
     this.setState({
       token: token,
       user: user

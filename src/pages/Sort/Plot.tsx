@@ -1,8 +1,8 @@
 import React from 'react';
-import { ReducedSpotifyTrack } from '../../Models';
+import { SpotifyTrack } from '../../Models';
 
 interface IProps {
-    tracks: ReducedSpotifyTrack[]
+    tracks: SpotifyTrack[]
 }
 
 interface Point {

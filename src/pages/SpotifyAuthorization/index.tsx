@@ -5,7 +5,7 @@ import Container from 'react-bootstrap/Container';
 import Spinner from 'react-bootstrap/Spinner';
 import settings from '../../settings.json';
 import { Token } from '../../Models';
-import { ReducedSpotifyUser } from '../../Models';
+import { SpotifyUser } from '../../Models';
 import { getUser } from '../../logic/Spotify';
 
 
@@ -27,7 +27,7 @@ enum SubState {
 
 interface IProps extends RouteComponentProps<{}> {
     token: Token | null,
-    onUserChange: (token: Token, user: ReducedSpotifyUser) => void,
+    onUserChange: (token: Token, user: SpotifyUser) => void,
     redirectToOnCompletion: string
 }
 

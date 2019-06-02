@@ -2,10 +2,10 @@ import React from 'react';
 import Table from 'react-bootstrap/Table';
 import { millisecondsToMinSec } from '../../logic/Utils';
 import { SortablePoint } from '../../logic/PointSorting';
-import { ReducedSpotifyTrack, ReducedSpotifyTrackAudioFeatures } from '../../Models';
+import { SpotifyTrack, SpotifyTrackAudioFeatures } from '../../Models';
 
 interface IProps {
-    tracks: ReducedSpotifyTrack[], // These are ordered when they come in
+    tracks: SpotifyTrack[], // These are ordered when they come in
     x_audio_feature: string,
     x_audio_feature_name: string,
     y_audio_feature: string,
@@ -13,7 +13,7 @@ interface IProps {
     sorting_method: Function
 }
 
-interface ReducedSpotifyTrackAndPlaylistIndex extends ReducedSpotifyTrack {
+interface SpotifyTrackAndPlaylistIndex extends SpotifyTrack {
     index: {
         before: number,
         after: number
@@ -22,12 +22,12 @@ interface ReducedSpotifyTrackAndPlaylistIndex extends ReducedSpotifyTrack {
 
 const TrackTable: React.SFC<IProps> = (props: IProps) => {
     // Get points initial indexes (to calculate movement)
-    let tracks_with_playlist_indexes: ReducedSpotifyTrackAndPlaylistIndex[] = props.tracks.map((t, i) => {
+    let tracks_with_playlist_indexes: SpotifyTrackAndPlaylistIndex[] = props.tracks.map((t, i) => {
         return { ...t, index: { before: i, after: 0 } };
     });
 
     // Sort points
-    const isValidAudioFeature = (audioFeatures: ReducedSpotifyTrackAudioFeatures, audioFeature: string): audioFeature is keyof ReducedSpotifyTrackAudioFeatures => {
+    const isValidAudioFeature = (audioFeatures: SpotifyTrackAudioFeatures, audioFeature: string): audioFeature is keyof SpotifyTrackAudioFeatures => {
         return audioFeature in audioFeatures;
     };
     const isNumber = (value: any): value is number => {
@@ -70,7 +70,7 @@ const TrackTable: React.SFC<IProps> = (props: IProps) => {
     let tracks_as_sp_sorted: SortablePoint[] = props.sorting_method(tracks_as_sp);
 
     // Calculate new indexes using the sorted points
-    let tracks_with_sorted_indexes: ReducedSpotifyTrackAndPlaylistIndex[] = tracks_as_sp_sorted.map((sp, i) => {
+    let tracks_with_sorted_indexes: SpotifyTrackAndPlaylistIndex[] = tracks_as_sp_sorted.map((sp, i) => {
         let track = tracks_with_playlist_indexes.find(t => t.id === sp.id);
         if (track !== undefined) {
             return { ...track, index: { before: track.index.before, after: i } };
@@ -78,10 +78,10 @@ const TrackTable: React.SFC<IProps> = (props: IProps) => {
             console.error('[TrackTable:tracks_with_sorted_indexes] Cannot find match for: ' + sp.id);
             return null;
         }
-    }).filter((t: ReducedSpotifyTrackAndPlaylistIndex | null): t is ReducedSpotifyTrackAndPlaylistIndex => t !== null);
+    }).filter((t: SpotifyTrackAndPlaylistIndex | null): t is SpotifyTrackAndPlaylistIndex => t !== null);
 
     // Sort tracks by the new indexes
-    let tracks_sorted: ReducedSpotifyTrackAndPlaylistIndex[] = tracks_with_sorted_indexes.sort((a, b) => a.index.after - b.index.after);
+    let tracks_sorted: SpotifyTrackAndPlaylistIndex[] = tracks_with_sorted_indexes.sort((a, b) => a.index.after - b.index.after);
 
     const header_cell_style: React.CSSProperties = {
         position: 'sticky',
