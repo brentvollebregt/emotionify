@@ -10,7 +10,8 @@ export interface SortablePoint {
 
 export const availableSortingMethods: {[key: string]: Function} = {
     'Distance From Origin': originDistance,
-    'Nearest Neighbour': nearestNeighbourFromOrigin
+    'Nearest Neighbour': nearestNeighbourFromOrigin,
+    'No Sorting': noSort
 }
 
 function distanceToPoint(xOrigin: number, yOrigin: number, x: number, y: number): number {
@@ -27,6 +28,7 @@ export function originDistance(points: SortablePoint[]): SortablePoint[] {
     return distances_from_origin.sort((a, b) => a.distance - b.distance);
 }
 
+// Sorts points by going point to point based off the closest left-over points. Starts at 0,0.
 export function nearestNeighbourFromOrigin(points: SortablePoint[]): SortablePoint[] {
     let nearest_point_to_origin = points.reduce((accumulator: SortablePoint, currentValue: SortablePoint): SortablePoint => {
         let acc_dist = distanceToPoint(0, 0, accumulator.x, accumulator.y);
@@ -52,4 +54,8 @@ export function nearestNeighbourFromOrigin(points: SortablePoint[]): SortablePoi
     }
 
     return sorted_points;
+}
+
+export function noSort(points: SortablePoint[]): SortablePoint[] {
+    return points;
 }
