@@ -1,5 +1,7 @@
 import React from 'react';
 import Dropdown from 'react-bootstrap/Dropdown';
+import InputGroup from 'react-bootstrap/InputGroup';
+import DropdownButton from 'react-bootstrap/DropdownButton';
 
 interface IProps {
     available_audio_features: string[],
@@ -14,41 +16,53 @@ interface IProps {
 
 const TrackSortControl: React.SFC<IProps> = (props: IProps) => {
     return <>
-        <div style={{display: 'inline-block', marginRight: 20, marginTop: 5}}>
-            <span>X-Axis: </span>
-            <Dropdown style={{display: 'inline'}}>
-                <Dropdown.Toggle size="sm" id="X-Axis">{props.selected_x_axis}</Dropdown.Toggle>
-                <Dropdown.Menu>
-                    {props.available_audio_features.map(audio_feature =>
-                        <Dropdown.Item key={audio_feature} onClick={() => props.onXAxisSelect(audio_feature)}>{audio_feature}</Dropdown.Item>
-                    )}
-                </Dropdown.Menu>
-            </Dropdown>
-        </div>
+        <InputGroup className="mr-3" style={{display: 'inline-flex', width: 'auto'}}>
+            <InputGroup.Prepend>
+                <InputGroup.Text>X-Axis</InputGroup.Text>
+            </InputGroup.Prepend>
+            <DropdownButton
+                as={InputGroup.Append}
+                variant="primary"
+                title={props.selected_x_axis}
+                id="X-Axis"
+            >
+                {props.available_audio_features.map(audio_feature =>
+                    <Dropdown.Item key={audio_feature} onClick={() => props.onXAxisSelect(audio_feature)}>{audio_feature}</Dropdown.Item>
+                )}
+            </DropdownButton>
+        </InputGroup>
 
-        <div style={{display: 'inline-block', marginRight: 20, marginTop: 5}}>
-            <span>Y-Axis: </span>
-            <Dropdown style={{display: 'inline'}}>
-                <Dropdown.Toggle size="sm" id="Y-Axis">{props.selected_y_axis}</Dropdown.Toggle>
-                <Dropdown.Menu>
-                    {props.available_audio_features.map(audio_feature =>
-                        <Dropdown.Item key={audio_feature} onClick={() => props.onYAxisSelect(audio_feature)}>{audio_feature}</Dropdown.Item>
-                    )}
-                </Dropdown.Menu>
-            </Dropdown>
-        </div>
+        <InputGroup className="mr-3" style={{display: 'inline-flex', width: 'auto'}}>
+            <InputGroup.Prepend>
+                <InputGroup.Text>Y-Axis</InputGroup.Text>
+            </InputGroup.Prepend>
+            <DropdownButton
+                as={InputGroup.Append}
+                variant="primary"
+                title={props.selected_y_axis}
+                id="Y-Axis"
+            >
+                {props.available_audio_features.map(audio_feature =>
+                    <Dropdown.Item key={audio_feature} onClick={() => props.onYAxisSelect(audio_feature)}>{audio_feature}</Dropdown.Item>
+                )}
+            </DropdownButton>
+        </InputGroup>
 
-        <div style={{display: 'inline-block', marginRight: 20, marginTop: 5}}>
-            <span>Sort Method: </span>
-            <Dropdown style={{display: 'inline'}}>
-                <Dropdown.Toggle size="sm" id="Sort Method">{props.selected_sorting_method}</Dropdown.Toggle>
-                <Dropdown.Menu>
-                    {props.available_track_sorting_methods.map(sorting_method =>
-                        <Dropdown.Item key={sorting_method} onClick={() => props.onSortMethodSelect(sorting_method)}>{sorting_method}</Dropdown.Item>
-                    )}
-                </Dropdown.Menu>
-            </Dropdown>
-        </div>
+        <InputGroup style={{display: 'inline-flex', width: 'auto'}}>
+            <InputGroup.Prepend>
+                <InputGroup.Text>Sort Method</InputGroup.Text>
+            </InputGroup.Prepend>
+            <DropdownButton
+                as={InputGroup.Append}
+                variant="primary"
+                title={props.selected_sorting_method}
+                id="Sort-Method"
+            >
+                {props.available_track_sorting_methods.map(sorting_method =>
+                    <Dropdown.Item key={sorting_method} onClick={() => props.onSortMethodSelect(sorting_method)}>{sorting_method}</Dropdown.Item>
+                )}
+            </DropdownButton>
+        </InputGroup>
     </>
 }
 
