@@ -22,7 +22,7 @@ const TrackSortControl: React.SFC<IProps> = (props: IProps) => {
             </InputGroup.Prepend>
             <DropdownButton
                 as={InputGroup.Append}
-                variant="primary"
+                variant="outline-secondary"
                 title={props.selected_x_axis}
                 id="X-Axis"
             >
@@ -38,7 +38,7 @@ const TrackSortControl: React.SFC<IProps> = (props: IProps) => {
             </InputGroup.Prepend>
             <DropdownButton
                 as={InputGroup.Append}
-                variant="primary"
+                variant="outline-secondary"
                 title={props.selected_y_axis}
                 id="Y-Axis"
             >
@@ -54,7 +54,7 @@ const TrackSortControl: React.SFC<IProps> = (props: IProps) => {
             </InputGroup.Prepend>
             <DropdownButton
                 as={InputGroup.Append}
-                variant="primary"
+                variant="outline-secondary"
                 title={props.selected_sorting_method}
                 id="Sort-Method"
             >

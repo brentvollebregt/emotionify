@@ -13,6 +13,7 @@ import Plot from './Plot';
 import TrackTable from './TrackTable';
 import TrackSortControl from './TrackSortControl';
 import AccordionDynamicHeader from './AccordionDynamicHeader';
+import Export from './Export';
 import { availableSortingMethods } from '../../logic/PointSorting';
 import { SpotifyUser, SpotifyPlaylist, SpotifyTrack } from '../../Models';
 
@@ -93,6 +94,7 @@ class Sort extends React.Component<IProps, IState> {
         this.onXAxisSelect = this.onXAxisSelect.bind(this);
         this.onYAxisSelect = this.onYAxisSelect.bind(this);
         this.onSortMethodSelect = this.onSortMethodSelect.bind(this);
+        this.onExport = this.onExport.bind(this);
         this.logout = this.logout.bind(this);
     }
 
@@ -213,6 +215,10 @@ class Sort extends React.Component<IProps, IState> {
         this.setState({ selectedSortingMethod: selection });
     }
 
+    onExport(name: string, makePrivate: boolean) {
+        console.log(name, makePrivate);
+    }
+
     logout(): void {
         this.deleteStoredState();
         this.setState(blank_state);
@@ -272,11 +278,11 @@ class Sort extends React.Component<IProps, IState> {
                 <hr />
 
                 {selectedPlaylist !== null && <>
-                    <div className="mb-2">
+                    <div className="mb-4">
                         <PlaylistDetails playlist={playlists[selectedPlaylist]} />
                     </div>
 
-                    <div className="mb-3">
+                    <div className="mb-5">
                         <TrackSortControl 
                             available_audio_features={Object.keys(available_audio_features)} 
                             available_track_sorting_methods={Object.keys(availableSortingMethods)}
@@ -289,7 +295,7 @@ class Sort extends React.Component<IProps, IState> {
                         />
                     </div>
                     
-                    <div className="mb-3">
+                    <div className="mb-5">
                         {requestingTracks && <Spinner animation="border" className="my-3" />}
                         <Plot tracks={selected_playlist_tracks} />
                     </div>
@@ -300,21 +306,27 @@ class Sort extends React.Component<IProps, IState> {
                         </Alert>
                     }
 
-                    <AccordionDynamicHeader
-                        name={'tracks'}
-                        contractedHeader={'Songs in Playlist (click to expand)'}
-                        expandedHeader={'Songs in Playlist (click to collapse)'}
-                        initiallyExpanded={false}
-                    >
-                        <TrackTable 
-                            tracks={selected_playlist_tracks}
-                            x_audio_feature={available_audio_features[selectedAxis.x]}
-                            x_audio_feature_name={selectedAxis.x}
-                            y_audio_feature={available_audio_features[selectedAxis.y]}
-                            y_audio_feature_name={selectedAxis.y}
-                            sorting_method={availableSortingMethods[selectedSortingMethod]}
-                        />
-                    </AccordionDynamicHeader>
+                    <div className="mb-5">
+                        <AccordionDynamicHeader
+                            name={'tracks'}
+                            contractedHeader={'Songs in Playlist (click to expand)'}
+                            expandedHeader={'Songs in Playlist (click to collapse)'}
+                            initiallyExpanded={false}
+                        >
+                            <TrackTable 
+                                tracks={selected_playlist_tracks}
+                                x_audio_feature={available_audio_features[selectedAxis.x]}
+                                x_audio_feature_name={selectedAxis.x}
+                                y_audio_feature={available_audio_features[selectedAxis.y]}
+                                y_audio_feature_name={selectedAxis.y}
+                                sorting_method={availableSortingMethods[selectedSortingMethod]}
+                            />
+                        </AccordionDynamicHeader>
+                    </div>
+
+                    <div className="mb-5">
+                        <Export onExport={this.onExport}/>
+                    </div>
                 </>}
 
             </Container>
