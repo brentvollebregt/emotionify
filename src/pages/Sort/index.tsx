@@ -3,17 +3,16 @@ import { Link } from "react-router-dom";
 import Container from 'react-bootstrap/Container';
 import Button from 'react-bootstrap/Button';
 import Spinner from 'react-bootstrap/Spinner';
-import Accordion from 'react-bootstrap/Accordion';
 import Alert from 'react-bootstrap/Alert';
-import Card from 'react-bootstrap/Card';
 import { getUserPlaylists, getPlaylistTracks, getFeaturesForTracks } from '../../logic/Spotify';
 import { Token } from '../../Models';
 import { arrayToObject } from '../../logic/Utils';
 import PlaylistSelection from './PlaylistSelectionTable';
-import SelectedPlaylist from './SelectedPlaylist';
+import PlaylistDetails from './PlaylistDetails';
 import Plot from './Plot';
 import TrackTable from './TrackTable';
 import TrackSortControl from './TrackSortControl';
+import AccordionDynamicHeader from './AccordionDynamicHeader';
 import { availableSortingMethods } from '../../logic/PointSorting';
 import { SpotifyUser, SpotifyPlaylist, SpotifyTrack } from '../../Models';
 
@@ -274,7 +273,7 @@ class Sort extends React.Component<IProps, IState> {
 
                 {selectedPlaylist !== null && <>
                     <div className="mb-2">
-                        <SelectedPlaylist playlist={playlists[selectedPlaylist]} />
+                        <PlaylistDetails playlist={playlists[selectedPlaylist]} />
                     </div>
 
                     <div className="mb-3">
@@ -289,34 +288,33 @@ class Sort extends React.Component<IProps, IState> {
                             onSortMethodSelect={this.onSortMethodSelect}
                         />
                     </div>
-
-                    {requestingTracks && <Spinner animation="border" className="my-3" />}
+                    
                     <div className="mb-3">
+                        {requestingTracks && <Spinner animation="border" className="my-3" />}
                         <Plot tracks={selected_playlist_tracks} />
                     </div>
+
                     {!requestingTracks && playlists[selectedPlaylist].tracks.total !== selected_playlist_tracks.length && 
                         <Alert variant="warning" style={{display: 'inline-block'}}>
                             Warning: Duplicates in this playlist will be removed
                         </Alert>
                     }
 
-                    <Accordion defaultActiveKey="0">
-                        <Card>
-                            <Accordion.Toggle as={Card.Header} eventKey="songs">Songs in Playlist</Accordion.Toggle>
-                            <Accordion.Collapse eventKey="songs">
-                                <Card.Body className="p-0" style={{ cursor: 'padding' }}>
-                                    <TrackTable 
-                                        tracks={selected_playlist_tracks}
-                                        x_audio_feature={available_audio_features[selectedAxis.x]}
-                                        x_audio_feature_name={selectedAxis.x}
-                                        y_audio_feature={available_audio_features[selectedAxis.y]}
-                                        y_audio_feature_name={selectedAxis.y}
-                                        sorting_method={availableSortingMethods[selectedSortingMethod]}
-                                    />
-                                </Card.Body>
-                            </Accordion.Collapse>
-                        </Card>
-                    </Accordion>
+                    <AccordionDynamicHeader
+                        name={'tracks'}
+                        contractedHeader={'Songs in Playlist (click to expand)'}
+                        expandedHeader={'Songs in Playlist (click to collapse)'}
+                        initiallyExpanded={false}
+                    >
+                        <TrackTable 
+                            tracks={selected_playlist_tracks}
+                            x_audio_feature={available_audio_features[selectedAxis.x]}
+                            x_audio_feature_name={selectedAxis.x}
+                            y_audio_feature={available_audio_features[selectedAxis.y]}
+                            y_audio_feature_name={selectedAxis.y}
+                            sorting_method={availableSortingMethods[selectedSortingMethod]}
+                        />
+                    </AccordionDynamicHeader>
                 </>}
 
             </Container>

@@ -6,7 +6,7 @@ interface IProps {
     playlist: SpotifyPlaylist
 }
 
-const SelectedPlaylist: React.SFC<IProps> = (props: IProps) => {
+const PlaylistDetails: React.SFC<IProps> = (props: IProps) => {
     const { playlist } = props;
     return <>
         <h3 className="mt-4 mb-0">{playlist.name}</h3>
@@ -19,4 +19,4 @@ const SelectedPlaylist: React.SFC<IProps> = (props: IProps) => {
     </>
 }
 
-export default SelectedPlaylist;
+export default PlaylistDetails;
