@@ -1,4 +1,4 @@
-import { SpotifyUser, SpotifyPlaylist, SpotifyTrack, SpotifyTrackAudioFeatures } from './Models'
+import { SpotifyUser, SpotifyPlaylist, SpotifyTrack, SpotifyTrackAudioFeatures } from '../Models'
 
 // Reduce SpotifyApi.CurrentUsersProfileResponse. Take in the sub-class SpotifyApi.UserObjectPublic as all required fields are in this.
 export function ReduceCurrentUsersProfile(user: SpotifyApi.UserObjectPublic): SpotifyUser {

@@ -1,7 +1,7 @@
 import SpotifyWebApi from 'spotify-web-api-js';
 import { chunkList } from './Utils';
 import { SpotifyUser, SpotifyPlaylist, SpotifyTrack, SpotifyTrackAudioFeatures } from './../Models';
-import { ReduceCurrentUsersProfile, ReducePlaylistObjectSimplified, ReduceTrackObjectFull, ReduceAudioFeaturesObject } from './../ModelMappers';
+import { ReduceCurrentUsersProfile, ReducePlaylistObjectSimplified, ReduceTrackObjectFull, ReduceAudioFeaturesObject } from './ModelMappers';
 
 const playlistRequestLimit = 20;
 const playlistTrackRequestLimit = 100;
