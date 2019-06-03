@@ -4,17 +4,20 @@ import FormControl from 'react-bootstrap/FormControl'
 import Button from 'react-bootstrap/Button'
 import DropdownButton from 'react-bootstrap/DropdownButton'
 import Dropdown from 'react-bootstrap/Dropdown'
+import Alert from 'react-bootstrap/Alert'
 import { BsPrefixProps, ReplaceProps } from 'react-bootstrap/helpers'
 import { FormControlProps } from 'react-bootstrap/FormControl'
 
 
 interface IProps {
-    onExport: (name: string, makePublic: boolean) => void
+    onExport: (name: string, makePublic: boolean) => Promise<boolean>
 }
 
 interface IState {
     name: string,
-    makePublic: boolean
+    makePublic: boolean,
+    nameInvalid: boolean,
+    complete: boolean,
 }
 
 class Export extends React.Component<IProps, IState> {
@@ -23,7 +26,9 @@ class Export extends React.Component<IProps, IState> {
 
         this.state = {
             name: '',
-            makePublic: false
+            makePublic: false,
+            nameInvalid: false,
+            complete: false
         }
 
         this.onPlaylistNameChange = this.onPlaylistNameChange.bind(this);
@@ -32,8 +37,12 @@ class Export extends React.Component<IProps, IState> {
     }
 
     onPlaylistNameChange(e: React.FormEvent<ReplaceProps<"input", BsPrefixProps<"input"> & FormControlProps>>): void {
-        if (e.currentTarget.value !== undefined) {
-            this.setState({ name: e.currentTarget.value });
+        if (e.currentTarget.value !== undefined && !this.state.complete) { // No entry in the time the form is green
+            console.log(e.currentTarget.value, e.currentTarget.value !== '' );
+            this.setState({ 
+                name: e.currentTarget.value, 
+                nameInvalid: e.currentTarget.value === '' 
+            });
         }
     }
 
@@ -42,11 +51,25 @@ class Export extends React.Component<IProps, IState> {
     }
 
     onCreateClick() {
-        this.props.onExport(this.state.name, this.state.makePublic);
+        if (this.state.name === '') {
+            this.setState({ nameInvalid: true });
+        } else {
+            this.props.onExport(this.state.name, this.state.makePublic)
+                .then(success => {
+                    if (success) {
+                        this.setState({ complete: true });
+                    } else {
+                        alert('Failed to create playlist');
+                    }
+                    setTimeout(() => {
+                        this.setState({ complete: false, name: '' });
+                    }, 2500);
+                });
+        }
     }
 
     render() {
-        const { name, makePublic } = this.state;
+        const { name, makePublic, nameInvalid, complete } = this.state;
         return <>
             <h4 className="mb-2">Create New Playlist</h4>
             <InputGroup className="mb-3" style={{ maxWidth: 500, display: 'inline-flex' }}>
@@ -59,10 +82,12 @@ class Export extends React.Component<IProps, IState> {
                     aria-describedby="playlist-name"
                     value={name}
                     onChange={this.onPlaylistNameChange}
+                    isInvalid={nameInvalid}
+                    isValid={complete}
                 />
                 <DropdownButton
                     as={InputGroup.Append}
-                    variant="outline-secondary"
+                    variant={complete ? 'outline-success' : 'outline-secondary'}
                     title={makePublic ? 'Public' : 'Private'}
                     id="make-private"
                 >
@@ -70,7 +95,7 @@ class Export extends React.Component<IProps, IState> {
                     <Dropdown.Item onClick={() => this.onPublicPrivateSelect(true)}>Public</Dropdown.Item>
                 </DropdownButton>
                 <InputGroup.Append>
-                    <Button variant="outline-secondary" onClick={this.onCreateClick}>Create</Button>
+                    <Button variant={complete ? 'outline-success' : 'outline-secondary'} onClick={this.onCreateClick}>Create</Button>
                 </InputGroup.Append>
             </InputGroup>
         </>

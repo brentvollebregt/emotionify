@@ -227,14 +227,16 @@ class Sort extends React.Component<IProps, IState> {
         }
     }
 
-    onExport(name: string, isPublic: boolean) {
+    async onExport(name: string, isPublic: boolean): Promise<boolean> {
         const { token, user } = this.props;
         if (token !== null && user !== null) {
             // Map the sorted tracks to uris
             let track_uris: string[] = this.state.sortedTrackIds.map(st => this.state.tracks[st.id].uri);
             // Create the playlist
-            createPlaylist(token.value, user, name, isPublic, track_uris);
+            await createPlaylist(token.value, user, name, isPublic, track_uris);
+            return true; // TODO: Look into how this could be false
         }
+        return false;
     }
 
     logout(): void {
