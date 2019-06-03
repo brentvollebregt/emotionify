@@ -112,11 +112,10 @@ class Sort extends React.Component<IProps, IState> {
     
                 getUserPlaylists(token.value, user)
                     .then(playlists => {
-                        let playlists_with_tracks: SpotifyPlaylist[] = playlists.map(p => {return {...p, track_ids: []}});
-                        let playlists_with_tracks_indexed: {[key: string]: SpotifyPlaylist} = arrayToObject(playlists_with_tracks, 'id');
+                        let playlists_indexed: {[key: string]: SpotifyPlaylist} = arrayToObject(playlists, 'id');
                         this.setState({ 
                             requestingPlaylists: false, 
-                            playlists: playlists_with_tracks_indexed
+                            playlists: playlists_indexed
                         }, this.storeState);
                     }, err => {
                         console.error(err);
@@ -220,7 +219,15 @@ class Sort extends React.Component<IProps, IState> {
 
         if (selectedPlaylist !== null) {
             let selected_playlist_track_ids: string[] = playlists[selectedPlaylist].track_ids;
-            let selected_playlist_tracks = Object.values(tracks).filter(t => selected_playlist_track_ids.indexOf(t.id) !== -1);
+            let selected_playlist_tracks: SpotifyTrack[] = Object.values(tracks)
+                .filter(t => selected_playlist_track_ids.indexOf(t.id) !== -1)
+                .sort((a: SpotifyTrack, b: SpotifyTrack): number => { // Do a sort to put them in the correct order again (fixes incorrect order of overlapping playlists)
+                    let aIndex = selected_playlist_track_ids.indexOf(a.id);
+                    let bIndex = selected_playlist_track_ids.indexOf(b.id);
+                    return aIndex === bIndex 
+                        ? 0
+                        : aIndex > bIndex ? 1 : -1
+                });
             this.setState({
                 sortedTrackIds: sort(selected_playlist_tracks, available_audio_features[selectedAxis.x], available_audio_features[selectedAxis.y], availableSortingMethods[selectedSortingMethod])
             }, this.storeState); // Store the state otherwise this will be blank on rehydration
@@ -233,8 +240,15 @@ class Sort extends React.Component<IProps, IState> {
             // Map the sorted tracks to uris
             let track_uris: string[] = this.state.sortedTrackIds.map(st => this.state.tracks[st.id].uri);
             // Create the playlist
-            await createPlaylist(token.value, user, name, isPublic, track_uris);
-            return true; // TODO: Look into how this could be false
+            let success: boolean = await createPlaylist(token.value, user, name, isPublic, track_uris)
+                .then(playlist => {
+                    this.setState({ playlists: {...this.state.playlists, [playlist.id] : playlist} }, this.storeState); // Add the new playlist
+                    return true;
+                }, err => {
+                    console.error(err);
+                    return false;
+                });
+            return success;
         }
         return false;
     }

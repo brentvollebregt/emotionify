@@ -4,7 +4,6 @@ import FormControl from 'react-bootstrap/FormControl'
 import Button from 'react-bootstrap/Button'
 import DropdownButton from 'react-bootstrap/DropdownButton'
 import Dropdown from 'react-bootstrap/Dropdown'
-import Alert from 'react-bootstrap/Alert'
 import { BsPrefixProps, ReplaceProps } from 'react-bootstrap/helpers'
 import { FormControlProps } from 'react-bootstrap/FormControl'
 
@@ -38,7 +37,6 @@ class Export extends React.Component<IProps, IState> {
 
     onPlaylistNameChange(e: React.FormEvent<ReplaceProps<"input", BsPrefixProps<"input"> & FormControlProps>>): void {
         if (e.currentTarget.value !== undefined && !this.state.complete) { // No entry in the time the form is green
-            console.log(e.currentTarget.value, e.currentTarget.value !== '' );
             this.setState({ 
                 name: e.currentTarget.value, 
                 nameInvalid: e.currentTarget.value === '' 
@@ -58,12 +56,12 @@ class Export extends React.Component<IProps, IState> {
                 .then(success => {
                     if (success) {
                         this.setState({ complete: true });
+                        setTimeout(() => {
+                            this.setState({ complete: false, name: '' });
+                        }, 2500);
                     } else {
-                        alert('Failed to create playlist');
+                        alert('Failed to create playlist.\nPlease make sure you have an internet connection.');
                     }
-                    setTimeout(() => {
-                        this.setState({ complete: false, name: '' });
-                    }, 2500);
                 });
         }
     }

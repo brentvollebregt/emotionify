@@ -138,6 +138,8 @@ export function getFeaturesForTracks(token: string, track_ids: string[]): Promis
 }
 
 export function createPlaylist(token: string, user: SpotifyUser, name: string, isPublic: boolean, track_uris: string[]): Promise<SpotifyPlaylist> {
+    return new Promise((resolve, reject) => {
+
         let spotifyApi = new SpotifyWebApi();
         spotifyApi.setAccessToken(token);
         
@@ -152,11 +154,15 @@ export function createPlaylist(token: string, user: SpotifyUser, name: string, i
 
                 // Add tracks in order
                 for (let i = 0; i < chunks.length; i++) {
-                    await spotifyApi.addTracksToPlaylist(playlist.id, chunks[i]);  // TODO: Catch errors
+                    await spotifyApi.addTracksToPlaylist(playlist.id, chunks[i])
+                        .catch(err => reject(err));
                 }
 
                 // Manually set the amount of tracks rather than requesting for it again
                 playlist.tracks.total = track_uris.length; 
-                return ReducePlaylistObjectSimplified(playlist);
+                resolve(ReducePlaylistObjectSimplified(playlist));
+            }, err => {
+                reject(err);
             });
+    });
 }
