@@ -1,95 +1,29 @@
 import React from 'react';
 import Table from 'react-bootstrap/Table';
 import { millisecondsToMinSec } from '../../logic/Utils';
-import { SortablePoint } from '../../logic/PointSorting';
-import { SpotifyTrack, SpotifyTrackAudioFeatures } from '../../Models';
+import { SpotifyTrackWithIndexes } from '../../logic/PointSorting';
+import { SpotifyTrackAudioFeatures } from '../../Models';
 
 interface IProps {
-    tracks: SpotifyTrack[], // These are ordered when they come in
+    tracks: SpotifyTrackWithIndexes[], // These are sorted using the current method when they come in
     x_audio_feature: string,
     x_audio_feature_name: string,
     y_audio_feature: string,
-    y_audio_feature_name: string,
-    sorting_method: Function
+    y_audio_feature_name: string
 }
 
-interface SpotifyTrackAndPlaylistIndex extends SpotifyTrack {
-    index: {
-        before: number,
-        after: number
-    }
+const header_cell_style: React.CSSProperties = {
+    position: 'sticky',
+    top: 0,
+    background: 'white',
+    borderTop: 0
 }
+
+const isValidAudioFeature = (audioFeatures: SpotifyTrackAudioFeatures, audioFeature: string): audioFeature is keyof SpotifyTrackAudioFeatures => {
+    return audioFeature in audioFeatures;
+};
 
 const TrackTable: React.SFC<IProps> = (props: IProps) => {
-    // Get points initial indexes (to calculate movement)
-    let tracks_with_playlist_indexes: SpotifyTrackAndPlaylistIndex[] = props.tracks.map((t, i) => {
-        return { ...t, index: { before: i, after: 0 } };
-    });
-
-    // Sort points
-    const isValidAudioFeature = (audioFeatures: SpotifyTrackAudioFeatures, audioFeature: string): audioFeature is keyof SpotifyTrackAudioFeatures => {
-        return audioFeature in audioFeatures;
-    };
-    const isNumber = (value: any): value is number => {
-        return typeof value === "number";
-    };
-    let tracks_as_sp: SortablePoint[] = props.tracks.map(t => {
-        if (t.audio_features !== null 
-            && isValidAudioFeature(t.audio_features, props.x_audio_feature) 
-            && isValidAudioFeature(t.audio_features, props.y_audio_feature)
-            && isNumber(t.audio_features[props.x_audio_feature])
-            && isNumber(t.audio_features[props.y_audio_feature])
-        ) {
-
-            let x = t.audio_features[props.x_audio_feature];
-            let y = t.audio_features[props.y_audio_feature];
-            if (isNumber(x) && isNumber(y)) {
-                return {
-                    id: t.id, 
-                    x: x,
-                    y: y
-                }
-            } else {
-                console.error('TrackTable/tracks_as_sp: Audio feature is a string for (' + props.x_audio_feature + ', ' + props.y_audio_feature + ') from ' + t.id);
-                return {
-                    id: t.id, 
-                    x: 0,
-                    y: 0
-                }
-            }
-
-        } else {
-            // Commonly occurs as t.audioFeatures === null on first playlist selection
-            return {
-                id: t.id, 
-                x: 0,
-                y: 0
-            }
-        }
-    });
-    let tracks_as_sp_sorted: SortablePoint[] = props.sorting_method(tracks_as_sp);
-
-    // Calculate new indexes using the sorted points
-    let tracks_with_sorted_indexes: SpotifyTrackAndPlaylistIndex[] = tracks_as_sp_sorted.map((sp, i) => {
-        let track = tracks_with_playlist_indexes.find(t => t.id === sp.id);
-        if (track !== undefined) {
-            return { ...track, index: { before: track.index.before, after: i } };
-        } else {
-            console.error('[TrackTable:tracks_with_sorted_indexes] Cannot find match for: ' + sp.id);
-            return null;
-        }
-    }).filter((t: SpotifyTrackAndPlaylistIndex | null): t is SpotifyTrackAndPlaylistIndex => t !== null);
-
-    // Sort tracks by the new indexes
-    let tracks_sorted: SpotifyTrackAndPlaylistIndex[] = tracks_with_sorted_indexes.sort((a, b) => a.index.after - b.index.after);
-
-    const header_cell_style: React.CSSProperties = {
-        position: 'sticky',
-        top: 0,
-        background: 'white',
-        borderTop: 0
-    }
-
     return <div style={{maxHeight: 400, overflowY: 'auto', borderTop: '1px solid #dee2e6'}}>
         <Table bordered striped size="sm" style={{borderTop: 0}}>
             <thead>
@@ -103,7 +37,7 @@ const TrackTable: React.SFC<IProps> = (props: IProps) => {
                 </tr>
             </thead>
             <tbody>
-                {tracks_sorted.map(
+                {props.tracks.map(
                     track => (<tr key={track.id}>
                         <td style={track.index.after - track.index.before === 0 ? {color: 'black'} : track.index.after - track.index.before < 0 ? {color: 'green'} : {color: 'red'}}>
                             {track.index.before - track.index.after}

@@ -4,7 +4,7 @@ import Container from 'react-bootstrap/Container';
 import Button from 'react-bootstrap/Button';
 import Spinner from 'react-bootstrap/Spinner';
 import Alert from 'react-bootstrap/Alert';
-import { getUserPlaylists, getPlaylistTracks, getFeaturesForTracks } from '../../logic/Spotify';
+import { getUserPlaylists, getPlaylistTracks, getFeaturesForTracks, createPlaylist } from '../../logic/Spotify';
 import { Token } from '../../Models';
 import { arrayToObject } from '../../logic/Utils';
 import PlaylistSelection from './PlaylistSelectionTable';
@@ -14,7 +14,8 @@ import TrackTable from './TrackTable';
 import TrackSortControl from './TrackSortControl';
 import AccordionDynamicHeader from './AccordionDynamicHeader';
 import Export from './Export';
-import { availableSortingMethods } from '../../logic/PointSorting';
+import { availableSortingMethods, IndexedTrackId, sort, SpotifyTrackWithIndexes } from '../../logic/PointSorting';
+import { putStoredState, getStoredState, deleteStoredState } from '../../logic/StateStore';
 import { SpotifyUser, SpotifyPlaylist, SpotifyTrack } from '../../Models';
 
 const local_storage_sort_component_state_key: string = 'emotionify-sort-component-state';
@@ -54,7 +55,8 @@ interface IState {
         x: string,
         y: string
     },
-    selectedSortingMethod: string
+    selectedSortingMethod: string,
+    sortedTrackIds: IndexedTrackId[]
 }
 
 interface IStorage {
@@ -72,7 +74,8 @@ let blank_state: IState = {
         x: 'Energy',
         y: 'Valence',
     },
-    selectedSortingMethod: 'Distance From Origin'
+    selectedSortingMethod: 'Distance From Origin',
+    sortedTrackIds: []
 }
 
 class Sort extends React.Component<IProps, IState> {
@@ -129,26 +132,19 @@ class Sort extends React.Component<IProps, IState> {
                 user_id: this.props.user.id,
                 state: this.state
             }
-            localStorage.setItem(local_storage_sort_component_state_key, JSON.stringify(data_to_store));
+            putStoredState(local_storage_sort_component_state_key, data_to_store);
         }
     }
 
     getStoredState(user_id: string): IState | null {
-        let stored_data = localStorage.getItem(local_storage_sort_component_state_key);
-        if (stored_data === null) {
-            return null;
-        } else {
-            let stored_data_parsed: IStorage = JSON.parse(stored_data);
-            if (stored_data_parsed.user_id === user_id) { // Only get a stored state if it relates to the current user
-                return stored_data_parsed.state;
-            } else {
-                return null;
-            }
-        }
+        let storage = getStoredState(local_storage_sort_component_state_key, (state: IStorage): boolean => {
+            return state.user_id === user_id; // Only get a stored state if it relates to the current user
+        });
+        return storage === null ? null : storage.state;
     }
 
     deleteStoredState(): void {
-        localStorage.removeItem(local_storage_sort_component_state_key);
+        deleteStoredState(local_storage_sort_component_state_key);
     }
 
     onPlaylistSelected(playlist_id: string): void {
@@ -158,6 +154,7 @@ class Sort extends React.Component<IProps, IState> {
                 selectedPlaylist: playlist_id
             }, () => {
                 this.getPlaylistTracks(playlist);
+                this.sortTracks();
             });
         }
     }
@@ -196,7 +193,10 @@ class Sort extends React.Component<IProps, IState> {
                     this.setState({ 
                         tracks: {...this.state.tracks, ...features_merged_with_tracks_indexed},
                         requestingTracks: false // Now that we have all track data required
-                    }, () => this.storeState);
+                    }, () => {
+                        this.storeState();
+                        this.sortTracks();
+                    });
                 }, err => {
                     console.error(err);
                 });
@@ -204,19 +204,37 @@ class Sort extends React.Component<IProps, IState> {
     }
 
     onXAxisSelect(selection: string): void {
-        this.setState({ selectedAxis: {...this.state.selectedAxis, x: selection} });
+        this.setState({ selectedAxis: {...this.state.selectedAxis, x: selection} }, this.sortTracks);
     }
 
     onYAxisSelect(selection: string): void {
-        this.setState({ selectedAxis: {...this.state.selectedAxis, y: selection} });
+        this.setState({ selectedAxis: {...this.state.selectedAxis, y: selection} }, this.sortTracks);
     }
 
     onSortMethodSelect(selection: string): void {
-        this.setState({ selectedSortingMethod: selection });
+        this.setState({ selectedSortingMethod: selection }, this.sortTracks);
     }
 
-    onExport(name: string, makePrivate: boolean) {
-        console.log(name, makePrivate);
+    sortTracks(): void {
+        const { playlists, tracks, selectedPlaylist, selectedAxis, selectedSortingMethod } = this.state;
+
+        if (selectedPlaylist !== null) {
+            let selected_playlist_track_ids: string[] = playlists[selectedPlaylist].track_ids;
+            let selected_playlist_tracks = Object.values(tracks).filter(t => selected_playlist_track_ids.indexOf(t.id) !== -1);
+            this.setState({
+                sortedTrackIds: sort(selected_playlist_tracks, available_audio_features[selectedAxis.x], available_audio_features[selectedAxis.y], availableSortingMethods[selectedSortingMethod])
+            }, this.storeState); // Store the state otherwise this will be blank on rehydration
+        }
+    }
+
+    onExport(name: string, isPublic: boolean) {
+        const { token, user } = this.props;
+        if (token !== null && user !== null) {
+            // Map the sorted tracks to uris
+            let track_uris: string[] = this.state.sortedTrackIds.map(st => this.state.tracks[st.id].uri);
+            // Create the playlist
+            createPlaylist(token.value, user, name, isPublic, track_uris);
+        }
     }
 
     logout(): void {
@@ -253,14 +271,12 @@ class Sort extends React.Component<IProps, IState> {
             </>)
         }
 
-        const { playlists, tracks, selectedPlaylist, requestingPlaylists, requestingTracks, selectedAxis, selectedSortingMethod } = this.state;
+        const { playlists, tracks, selectedPlaylist, requestingPlaylists, requestingTracks, selectedAxis, selectedSortingMethod, sortedTrackIds } = this.state;
         const { user } = this.props;
 
-        let selected_playlist_tracks: SpotifyTrack[] = [];
-        if (selectedPlaylist !== null) {
-            let selected_playlist_track_ids: string[] = playlists[selectedPlaylist].track_ids;
-            selected_playlist_tracks = Object.values(tracks).filter(t => selected_playlist_track_ids.indexOf(t.id) !== -1);
-        }
+        // Map the sorted data back to tracks to display
+        // TODO: Coule be mapped into state?
+        let sorted_spotify_tracks: SpotifyTrackWithIndexes[] = sortedTrackIds.map(st => {return {...st, ...tracks[st.id]}});
 
         return (<>
             {header}
@@ -297,10 +313,10 @@ class Sort extends React.Component<IProps, IState> {
                     
                     <div className="mb-5">
                         {requestingTracks && <Spinner animation="border" className="my-3" />}
-                        <Plot tracks={selected_playlist_tracks} />
+                        <Plot tracks={sorted_spotify_tracks} />
                     </div>
 
-                    {!requestingTracks && playlists[selectedPlaylist].tracks.total !== selected_playlist_tracks.length && 
+                    {!requestingTracks && playlists[selectedPlaylist].tracks.total !== sorted_spotify_tracks.length && 
                         <Alert variant="warning" style={{display: 'inline-block'}}>
                             Warning: Duplicates in this playlist will be removed
                         </Alert>
@@ -314,12 +330,11 @@ class Sort extends React.Component<IProps, IState> {
                             initiallyExpanded={false}
                         >
                             <TrackTable 
-                                tracks={selected_playlist_tracks}
+                                tracks={sorted_spotify_tracks}
                                 x_audio_feature={available_audio_features[selectedAxis.x]}
                                 x_audio_feature_name={selectedAxis.x}
                                 y_audio_feature={available_audio_features[selectedAxis.y]}
                                 y_audio_feature_name={selectedAxis.y}
-                                sorting_method={availableSortingMethods[selectedSortingMethod]}
                             />
                         </AccordionDynamicHeader>
                     </div>

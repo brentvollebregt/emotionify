@@ -1,3 +1,5 @@
+import { SpotifyTrack, SpotifyTrackAudioFeatures } from '../Models';
+
 /*
 * Different methods of sorting x y points
 */
@@ -7,6 +9,16 @@ export interface SortablePoint {
     x: number,
     y: number
 }
+
+export interface IndexedTrackId { // Minimal stored data
+    id: string,
+    index: {
+        before: number,
+        after: number
+    }
+}
+
+export interface SpotifyTrackWithIndexes extends SpotifyTrack, IndexedTrackId { } // Not used here but relates to methods here
 
 export const availableSortingMethods: {[key: string]: Function} = {
     'Distance From Origin': originDistance,
@@ -56,6 +68,68 @@ export function nearestNeighbourFromOrigin(points: SortablePoint[]): SortablePoi
     return sorted_points;
 }
 
+// Return the data provided
 export function noSort(points: SortablePoint[]): SortablePoint[] {
     return points;
+}
+
+const isValidAudioFeature = (audioFeatures: SpotifyTrackAudioFeatures, audioFeature: string): audioFeature is keyof SpotifyTrackAudioFeatures => {
+    return audioFeature in audioFeatures;
+};
+
+const isNumber = (value: any): value is number => {
+    return typeof value === "number";
+};
+
+// Sort tracks given x and y features and a sorting method
+export function sort(tracks: SpotifyTrack[], x_audio_feature: string, y_audio_feature: string, sorting_method: Function): IndexedTrackId[] {
+    // Get points initial indexes (to calculate movement)
+    let tracks_with_playlist_indexes: IndexedTrackId[] = tracks.map((t, i) => {
+        return { id: t.id, index: { before: i, after: 0 } };
+    });
+
+    // Convert tracks to sortable points
+    let tracks_as_sp: SortablePoint[] = tracks.map(t => {
+        if (t.audio_features !== null 
+            && isValidAudioFeature(t.audio_features, x_audio_feature) 
+            && isValidAudioFeature(t.audio_features, y_audio_feature)
+            && isNumber(t.audio_features[x_audio_feature])
+            && isNumber(t.audio_features[y_audio_feature])
+        ) {
+
+            let x = t.audio_features[x_audio_feature];
+            let y = t.audio_features[y_audio_feature];
+            if (isNumber(x) && isNumber(y)) {
+                return { id: t.id, x: x, y: y }
+            } else {
+                console.error('TrackTable/tracks_as_sp: Audio feature is a string for (' + x_audio_feature + ', ' + y_audio_feature + ') from ' + t.id);
+                return { id: t.id, x: 0, y: 0 }
+            }
+
+        } else { // Commonly occurs as t.audioFeatures === null on first playlist selection
+            return { id: t.id, x: 0, y: 0 }
+        }
+    });
+
+    // Sort the sortable points
+    let tracks_as_sp_sorted: SortablePoint[] = sorting_method(tracks_as_sp);
+
+    // Calculate new indexes using the sorted points
+    let tracks_with_sorted_indexes: IndexedTrackId[] = tracks_as_sp_sorted.map((sp, i) => {
+        let track = tracks_with_playlist_indexes.find(t => t.id === sp.id);
+        if (track !== undefined) {
+            return { ...track, index: { before: track.index.before, after: i } };
+        } else {
+            console.error('[TrackTable:tracks_with_sorted_indexes] Cannot find match for: ' + sp.id);
+            return null;
+        }
+    }).filter((t: IndexedTrackId | null): t is IndexedTrackId => t !== null);
+
+    // Quick debugging verification
+    if (tracks_with_sorted_indexes.length !== tracks.length) {
+        console.error('PointSorting.sort did not output the same amount of tracks input');
+    }
+
+    // Sort tracks by the new indexes
+    return tracks_with_sorted_indexes.sort((a, b) => a.index.after - b.index.after);
 }

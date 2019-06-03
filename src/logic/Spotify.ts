@@ -62,7 +62,7 @@ export function getUserPlaylists(token: string, user: SpotifyUser): Promise<Spot
                         promises.push( spotifyApi.getUserPlaylists(user.id, request_blocks_chunked[i][j]) );
                     }
                     // Wait for each request and get data
-                    let promise_data = await Promise.all(promises);
+                    let promise_data = await Promise.all(promises); // TODO: Catch errors
                     playlists = [...playlists, ...promise_data.map(i => i.items).flat()];
                 }
 
@@ -99,7 +99,7 @@ export function getPlaylistTracks(token: string, playlist: SpotifyPlaylist): Pro
                         promises.push( spotifyApi.getPlaylistTracks(playlist.id, request_blocks_chunked[i][j]) );
                     }
                     // Wait for each request and get data
-                    let promise_data = await Promise.all(promises);
+                    let promise_data = await Promise.all(promises); // TODO: Catch errors
                     tracks = [...tracks, ...promise_data.map(i => i.items).flat().map(i => i.track)];
                 }
 
@@ -128,11 +128,35 @@ export function getFeaturesForTracks(token: string, track_ids: string[]): Promis
                 promises.push( spotifyApi.getAudioFeaturesForTracks(track_groups_chunked[i][j]) );
             }
             // Wait for each request and get data
-            let promise_data = await Promise.all(promises);
+            let promise_data = await Promise.all(promises); // TODO: Catch errors
             features = [...features, ...promise_data.map(i => i.audio_features).flat()];
         }
 
         resolve(features.map(af => ReduceAudioFeaturesObject(af)));
 
     });
+}
+
+export function createPlaylist(token: string, user: SpotifyUser, name: string, isPublic: boolean, track_uris: string[]): Promise<SpotifyPlaylist> {
+        let spotifyApi = new SpotifyWebApi();
+        spotifyApi.setAccessToken(token);
+        
+        return spotifyApi.createPlaylist(user.id, {
+            name: name,
+            public: isPublic,
+            description: 'Created by emotionify.nitratine.net'
+        })
+            .then(async playlist => {
+                // Chunk into blocks of 100
+                let chunks: string[][] = chunkList(track_uris, 100);
+
+                // Add tracks in order
+                for (let i = 0; i < chunks.length; i++) {
+                    await spotifyApi.addTracksToPlaylist(playlist.id, chunks[i]);  // TODO: Catch errors
+                }
+
+                // Manually set the amount of tracks rather than requesting for it again
+                playlist.tracks.total = track_uris.length; 
+                return ReducePlaylistObjectSimplified(playlist);
+            });
 }

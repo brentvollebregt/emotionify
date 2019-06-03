@@ -9,12 +9,12 @@ import { FormControlProps } from 'react-bootstrap/FormControl'
 
 
 interface IProps {
-    onExport: (name: string, makePrivate: boolean) => void
+    onExport: (name: string, makePublic: boolean) => void
 }
 
 interface IState {
     name: string,
-    makePrivate: boolean
+    makePublic: boolean
 }
 
 class Export extends React.Component<IProps, IState> {
@@ -23,10 +23,11 @@ class Export extends React.Component<IProps, IState> {
 
         this.state = {
             name: '',
-            makePrivate: true
+            makePublic: false
         }
 
         this.onPlaylistNameChange = this.onPlaylistNameChange.bind(this);
+        this.onPublicPrivateSelect = this.onPublicPrivateSelect.bind(this);
         this.onCreateClick = this.onCreateClick.bind(this);
     }
 
@@ -36,12 +37,16 @@ class Export extends React.Component<IProps, IState> {
         }
     }
 
+    onPublicPrivateSelect(makePublic: boolean) {
+        this.setState({ makePublic: makePublic });
+    }
+
     onCreateClick() {
-        this.props.onExport(this.state.name, true);
+        this.props.onExport(this.state.name, this.state.makePublic);
     }
 
     render() {
-        const { name: playlistName } = this.state;
+        const { name, makePublic } = this.state;
         return <>
             <h4 className="mb-2">Create New Playlist</h4>
             <InputGroup className="mb-3" style={{ maxWidth: 500, display: 'inline-flex' }}>
@@ -52,17 +57,17 @@ class Export extends React.Component<IProps, IState> {
                     placeholder="Playlist Name"
                     aria-label="Playlist Name"
                     aria-describedby="playlist-name"
-                    value={playlistName}
+                    value={name}
                     onChange={this.onPlaylistNameChange}
                 />
                 <DropdownButton
                     as={InputGroup.Append}
                     variant="outline-secondary"
-                    title="Private"
+                    title={makePublic ? 'Public' : 'Private'}
                     id="make-private"
                 >
-                    <Dropdown.Item>Private</Dropdown.Item>
-                    <Dropdown.Item>Public</Dropdown.Item>
+                    <Dropdown.Item onClick={() => this.onPublicPrivateSelect(false)}>Private</Dropdown.Item>
+                    <Dropdown.Item onClick={() => this.onPublicPrivateSelect(true)}>Public</Dropdown.Item>
                 </DropdownButton>
                 <InputGroup.Append>
                     <Button variant="outline-secondary" onClick={this.onCreateClick}>Create</Button>
