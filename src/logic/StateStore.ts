@@ -1,5 +1,16 @@
+const version = 1;
+
+interface VersionedState<T> {
+    version: number,
+    state: T
+}
+
 export function putStoredState<T>(key: string, state: T): void {
-    localStorage.setItem(key, JSON.stringify(state));
+    let versionedState: VersionedState<T> = {
+        version: version,
+        state: state
+    }
+    localStorage.setItem(key, JSON.stringify(versionedState));
 }
 
 export function getStoredState<T>(key: string, isValid: (state: T) => boolean): T | null {
@@ -7,11 +18,15 @@ export function getStoredState<T>(key: string, isValid: (state: T) => boolean): 
     if (stored_data === null) {
         return null;
     } else {
-        let stored_data_parsed: T = JSON.parse(stored_data);
-        if (isValid(stored_data_parsed)) { // Only get a stored state if it is valid
-            return stored_data_parsed;
+        let stored_versioned_state_parsed: VersionedState<T> = JSON.parse(stored_data);
+        if (stored_versioned_state_parsed.version === version) {
+            if (isValid(stored_versioned_state_parsed.state)) { // Only get a stored state if it is valid
+                return stored_versioned_state_parsed.state;
+            } else {
+                return null;
+            }
         } else {
-            return null;
+            return null; // An old version of data storage
         }
     }
 }
