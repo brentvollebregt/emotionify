@@ -44,6 +44,10 @@ export function originDistance(points: SortablePoint[]): SortablePoint[] {
 
 // Sorts points by going point to point based off the closest left-over points. Starts at 0,0.
 export function nearestNeighbourFromOrigin(points: SortablePoint[]): SortablePoint[] {
+    if (points.length === 0) {
+        return [];
+    }
+
     let nearest_point_to_origin = points.reduce((accumulator: SortablePoint, currentValue: SortablePoint): SortablePoint => {
         let acc_dist = distanceToPoint(0, 0, accumulator.x, accumulator.y);
         let curr_dist = distanceToPoint(0, 0, currentValue.x, currentValue.y);
