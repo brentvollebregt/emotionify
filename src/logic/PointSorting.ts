@@ -23,6 +23,8 @@ export interface SpotifyTrackWithIndexes extends SpotifyTrack, IndexedTrackId { 
 export const availableSortingMethods: {[key: string]: Function} = {
     'Distance From Origin': originDistance,
     'Nearest Neighbour': nearestNeighbourFromOrigin,
+    'X Axis': xAxis,
+    'Y Axis': yAxis,
     'No Sorting': noSort
 }
 
@@ -71,6 +73,24 @@ export function nearestNeighbourFromOrigin(points: SortablePoint[]): SortablePoi
 // Return the data provided
 export function noSort(points: SortablePoint[]): SortablePoint[] {
     return points;
+}
+
+// Sort by x
+export function xAxis(points: SortablePoint[]): SortablePoint[] {
+    return points.sort((a, b) => {
+        return a.x === b.x
+            ? 0
+            : a.x > b.x ? 1 : -1
+    });
+}
+
+// Sort by y
+export function yAxis(points: SortablePoint[]): SortablePoint[] {
+    return points.sort((a, b) => {
+        return a.y === b.y
+            ? 0
+            : a.y > b.y ? 1 : -1
+    });
 }
 
 const isValidAudioFeature = (audioFeatures: SpotifyTrackAudioFeatures, audioFeature: string): audioFeature is keyof SpotifyTrackAudioFeatures => {
