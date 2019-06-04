@@ -14,6 +14,8 @@ const About: React.SFC<IProps> = (props: IProps) => {
         <p>Because I wanted it to be.</p>
         <h5>Will this remove duplicates?</h5>
         <p>Yes, if we didn't then the duplicate songs would be bunched up by each other. Removing these allows for proper transitions into a different song.</p>
+        <h5>How do I clear all my data?</h5>
+        <p>All data is stored in localStorage on your machine; simply logging out will clear all this data.</p>
     </Container>
 }
 
