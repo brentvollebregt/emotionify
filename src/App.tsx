@@ -7,13 +7,22 @@ import About from './pages/About';
 import Sort from './pages/Sort';
 import { Token } from './Models';
 import { SpotifyUser } from './Models';
+import { putStoredState, getStoredState, deleteStoredState } from './logic/StateStore';
 
-const local_storage_token_key = 'spotify-token';
+const local_storage_key = 'emotionify-app';
 
 interface IProps { }
 
 interface IState {
   token: Token | null
+  user: SpotifyUser | null
+}
+
+interface IStorage {
+  token: {
+    value: string,
+    expiry: number
+  } | null
   user: SpotifyUser | null
 }
 
@@ -26,7 +35,7 @@ class App extends React.Component<IProps, IState> {
   constructor(props: IProps) {
     super(props)
 
-    let stored_state = this.readStoredState();
+    let stored_state = this.getStoredState();
     if (stored_state === null) {
       this.state = blank_state;
     } else {
@@ -37,7 +46,7 @@ class App extends React.Component<IProps, IState> {
     this.onLogout = this.onLogout.bind(this)
   }
 
-  onUserChange(token: Token, user: SpotifyUser) {
+  onUserChange(token: Token | null, user: SpotifyUser | null) {
     this.setState({
       token: token,
       user: user
@@ -45,42 +54,44 @@ class App extends React.Component<IProps, IState> {
   }
 
   onLogout(): void {
-    this.deleteStoredState();
-    this.setState(blank_state);
+    this.onUserChange(null, null);
   }
 
   storeState(): void {
     if (this.state.token !== null) { // Only store something if we have a token
-      let serializable_state = {
+      let serializable_state: IStorage = {
+        ...this.state,
         token: {
           value: this.state.token.value,
           expiry: this.state.token.expiry.getTime() // Date to seconds
         },
-        user: this.state.user
       }
-      localStorage.setItem(local_storage_token_key, JSON.stringify(serializable_state));
+      putStoredState(local_storage_key, serializable_state);
+    } else {
+      this.deleteStoredState(); // Delete whatever is currently stored if we have no token
     }
   }
 
-  readStoredState(): IState | null {
-    let stored_data = localStorage.getItem(local_storage_token_key);
-
-    if (stored_data === null) {
-      return null;
-    } else {
-      let serialized_state = JSON.parse(stored_data);
-      serialized_state.token.expiry = new Date(serialized_state.token.expiry); // Seconds to date
-
-      if (serialized_state.token.expiry > new Date()) {
-        return serialized_state;
-      } else {
-        return null; // Don't return the token if it's expired
+  getStoredState(): IState | null {
+    let storage = getStoredState(local_storage_key, (state: IStorage): boolean => {
+      return state.token !== null && new Date(state.token.expiry) > new Date(); // Only get a stored state if the token within is not expired
+    });
+    if (storage !== null && storage.token !== null) {
+      let state: IState = {
+        ...storage,
+        token : {
+          value: storage.token.value,
+          expiry: new Date(storage.token.value)
+        }
       }
+      return state;
+    } else {
+      return null
     }
   }
 
   deleteStoredState(): void {
-    localStorage.removeItem(local_storage_token_key);
+    deleteStoredState(local_storage_key);
   }
 
   render() {

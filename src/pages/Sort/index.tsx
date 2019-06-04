@@ -18,7 +18,7 @@ import { availableSortingMethods, IndexedTrackId, sort, SpotifyTrackWithIndexes 
 import { putStoredState, getStoredState, deleteStoredState } from '../../logic/StateStore';
 import { SpotifyUser, SpotifyPlaylist, SpotifyTrack } from '../../Models';
 
-const local_storage_sort_component_state_key: string = 'emotionify-sort-component-state';
+const local_storage_key: string = 'emotionify-app-sort';
 const available_audio_features: {[key: string]: string} = {
     'Acousticness': 'acousticness',
     'Danceability': 'danceability',
@@ -131,19 +131,19 @@ class Sort extends React.Component<IProps, IState> {
                 user_id: this.props.user.id,
                 state: this.state
             }
-            putStoredState(local_storage_sort_component_state_key, data_to_store);
+            putStoredState(local_storage_key, data_to_store);
         }
     }
 
     getStoredState(user_id: string): IState | null {
-        let storage = getStoredState(local_storage_sort_component_state_key, (state: IStorage): boolean => {
+        let storage = getStoredState(local_storage_key, (state: IStorage): boolean => {
             return state.user_id === user_id; // Only get a stored state if it relates to the current user
         });
         return storage === null ? null : storage.state;
     }
 
     deleteStoredState(): void {
-        deleteStoredState(local_storage_sort_component_state_key);
+        deleteStoredState(local_storage_key);
     }
 
     onPlaylistSelected(playlist_id: string): void {
