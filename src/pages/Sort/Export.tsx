@@ -70,7 +70,7 @@ class Export extends React.Component<IProps, IState> {
         const { name, makePublic, nameInvalid, complete } = this.state;
         return <>
             <h4 className="mb-2">Create New Playlist</h4>
-            <InputGroup className="mb-3" style={{ maxWidth: 500, display: 'inline-flex' }}>
+            <InputGroup className="mb-3 d-none d-sm-inline-flex" style={{ maxWidth: 500 }}>
                 <InputGroup.Prepend>
                     <InputGroup.Text id="playlist-name">Playlist Name</InputGroup.Text>
                 </InputGroup.Prepend>
@@ -85,6 +85,35 @@ class Export extends React.Component<IProps, IState> {
                 />
                 <DropdownButton
                     as={InputGroup.Append}
+                    variant={complete ? 'outline-success' : 'outline-secondary'}
+                    title={makePublic ? 'Public' : 'Private'}
+                    id="make-private"
+                >
+                    <Dropdown.Item onClick={() => this.onPublicPrivateSelect(false)}>Private</Dropdown.Item>
+                    <Dropdown.Item onClick={() => this.onPublicPrivateSelect(true)}>Public</Dropdown.Item>
+                </DropdownButton>
+                <InputGroup.Append>
+                    <Button variant={complete ? 'outline-success' : 'outline-secondary'} onClick={this.onCreateClick}>Create</Button>
+                </InputGroup.Append>
+            </InputGroup>
+
+            <InputGroup className="mb-3 d-inline-flex d-sm-none" style={{ maxWidth: 500, justifyContent: 'center' }}>
+                <InputGroup.Prepend>
+                    <InputGroup.Text id="playlist-name">Playlist Name</InputGroup.Text>
+                </InputGroup.Prepend>
+                <FormControl
+                    placeholder="Playlist Name"
+                    aria-label="Playlist Name"
+                    aria-describedby="playlist-name"
+                    value={name}
+                    onChange={this.onPlaylistNameChange}
+                    isInvalid={nameInvalid}
+                    isValid={complete}
+                />
+            </InputGroup>
+            <InputGroup className="mb-3 d-inline-flex d-sm-none" style={{ maxWidth: 500, justifyContent: 'center' }}>
+                <DropdownButton
+                    as={InputGroup.Prepend}
                     variant={complete ? 'outline-success' : 'outline-secondary'}
                     title={makePublic ? 'Public' : 'Private'}
                     id="make-private"

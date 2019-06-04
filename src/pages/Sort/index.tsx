@@ -314,7 +314,12 @@ class Sort extends React.Component<IProps, IState> {
                         <PlaylistDetails playlist={playlists[selectedPlaylist]} />
                     </div>
 
-                    <div className="mb-5">
+                    <div className="mb-4">
+                        {requestingTracks && <Spinner animation="border" className="my-3" />}
+                        <Plot tracks={sorted_spotify_tracks} />
+                    </div>
+
+                    <div className="mb-3">
                         <TrackSortControl 
                             available_audio_features={Object.keys(available_audio_features)} 
                             available_track_sorting_methods={Object.keys(availableSortingMethods)}
@@ -325,11 +330,6 @@ class Sort extends React.Component<IProps, IState> {
                             onYAxisSelect={this.onYAxisSelect}
                             onSortMethodSelect={this.onSortMethodSelect}
                         />
-                    </div>
-                    
-                    <div className="mb-5">
-                        {requestingTracks && <Spinner animation="border" className="my-3" />}
-                        <Plot tracks={sorted_spotify_tracks} />
                     </div>
 
                     {!requestingTracks && playlists[selectedPlaylist].tracks.total !== sorted_spotify_tracks.length && 

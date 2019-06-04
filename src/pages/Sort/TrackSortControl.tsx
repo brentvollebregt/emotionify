@@ -16,7 +16,7 @@ interface IProps {
 
 const TrackSortControl: React.SFC<IProps> = (props: IProps) => {
     return <>
-        <InputGroup className="mr-3" style={{display: 'inline-flex', width: 'auto'}}>
+        <InputGroup className="mr-3 mt-1" style={{display: 'inline-flex', width: 'auto'}}>
             <InputGroup.Prepend>
                 <InputGroup.Text>X-Axis</InputGroup.Text>
             </InputGroup.Prepend>
@@ -32,7 +32,7 @@ const TrackSortControl: React.SFC<IProps> = (props: IProps) => {
             </DropdownButton>
         </InputGroup>
 
-        <InputGroup className="mr-3" style={{display: 'inline-flex', width: 'auto'}}>
+        <InputGroup className="mr-3 mt-1" style={{display: 'inline-flex', width: 'auto'}}>
             <InputGroup.Prepend>
                 <InputGroup.Text>Y-Axis</InputGroup.Text>
             </InputGroup.Prepend>
@@ -48,7 +48,7 @@ const TrackSortControl: React.SFC<IProps> = (props: IProps) => {
             </DropdownButton>
         </InputGroup>
 
-        <InputGroup style={{display: 'inline-flex', width: 'auto'}}>
+        <InputGroup className="mt-1" style={{display: 'inline-flex', width: 'auto'}}>
             <InputGroup.Prepend>
                 <InputGroup.Text>Sort Method</InputGroup.Text>
             </InputGroup.Prepend>
