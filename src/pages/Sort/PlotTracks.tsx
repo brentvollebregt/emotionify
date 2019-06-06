@@ -111,7 +111,7 @@ const PlotTracks: React.SFC<IProps> = (props: IProps) => {
                 })
             },
             line: {
-                color: '#2c3033',
+                color: 'rgba(44, 48, 51, 0.5)',
                 width: 1
             }
         }]}
