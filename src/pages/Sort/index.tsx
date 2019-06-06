@@ -9,7 +9,7 @@ import { Token } from '../../Models';
 import { arrayToObject } from '../../logic/Utils';
 import PlaylistSelection from './PlaylistSelectionTable';
 import PlaylistDetails from './PlaylistDetails';
-import Plot from './Plot';
+import Plot from './PlotTracks';
 import TrackTable from './TrackTable';
 import TrackSortControl from './TrackSortControl';
 import AccordionDynamicHeader from './AccordionDynamicHeader';
@@ -316,7 +316,13 @@ class Sort extends React.Component<IProps, IState> {
 
                     <div className="mb-4">
                         {requestingTracks && <Spinner animation="border" className="my-3" />}
-                        <Plot tracks={sorted_spotify_tracks} />
+                        <Plot 
+                            tracks={sorted_spotify_tracks}
+                            selected_x_axis={available_audio_features[selectedAxis.x]}
+                            selected_y_axis={available_audio_features[selectedAxis.y]}
+                            selected_x_axis_name={selectedAxis.x}
+                            selected_y_axis_name={selectedAxis.y}
+                        />
                     </div>
 
                     <div className="mb-3">
