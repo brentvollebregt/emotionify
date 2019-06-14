@@ -1,6 +1,6 @@
 import React from 'react';
 import Table from 'react-bootstrap/Table';
-import { millisecondsToMinSec } from '../../logic/Utils';
+import { millisecondsToMinSecString } from '../../logic/Utils';
 import { SpotifyTrackWithIndexes } from '../../logic/PointSorting';
 import { SpotifyTrackAudioFeatures } from '../../Models';
 
@@ -44,7 +44,7 @@ const TrackTable: React.SFC<IProps> = (props: IProps) => {
                         </td>
                         <td>{track.name}</td>
                         <td className="d-none d-md-table-cell">{track.artists.map(a => a.name).join(', ')}</td>
-                        <td className="d-none d-lg-table-cell">{millisecondsToMinSec(track.duration_ms)}</td>
+                        <td className="d-none d-lg-table-cell">{millisecondsToMinSecString(track.duration_ms)}</td>
                         <td>{track.audio_features !== null && isValidAudioFeature(track.audio_features, props.x_audio_feature) ? track.audio_features[props.x_audio_feature] : 0}</td>
                         <td>{track.audio_features !== null && isValidAudioFeature(track.audio_features, props.y_audio_feature) ? track.audio_features[props.y_audio_feature] : 0}</td>
                     </tr>)

@@ -26,14 +26,14 @@ export function chunkList<T>(list: T[], chunk_amount: number): T[][] {
 }
 
 // Convert an array to an object using a provided key (src: https://medium.com/dailyjs/rewriting-javascript-converting-an-array-of-objects-to-an-object-ec579cafbfc7)
-export function arrayToObject<T>(array: T[], keyField: string): {[key: string]: T} {
+export function arrayToObject<T>(array: T[], keyField: keyof T): {[key: string]: T} {
     return array.reduce((obj: any, item: any) => {
         obj[item[keyField]] = item;
         return obj;
     }, {});
 }
 
-export function millisecondsToMinSec(milliseconds: number): string {
+export function millisecondsToMinSecString(milliseconds: number): string {
     let total_seconds = milliseconds / 1000;
     let minutes = Math.floor(total_seconds / 60);
     let seconds = Math.round(total_seconds - minutes * 60);
