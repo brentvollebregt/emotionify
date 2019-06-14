@@ -1,0 +1,17 @@
+import React from 'react';
+import { navigate } from 'hookrouter';
+import Button from 'react-bootstrap/Button';
+import Container from 'react-bootstrap/Container';
+
+interface IProps { }
+
+const NotFound: React.SFC<IProps> = (props: IProps) => {
+    const navigateHome = () => navigate('/');
+
+    return <Container className="text-center">
+        <h1 className="my-4">Page Not Found</h1>
+        <Button onClick={navigateHome}>Go Home &rarr;</Button>
+    </Container>;
+}
+
+export default NotFound;
