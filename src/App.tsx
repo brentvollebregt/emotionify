@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import { useRoutes } from 'hookrouter';
-import { useAsync } from "react-async";
 import SpotifyWebApi from 'spotify-web-api-js';
 import Navigation from './components/Navigation';
 import SpotifyAuthorization from './pages/SpotifyAuthorization';
