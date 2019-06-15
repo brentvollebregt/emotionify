@@ -7,7 +7,7 @@ import Home from './pages/Home';
 import About from './pages/About';
 import Sort from './pages/Sort';
 import NotFound from './pages/NotFound';
-import { Token, SpotifyData, PlaylistObjectSimplifiedWithTrackIds } from './models/Spotify';
+import { Token, SpotifyData, PlaylistObjectSimplifiedWithTrackIds, TrackWithAudioFeatures } from './models/Spotify';
 import { getAllSpotifyUsersPlaylists, getAllTracksInPlaylist, getAudioFeaturesForTracks } from './logic/Spotify';
 import { arrayToObject } from './logic/Utils';
 
@@ -52,7 +52,7 @@ export const App: React.FunctionComponent<IProps> = (props: IProps) => {
                 .then(tracks => {
                     setSpotifyData({ 
                         ...spotifyData,
-                        tracks: { ...spotifyData.tracks, ...arrayToObject<SpotifyApi.TrackObjectFull>(tracks, "id") },
+                        tracks: { ...spotifyData.tracks, ...arrayToObject<TrackWithAudioFeatures>(tracks, "id") },
                         playlists: { 
                             ...spotifyData.playlists, 
                             [playlist.id]: { ...spotifyData.playlists[playlist.id], track_ids: tracks.map(t => t.id) } 
@@ -92,21 +92,26 @@ export const App: React.FunctionComponent<IProps> = (props: IProps) => {
     }, [spotifyData.user]);
 
     useEffect(() => { // Request audio features when needed
-        const track_ids = Object.keys(spotifyData.tracks);
-        const audio_feature_ids = Object.keys(spotifyData.audioFeatures);
-        const tracks_with_no_audio_features = track_ids.filter(t => !audio_feature_ids.includes(t));
+        const track_ids_with_no_audio_features: string[] = Object.values(spotifyData.tracks)
+            .filter(t => t.audio_features === undefined)
+            .map(t => t.id);
 
-        if (token !== undefined && tracks_with_no_audio_features.length > 0) {
-            getAudioFeaturesForTracks(token, tracks_with_no_audio_features)
+        if (token !== undefined && track_ids_with_no_audio_features.length > 0) {
+            getAudioFeaturesForTracks(token, track_ids_with_no_audio_features)
                 .then(audio_features => {
+                    const tracks_with_new_audio_features: TrackWithAudioFeatures[] = audio_features.map(af => { return {...spotifyData.tracks[af.id], audio_features: af} });
+
                     setSpotifyData({
                         ...spotifyData,
-                        audioFeatures: { ...spotifyData.audioFeatures, ...arrayToObject<SpotifyApi.AudioFeaturesObject>(audio_features, "id")}
+                        tracks: { ...spotifyData.tracks, ...arrayToObject<TrackWithAudioFeatures>(tracks_with_new_audio_features, "id") }
                     });
                 })
                 .catch(err => console.error(err));
         }
     }, [spotifyData.tracks]);
+
+    (window as any).a = () => console.log('token', token, 'spotifyData', spotifyData);
+    (window as any).b = (playlist: SpotifyApi.PlaylistObjectSimplified) => refreshPlaylist(playlist);
 
     const routes = {
         '/': () => <Home />,

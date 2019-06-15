@@ -1,6 +1,6 @@
 import SpotifyWebApi from 'spotify-web-api-js';
 import { chunkList } from './Utils';
-import { Token, PlaylistObjectSimplifiedWithTrackIds } from '../models/Spotify';
+import { Token, PlaylistObjectSimplifiedWithTrackIds, TrackWithAudioFeatures } from '../models/Spotify';
 import {  SpotifyUser, SpotifyPlaylist, SpotifyTrack, SpotifyTrackAudioFeatures } from './../Models';
 import { ReducePlaylistObjectSimplified, ReduceTrackObjectFull, ReduceAudioFeaturesObject } from './ModelMappers';
 
@@ -63,7 +63,7 @@ export function getAllSpotifyUsersPlaylists(token: Token, user: SpotifyApi.UserO
     });
 }
 
-export function getAllTracksInPlaylist(token: Token, playlist: SpotifyApi.PlaylistObjectSimplified): Promise<SpotifyApi.TrackObjectFull[]> {
+export function getAllTracksInPlaylist(token: Token, playlist: SpotifyApi.PlaylistObjectSimplified): Promise<TrackWithAudioFeatures[]> {
     // Gets all tracks in a playlist. Fast as it makes more than one request a time.
     return new Promise((resolve, reject) => {
         const spotifyApi = new SpotifyWebApi();
@@ -92,7 +92,7 @@ export function getAllTracksInPlaylist(token: Token, playlist: SpotifyApi.Playli
                     tracks = [...tracks, ...promise_data.map(i => i.items).flat().map(i => i.track)];
                 }
 
-                resolve(tracks);
+                resolve(tracks.map(t => { return { ...t, audio_features: undefined } }));
 
             }, err => {
                 reject(err);

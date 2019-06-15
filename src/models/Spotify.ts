@@ -4,11 +4,8 @@ export interface SpotifyData {
         [key: string]: PlaylistObjectSimplifiedWithTrackIds
     },
     tracks: {
-        [key: string]: SpotifyApi.TrackObjectFull
-    },
-    audioFeatures: {
-        [key: string]: SpotifyApi.AudioFeaturesObject
-    },
+        [key: string]: TrackWithAudioFeatures
+    }
 }
 
 export interface Token {
@@ -18,6 +15,10 @@ export interface Token {
 
 export interface PlaylistObjectSimplifiedWithTrackIds extends SpotifyApi.PlaylistObjectSimplified {
     track_ids: string[]
+}
+
+export interface TrackWithAudioFeatures extends SpotifyApi.TrackObjectFull {
+    audio_features: SpotifyApi.AudioFeaturesObject | undefined
 }
 
 export const availableTrackAudioFeatures: {[key: string]: string} = {
