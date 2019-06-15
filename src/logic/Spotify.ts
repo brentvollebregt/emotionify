@@ -100,6 +100,32 @@ export function getAllTracksInPlaylist(token: Token, playlist: SpotifyApi.Playli
     });
 }
 
+export function getAudioFeaturesForTracks(token: Token, track_ids: string[]): Promise<SpotifyApi.AudioFeaturesObject[]> {
+    // Gets all the audio features for a list of tracks. Fast as it makes more than one request a time.
+    return new Promise(async (resolve, reject) => {
+        let spotifyApi = new SpotifyWebApi();
+        spotifyApi.setAccessToken(token.value);
+
+        let features: SpotifyApi.AudioFeaturesObject[] = [];
+        let track_groups = chunkList(track_ids, trackFeaturesRequestLimit); // Tracks for each request
+        let track_groups_chunked = chunkList(track_groups, maxRequestsSentAtOnce); // Batches of requests
+
+        for (let i = 0; i < track_groups_chunked.length; i++) {
+            // Start all requests in this chunk
+            let promises: Promise<SpotifyApi.MultipleAudioFeaturesResponse>[] = [];
+            for (let j = 0; j < track_groups_chunked[i].length; j++) {
+                promises.push( spotifyApi.getAudioFeaturesForTracks(track_groups_chunked[i][j]) );
+            }
+            // Wait for each request and get data
+            let promise_data = await Promise.all(promises); // TODO: Catch errors
+            features = [...features, ...promise_data.map(i => i.audio_features).flat()];
+        }
+
+        resolve(features);
+
+    });
+}
+
 
 
 

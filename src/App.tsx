@@ -8,7 +8,7 @@ import About from './pages/About';
 import Sort from './pages/Sort';
 import NotFound from './pages/NotFound';
 import { Token, SpotifyData, PlaylistObjectSimplifiedWithTrackIds } from './models/Spotify';
-import { getAllSpotifyUsersPlaylists, getAllTracksInPlaylist } from './logic/Spotify';
+import { getAllSpotifyUsersPlaylists, getAllTracksInPlaylist, getAudioFeaturesForTracks } from './logic/Spotify';
 import { arrayToObject } from './logic/Utils';
 
 // const local_storage_key = 'emotionify-app';
@@ -94,7 +94,16 @@ export const App: React.FunctionComponent = (props: IProps) => {
         const audio_feature_ids = Object.keys(spotifyData.audioFeatures);
         const tracks_with_no_audio_features = track_ids.filter(t => !audio_feature_ids.includes(t));
 
-        console.log('Need to request: ' , tracks_with_no_audio_features); // TODO
+        if (token !== undefined && tracks_with_no_audio_features.length > 0) {
+            getAudioFeaturesForTracks(token, tracks_with_no_audio_features)
+                .then(audio_features => {
+                    setSpotifyData({
+                        ...spotifyData,
+                        audioFeatures: { ...spotifyData.audioFeatures, ...arrayToObject<SpotifyApi.AudioFeaturesObject>(audio_features, "id")}
+                    });
+                })
+                .catch(err => console.error(err));
+        }
     }, [spotifyData.tracks]);
 
     (window as any).a = () => {
