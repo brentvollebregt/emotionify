@@ -1,6 +1,6 @@
 import SpotifyWebApi from 'spotify-web-api-js';
 import { chunkList } from './Utils';
-import { Token } from '../models/Spotify';
+import { Token, PlaylistObjectSimplifiedWithTrackIds } from '../models/Spotify';
 import {  SpotifyUser, SpotifyPlaylist, SpotifyTrack, SpotifyTrackAudioFeatures } from './../Models';
 import { ReducePlaylistObjectSimplified, ReduceTrackObjectFull, ReduceAudioFeaturesObject } from './ModelMappers';
 
@@ -25,7 +25,7 @@ function offsetCalculation(limit: number, total: number): OffsetLimit[] {
     return (request_blocks);
 }
 
-export function getAllSpotifyUsersPlaylists(token: Token, user: SpotifyApi.UserObjectPrivate): Promise<SpotifyApi.PlaylistObjectSimplified[]> {
+export function getAllSpotifyUsersPlaylists(token: Token, user: SpotifyApi.UserObjectPrivate): Promise<PlaylistObjectSimplifiedWithTrackIds[]> {
     // Gets all playlists for a user. Fast as it makes more than one request a time.
     return new Promise((resolve, reject) => {
         const spotifyApi = new SpotifyWebApi();
@@ -54,7 +54,8 @@ export function getAllSpotifyUsersPlaylists(token: Token, user: SpotifyApi.UserO
                     playlists = [...playlists, ...promise_data.map(i => i.items).flat()];
                 }
 
-                resolve(playlists);
+                // Convert to PlaylistObjectSimplifiedWithTrackIds using a blank list
+                resolve(playlists.map(p => { return {...p, track_ids: []} }));
 
             }, err => {
                 reject(err);

@@ -1,7 +1,7 @@
 export interface SpotifyData {
     user: SpotifyApi.UserObjectPrivate | undefined,
     playlists: {
-        [key: string]: SpotifyApi.PlaylistObjectSimplified
+        [key: string]: PlaylistObjectSimplifiedWithTrackIds
     },
     tracks: {
         [key: string]: SpotifyApi.TrackObjectFull
@@ -14,4 +14,8 @@ export interface SpotifyData {
 export interface Token {
     value: string,
     expiry: Date
+}
+
+export interface PlaylistObjectSimplifiedWithTrackIds extends SpotifyApi.PlaylistObjectSimplified {
+    track_ids: string[]
 }

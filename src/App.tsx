@@ -7,7 +7,7 @@ import Home from './pages/Home';
 import About from './pages/About';
 import Sort from './pages/Sort';
 import NotFound from './pages/NotFound';
-import { Token, SpotifyData } from './models/Spotify';
+import { Token, SpotifyData, PlaylistObjectSimplifiedWithTrackIds } from './models/Spotify';
 import { getAllSpotifyUsersPlaylists, getAllTracksInPlaylist } from './logic/Spotify';
 import { arrayToObject } from './logic/Utils';
 
@@ -28,10 +28,7 @@ export const App: React.FunctionComponent = (props: IProps) => {
 
     // TODO: Possible data preservation in localStorage
 
-    const onTokenChange = (newToken: Token | undefined) => {
-        setToken(newToken);
-    };
-
+    const onTokenChange = (newToken: Token | undefined) => setToken(newToken);
     const onLogOut = () => onTokenChange(undefined);
 
     const refreshUsersPlaylists = () => {
@@ -40,7 +37,7 @@ export const App: React.FunctionComponent = (props: IProps) => {
                 .then(playlists => {
                     setSpotifyData({ 
                         ...spotifyData,
-                        playlists: arrayToObject<SpotifyApi.PlaylistObjectSimplified>(playlists, "id")
+                        playlists: arrayToObject<PlaylistObjectSimplifiedWithTrackIds>(playlists, "id")
                     });
                 })
                 .catch(err => console.error(err));
@@ -53,7 +50,11 @@ export const App: React.FunctionComponent = (props: IProps) => {
                 .then(tracks => {
                     setSpotifyData({ 
                         ...spotifyData,
-                        tracks: { ...spotifyData.tracks, ...arrayToObject<SpotifyApi.TrackObjectFull>(tracks, "id") }
+                        tracks: { ...spotifyData.tracks, ...arrayToObject<SpotifyApi.TrackObjectFull>(tracks, "id") },
+                        playlists: { 
+                            ...spotifyData.playlists, 
+                            [playlist.id]: { ...spotifyData.playlists[playlist.id], track_ids: tracks.map(t => t.id) } 
+                        }
                     });
                 })
                 .catch(err => console.error(err));
@@ -87,6 +88,22 @@ export const App: React.FunctionComponent = (props: IProps) => {
             refreshUsersPlaylists();
         }
     }, [spotifyData.user]);
+
+    useEffect(() => { // Request audio features when needed
+        const track_ids = Object.keys(spotifyData.tracks);
+        const audio_feature_ids = Object.keys(spotifyData.audioFeatures);
+        const tracks_with_no_audio_features = track_ids.filter(t => !audio_feature_ids.includes(t));
+
+        console.log('Need to request: ' , tracks_with_no_audio_features); // TODO
+    }, [spotifyData.tracks]);
+
+    (window as any).a = () => {
+        console.log('token', token, 'spotifyData', spotifyData);
+    }
+
+    (window as any).b = (playlist: SpotifyApi.PlaylistObjectSimplified) => {
+        refreshPlaylist(playlist);
+    }
 
     const routes = {
         '/': () => <Home />,
