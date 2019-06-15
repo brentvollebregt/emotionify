@@ -1,7 +1,8 @@
 import SpotifyWebApi from 'spotify-web-api-js';
 import { chunkList } from './Utils';
-import { SpotifyUser, SpotifyPlaylist, SpotifyTrack, SpotifyTrackAudioFeatures } from './../Models';
-import { ReduceCurrentUsersProfile, ReducePlaylistObjectSimplified, ReduceTrackObjectFull, ReduceAudioFeaturesObject } from './ModelMappers';
+import { Token } from '../models/Spotify';
+import {  SpotifyUser, SpotifyPlaylist, SpotifyTrack, SpotifyTrackAudioFeatures } from './../Models';
+import { ReducePlaylistObjectSimplified, ReduceTrackObjectFull, ReduceAudioFeaturesObject } from './ModelMappers';
 
 const playlistRequestLimit = 20;
 const playlistTrackRequestLimit = 100;
@@ -24,17 +25,41 @@ function offsetCalculation(limit: number, total: number): OffsetLimit[] {
     return (request_blocks);
 }
 
-export function tokenValid(token: string | null, expiry: Date): token is string {
-    // Checks if a token is not null and is within the expiry
-    return token !== null && expiry > new Date();
-}
+export function getAllSpotifyUsersPlaylists(token: Token, user: SpotifyApi.UserObjectPrivate): Promise<SpotifyApi.PlaylistObjectSimplified[]> {
+    // Gets all playlists for a user. Fast as it makes more than one request a time.
+    return new Promise((resolve, reject) => {
+        const spotifyApi = new SpotifyWebApi();
+        spotifyApi.setAccessToken(token.value);
 
-export function getUser(token: string): Promise<SpotifyUser> {
-    // Gets the user associated with a provided token
-    const spotifyApi = new SpotifyWebApi();
-    spotifyApi.setAccessToken(token);
-    return spotifyApi.getMe()
-        .then(r => ReduceCurrentUsersProfile(r));
+        let playlists: SpotifyApi.PlaylistObjectSimplified[] = [];
+        let offset = 0;
+        let limit = playlistRequestLimit;
+
+        spotifyApi.getUserPlaylists(user.id, { offset, limit })
+            .then(async data => {
+                playlists = [...playlists, ...data.items]; // Store data from initial request
+
+                // Calculate requests to be made and chunk them
+                let request_blocks = offsetCalculation(limit, data.total).splice(1); // Ignore the first as we have already made that request
+                let request_blocks_chunked = chunkList(request_blocks, maxRequestsSentAtOnce);
+
+                for (let i = 0; i < request_blocks_chunked.length; i++) {
+                    // Start all requests in this chunk
+                    let promises: Promise<SpotifyApi.ListOfUsersPlaylistsResponse>[] = [];
+                    for (let j = 0; j < request_blocks_chunked[i].length; j++) {
+                        promises.push( spotifyApi.getUserPlaylists(user.id, request_blocks_chunked[i][j]) );
+                    }
+                    // Wait for each request and get data
+                    let promise_data = await Promise.all(promises); // TODO: Catch errors
+                    playlists = [...playlists, ...promise_data.map(i => i.items).flat()];
+                }
+
+                resolve(playlists);
+
+            }, err => {
+                reject(err);
+            });
+    });
 }
 
 export function getUserPlaylists(token: string, user: SpotifyUser): Promise<SpotifyPlaylist[]> {

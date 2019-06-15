@@ -2,11 +2,13 @@ import React from 'react';
 import Container from 'react-bootstrap/Container';
 import Button from 'react-bootstrap/Button';
 import BannerImage from '../../img/banner.png';
-import { navigate } from 'hookrouter';
+import { navigate, useTitle } from 'hookrouter';
 
 interface IProps { }
 
 const Home: React.FunctionComponent<IProps> = (props: IProps) => {
+    useTitle('Emotionify');
+
     const goToSort = () => navigate('/sort');
 
     return <>

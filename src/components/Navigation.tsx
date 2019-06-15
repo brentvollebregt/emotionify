@@ -66,7 +66,7 @@ const Navigation: React.FunctionComponent<IProps> = (props: IProps) => {
                     ? user.display_name + ' Logo'
                     : 'Spotify Logo Round'
                 }
-                style={{ height: 20, width: 20 }} 
+                style={{ height: 20, width: 20, borderRadius: '50%' }} 
                 className="mr-2" 
               />
               {
