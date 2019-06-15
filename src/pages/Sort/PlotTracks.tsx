@@ -1,10 +1,9 @@
 import React from 'react';
-import { SpotifyTrack } from '../../Models';
 import Plot from 'react-plotly.js';
-import { SpotifyTrackAudioFeatures } from '../../Models';
+import { TrackWithAudioFeatures } from '../../models/Spotify';
 
 interface IProps {
-    tracks: SpotifyTrack[],
+    tracks: TrackWithAudioFeatures[],
     selected_x_axis: string,
     selected_y_axis: string,
     selected_x_axis_name: string,
@@ -25,7 +24,7 @@ interface TrackPoint extends Point {
     },
 }
 
-const isValidAudioFeature = (audioFeatures: SpotifyTrackAudioFeatures, audioFeature: string): audioFeature is keyof SpotifyTrackAudioFeatures => {
+const isValidAudioFeature = (audioFeatures: SpotifyApi.AudioFeaturesObject, audioFeature: string): audioFeature is keyof SpotifyApi.AudioFeaturesObject => {
     return audioFeature in audioFeatures;
 };
 
@@ -72,7 +71,7 @@ const PlotTracks: React.SFC<IProps> = (props: IProps) => {
             length: t.duration_ms
         }
 
-        if (t.audio_features !== null 
+        if (t.audio_features !== undefined 
             && isValidAudioFeature(t.audio_features, props.selected_x_axis) 
             && isValidAudioFeature(t.audio_features, props.selected_y_axis)
         ) {

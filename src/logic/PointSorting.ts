@@ -1,4 +1,4 @@
-import { SpotifyTrack, SpotifyTrackAudioFeatures } from '../Models';
+import { TrackWithAudioFeatures } from '../models/Spotify';
 
 /*
 * Different methods of sorting x y points
@@ -18,7 +18,7 @@ export interface IndexedTrackId { // Minimal stored data
     }
 }
 
-export interface SpotifyTrackWithIndexes extends SpotifyTrack, IndexedTrackId { } // Not used here but relates to methods here
+export interface SpotifyTrackWithIndexes extends TrackWithAudioFeatures, IndexedTrackId { } // Not used here but relates to methods here
 
 export const availableSortingMethods: {[key: string]: Function} = {
     'Distance From Origin': originDistance,
@@ -97,7 +97,7 @@ export function yAxis(points: SortablePoint[]): SortablePoint[] {
     });
 }
 
-const isValidAudioFeature = (audioFeatures: SpotifyTrackAudioFeatures, audioFeature: string): audioFeature is keyof SpotifyTrackAudioFeatures => {
+const isValidAudioFeature = (audioFeatures: SpotifyApi.AudioFeaturesObject, audioFeature: string): audioFeature is keyof SpotifyApi.AudioFeaturesObject => {
     return audioFeature in audioFeatures;
 };
 
@@ -106,7 +106,7 @@ const isNumber = (value: any): value is number => {
 };
 
 // Sort tracks given x and y features and a sorting method
-export function sort(tracks: SpotifyTrack[], x_audio_feature: string, y_audio_feature: string, sorting_method: Function): IndexedTrackId[] {
+export function sort(tracks: TrackWithAudioFeatures[], x_audio_feature: string, y_audio_feature: string, sorting_method: Function): IndexedTrackId[] {
     // Get points initial indexes (to calculate movement)
     let tracks_with_playlist_indexes: IndexedTrackId[] = tracks.map((t, i) => {
         return { id: t.id, index: { before: i, after: 0 } };
@@ -114,8 +114,8 @@ export function sort(tracks: SpotifyTrack[], x_audio_feature: string, y_audio_fe
 
     // Convert tracks to sortable points
     let tracks_as_sp: SortablePoint[] = tracks.map(t => {
-        if (t.audio_features !== null 
-            && isValidAudioFeature(t.audio_features, x_audio_feature) 
+        if (t.audio_features !== undefined 
+            && isValidAudioFeature(t.audio_features, x_audio_feature)
             && isValidAudioFeature(t.audio_features, y_audio_feature)
             && isNumber(t.audio_features[x_audio_feature])
             && isNumber(t.audio_features[y_audio_feature])

@@ -235,7 +235,7 @@ export function getFeaturesForTracks(token: string, track_ids: string[]): Promis
     });
 }
 
-export function createPlaylist(token: string, user: SpotifyUser, name: string, isPublic: boolean, track_uris: string[]): Promise<SpotifyPlaylist> {
+export function createPlaylist(token: string, user: SpotifyApi.UserObjectPrivate, name: string, isPublic: boolean, track_uris: string[]): Promise<SpotifyPlaylist> {
     return new Promise((resolve, reject) => {
 
         let spotifyApi = new SpotifyWebApi();

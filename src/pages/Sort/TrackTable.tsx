@@ -45,8 +45,8 @@ const TrackTable: React.SFC<IProps> = (props: IProps) => {
                         <td>{track.name}</td>
                         <td className="d-none d-md-table-cell">{track.artists.map(a => a.name).join(', ')}</td>
                         <td className="d-none d-lg-table-cell">{millisecondsToMinSecString(track.duration_ms)}</td>
-                        <td>{track.audio_features !== null && isValidAudioFeature(track.audio_features, props.x_audio_feature) ? track.audio_features[props.x_audio_feature] : 0}</td>
-                        <td>{track.audio_features !== null && isValidAudioFeature(track.audio_features, props.y_audio_feature) ? track.audio_features[props.y_audio_feature] : 0}</td>
+                        <td>{track.audio_features !== undefined && isValidAudioFeature(track.audio_features, props.x_audio_feature) ? track.audio_features[props.x_audio_feature] : 0}</td>
+                        <td>{track.audio_features !== undefined && isValidAudioFeature(track.audio_features, props.y_audio_feature) ? track.audio_features[props.y_audio_feature] : 0}</td>
                     </tr>)
                 )}
             </tbody>
