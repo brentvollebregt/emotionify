@@ -8,7 +8,7 @@ import About from './pages/About';
 import Sort from './pages/Sort';
 import NotFound from './pages/NotFound';
 import { Token, SpotifyData } from './models/Spotify';
-import { getAllSpotifyUsersPlaylists } from './logic/Spotify';
+import { getAllSpotifyUsersPlaylists, getAllTracksInPlaylist } from './logic/Spotify';
 import { arrayToObject } from './logic/Utils';
 
 // const local_storage_key = 'emotionify-app';
@@ -47,8 +47,17 @@ export const App: React.FunctionComponent = (props: IProps) => {
         }
     }
 
-    const refreshPlaylist = (playlist: SpotifyApi.PlaylistTrackObject) => {
-
+    const refreshPlaylist = (playlist: SpotifyApi.PlaylistObjectSimplified) => {
+        if (token !== undefined) {
+            getAllTracksInPlaylist(token, playlist)
+                .then(tracks => {
+                    setSpotifyData({ 
+                        ...spotifyData,
+                        tracks: { ...spotifyData.tracks, ...arrayToObject<SpotifyApi.TrackObjectFull>(tracks, "id") }
+                    });
+                })
+                .catch(err => console.error(err));
+        }
     }
 
     useEffect(() => { // Request the user when the token changes

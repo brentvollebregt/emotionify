@@ -4,7 +4,7 @@ export interface SpotifyData {
         [key: string]: SpotifyApi.PlaylistObjectSimplified
     },
     tracks: {
-        [key: string]: SpotifyApi.PlaylistTrackObject
+        [key: string]: SpotifyApi.TrackObjectFull
     },
     audioFeatures: {
         [key: string]: SpotifyApi.AudioFeaturesObject

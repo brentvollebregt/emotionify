@@ -62,6 +62,52 @@ export function getAllSpotifyUsersPlaylists(token: Token, user: SpotifyApi.UserO
     });
 }
 
+export function getAllTracksInPlaylist(token: Token, playlist: SpotifyApi.PlaylistObjectSimplified): Promise<SpotifyApi.TrackObjectFull[]> {
+    // Gets all tracks in a playlist. Fast as it makes more than one request a time.
+    return new Promise((resolve, reject) => {
+        const spotifyApi = new SpotifyWebApi();
+        spotifyApi.setAccessToken(token.value);
+
+        let tracks: SpotifyApi.TrackObjectFull[] = [];
+        let offset = 0;
+        let limit = playlistTrackRequestLimit;
+
+        spotifyApi.getPlaylistTracks(playlist.id, { offset, limit })
+            .then(async data => {
+                tracks = [...tracks, ...data.items.map(i => i.track)]; // Store data from initial request
+
+                // Calculate requests to be made and chunk them
+                let request_blocks = offsetCalculation(limit, data.total).splice(1); // Ignore the first as we have already made that request
+                let request_blocks_chunked = chunkList(request_blocks, maxRequestsSentAtOnce);
+
+                for (let i = 0; i < request_blocks_chunked.length; i++) {
+                    // Start all requests in this chunk
+                    let promises: Promise<SpotifyApi.PlaylistTrackResponse>[] = [];
+                    for (let j = 0; j < request_blocks_chunked[i].length; j++) {
+                        promises.push( spotifyApi.getPlaylistTracks(playlist.id, request_blocks_chunked[i][j]) );
+                    }
+                    // Wait for each request and get data
+                    let promise_data = await Promise.all(promises); // TODO: Catch errors
+                    tracks = [...tracks, ...promise_data.map(i => i.items).flat().map(i => i.track)];
+                }
+
+                resolve(tracks);
+
+            }, err => {
+                reject(err);
+            });
+    });
+}
+
+
+
+
+
+
+
+
+
+
 export function getUserPlaylists(token: string, user: SpotifyUser): Promise<SpotifyPlaylist[]> {
     // Gets all playlists for a user. Fast as it makes more than one request a time.
     return new Promise((resolve, reject) => {
