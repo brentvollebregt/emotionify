@@ -22,11 +22,13 @@ const emptySpotifyData = {
 
 interface IProps { }
 
-export const App: React.FunctionComponent = (props: IProps) => {
+export const App: React.FunctionComponent<IProps> = (props: IProps) => {
     const [token, setToken] = useState<Token | undefined>(undefined);
     const [spotifyData, setSpotifyData] = useState<SpotifyData>(emptySpotifyData);
 
     // TODO: Possible data preservation in localStorage
+
+    // TODO: Notice on token expiry (Get a new token before the old expires - 5min)
 
     const onTokenChange = (newToken: Token | undefined) => setToken(newToken);
     const onLogOut = () => onTokenChange(undefined);
@@ -105,14 +107,6 @@ export const App: React.FunctionComponent = (props: IProps) => {
                 .catch(err => console.error(err));
         }
     }, [spotifyData.tracks]);
-
-    (window as any).a = () => {
-        console.log('token', token, 'spotifyData', spotifyData);
-    }
-
-    (window as any).b = (playlist: SpotifyApi.PlaylistObjectSimplified) => {
-        refreshPlaylist(playlist);
-    }
 
     const routes = {
         '/': () => <Home />,
