@@ -70,11 +70,12 @@ export const App: React.FunctionComponent<IProps> = (props: IProps) => {
 
     useEffect(() => { // Store part of state in localStorage
         if (token !== undefined) {
-            localStorage.setItem(localStorageKey, JSON.stringify({
+            let data_to_store: IStorage = {
                 token: token,
                 user: spotifyData.user,
-                playlists: spotifyData.playlists
-            }));
+                playlists: arrayToObject<PlaylistObjectSimplifiedWithTrackIds>(Object.values(spotifyData.playlists).map(p => { return { ...p, track_ids: [] }}), "id") // Empty track_id lists in playlist objects
+            }
+            localStorage.setItem(localStorageKey, JSON.stringify(data_to_store));
         } else {
             localStorage.removeItem(localStorageKey);
         }
