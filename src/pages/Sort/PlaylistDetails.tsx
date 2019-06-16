@@ -1,12 +1,12 @@
 import React from 'react';
 import Badge from 'react-bootstrap/Badge';
-import { SpotifyPlaylist } from '../../Models';
+import { PlaylistObjectSimplifiedWithTrackIds } from '../../models/Spotify';
 
 interface IProps {
-    playlist: SpotifyPlaylist
+    playlist: PlaylistObjectSimplifiedWithTrackIds
 }
 
-const PlaylistDetails: React.SFC<IProps> = (props: IProps) => {
+const PlaylistDetails: React.FunctionComponent<IProps> = (props: IProps) => {
     const { playlist } = props;
     return <>
         <h3 className="mt-4 mb-0">{playlist.name}</h3>

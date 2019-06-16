@@ -1,9 +1,12 @@
 import React from 'react';
 import Container from 'react-bootstrap/Container';
+import { useTitle } from 'hookrouter';
 
 interface IProps { }
 
-const About: React.SFC<IProps> = (props: IProps) => {
+const About: React.FunctionComponent<IProps> = (props: IProps) => {
+    useTitle('Emotionify - About');
+
     return <Container className="text-center">
         <h1>About</h1>
         <p>Emotionify is ...</p>

@@ -2,7 +2,6 @@ import React from 'react';
 import Table from 'react-bootstrap/Table';
 import { millisecondsToMinSecString } from '../../logic/Utils';
 import { SpotifyTrackWithIndexes } from '../../logic/PointSorting';
-import { SpotifyTrackAudioFeatures } from '../../Models';
 
 interface IProps {
     tracks: SpotifyTrackWithIndexes[], // These are sorted using the current method when they come in
@@ -19,11 +18,7 @@ const header_cell_style: React.CSSProperties = {
     borderTop: 0
 }
 
-const isValidAudioFeature = (audioFeatures: SpotifyTrackAudioFeatures, audioFeature: string): audioFeature is keyof SpotifyTrackAudioFeatures => {
-    return audioFeature in audioFeatures;
-};
-
-const TrackTable: React.SFC<IProps> = (props: IProps) => {
+const TrackTable: React.FunctionComponent<IProps> = (props: IProps) => {
     return <div style={{maxHeight: 400, overflowY: 'auto', borderTop: '1px solid #dee2e6'}}>
         <Table bordered striped size="sm" style={{borderTop: 0}}>
             <thead>
@@ -45,8 +40,8 @@ const TrackTable: React.SFC<IProps> = (props: IProps) => {
                         <td>{track.name}</td>
                         <td className="d-none d-md-table-cell">{track.artists.map(a => a.name).join(', ')}</td>
                         <td className="d-none d-lg-table-cell">{millisecondsToMinSecString(track.duration_ms)}</td>
-                        <td>{track.audio_features !== null && isValidAudioFeature(track.audio_features, props.x_audio_feature) ? track.audio_features[props.x_audio_feature] : 0}</td>
-                        <td>{track.audio_features !== null && isValidAudioFeature(track.audio_features, props.y_audio_feature) ? track.audio_features[props.y_audio_feature] : 0}</td>
+                        <td>{track.audio_features !== undefined && track.audio_features[(props.x_audio_feature as keyof SpotifyApi.AudioFeaturesObject)]}</td>
+                        <td>{track.audio_features !== undefined && track.audio_features[(props.y_audio_feature as keyof SpotifyApi.AudioFeaturesObject)]}</td>
                     </tr>)
                 )}
             </tbody>

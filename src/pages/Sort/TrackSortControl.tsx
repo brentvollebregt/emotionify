@@ -14,7 +14,7 @@ interface IProps {
     onSortMethodSelect: (selection: string) => void
 }
 
-const TrackSortControl: React.SFC<IProps> = (props: IProps) => {
+const TrackSortControl: React.FunctionComponent<IProps> = (props: IProps) => {
     return <>
         <InputGroup className="mr-3 mt-1" style={{display: 'inline-flex', width: 'auto'}}>
             <InputGroup.Prepend>

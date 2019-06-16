@@ -1,10 +1,9 @@
 import React from 'react';
-import { SpotifyTrack } from '../../Models';
 import Plot from 'react-plotly.js';
-import { SpotifyTrackAudioFeatures } from '../../Models';
+import { TrackWithAudioFeatures } from '../../models/Spotify';
 
 interface IProps {
-    tracks: SpotifyTrack[],
+    tracks: TrackWithAudioFeatures[],
     selected_x_axis: string,
     selected_y_axis: string,
     selected_x_axis_name: string,
@@ -21,17 +20,9 @@ interface TrackPoint extends Point {
         id: string,
         title: string,
         artist: string,
-        length: number // Could use this for size? (make it a toggle)
+        length: number
     },
 }
-
-const isValidAudioFeature = (audioFeatures: SpotifyTrackAudioFeatures, audioFeature: string): audioFeature is keyof SpotifyTrackAudioFeatures => {
-    return audioFeature in audioFeatures;
-};
-
-const isNumber = (value: any): value is number => {
-    return typeof value === "number";
-};
 
 function getDistancePercentageAlongLineTheOfClosestPointOnLineToAnArbitaryPoint(start: Point, end: Point, point: Point): number {
     // Modified from https://jsfiddle.net/soulwire/UA6H5/
@@ -63,7 +54,7 @@ function getPointAlongColourGradient(start_hex_colour: string, end_hex_colour: s
     return hex(r) + hex(g) + hex(b);
 }
 
-const PlotTracks: React.SFC<IProps> = (props: IProps) => {
+const PlotTracks: React.FunctionComponent<IProps> = (props: IProps) => {
     const points: TrackPoint[] = props.tracks.map(t => {
         let track = {
             id: t.id,
@@ -72,21 +63,11 @@ const PlotTracks: React.SFC<IProps> = (props: IProps) => {
             length: t.duration_ms
         }
 
-        if (t.audio_features !== null 
-            && isValidAudioFeature(t.audio_features, props.selected_x_axis) 
-            && isValidAudioFeature(t.audio_features, props.selected_y_axis)
-        ) {
-
-            let x = t.audio_features[props.selected_x_axis];
-            let y = t.audio_features[props.selected_y_axis];
-            if (isNumber(x) && isNumber(y)) {
-                return { x: x, y: y, track: track }
-            } else {
-                console.error('TrackTable/tracks_as_sp: Audio feature is a string for (' + props.selected_x_axis + ', ' + props.selected_y_axis + ') from ' + t.id);
-                return { x: 0, y: 0, track: track }
-            }
-
-        } else { // Commonly occurs as t.audioFeatures === null on first playlist selection
+        if (t.audio_features !== undefined) {
+            let x = (t.audio_features[(props.selected_x_axis as keyof SpotifyApi.AudioFeaturesObject)] as number);
+            let y = (t.audio_features[(props.selected_y_axis as keyof SpotifyApi.AudioFeaturesObject)] as number);
+            return { x: x, y: y, track: track }
+        } else { // Commonly occurs as t.audioFeatures === undefined on first playlist selection
             return { x: 0, y: 0, track: track }
         }
     });
@@ -122,7 +103,6 @@ const PlotTracks: React.SFC<IProps> = (props: IProps) => {
             maxWidth: 700,
             height: 450,
             margin: 'auto',
-            // background: 'linear-gradient(to right top, rgba(0, 82, 157, 0.2), rgba(111, 70, 165, 0.2), rgba(179, 34, 143, 0.2), rgba(223, 0, 95, 0.2), rgba(235, 18, 27, 0.2))',
             border: '2px solid #6c757d',
             overflow: 'hidden',
             borderRadius: 10

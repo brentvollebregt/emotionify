@@ -1,4 +1,4 @@
-import { SpotifyTrack, SpotifyTrackAudioFeatures } from '../Models';
+import { TrackWithAudioFeatures } from '../models/Spotify';
 
 /*
 * Different methods of sorting x y points
@@ -18,7 +18,7 @@ export interface IndexedTrackId { // Minimal stored data
     }
 }
 
-export interface SpotifyTrackWithIndexes extends SpotifyTrack, IndexedTrackId { } // Not used here but relates to methods here
+export interface SpotifyTrackWithIndexes extends TrackWithAudioFeatures, IndexedTrackId { } // Not used here but relates to methods here
 
 export const availableSortingMethods: {[key: string]: Function} = {
     'Distance From Origin': originDistance,
@@ -97,16 +97,8 @@ export function yAxis(points: SortablePoint[]): SortablePoint[] {
     });
 }
 
-const isValidAudioFeature = (audioFeatures: SpotifyTrackAudioFeatures, audioFeature: string): audioFeature is keyof SpotifyTrackAudioFeatures => {
-    return audioFeature in audioFeatures;
-};
-
-const isNumber = (value: any): value is number => {
-    return typeof value === "number";
-};
-
 // Sort tracks given x and y features and a sorting method
-export function sort(tracks: SpotifyTrack[], x_audio_feature: string, y_audio_feature: string, sorting_method: Function): IndexedTrackId[] {
+export function sort(tracks: TrackWithAudioFeatures[], x_audio_feature: string, y_audio_feature: string, sorting_method: Function): IndexedTrackId[] {
     // Get points initial indexes (to calculate movement)
     let tracks_with_playlist_indexes: IndexedTrackId[] = tracks.map((t, i) => {
         return { id: t.id, index: { before: i, after: 0 } };
@@ -114,22 +106,10 @@ export function sort(tracks: SpotifyTrack[], x_audio_feature: string, y_audio_fe
 
     // Convert tracks to sortable points
     let tracks_as_sp: SortablePoint[] = tracks.map(t => {
-        if (t.audio_features !== null 
-            && isValidAudioFeature(t.audio_features, x_audio_feature) 
-            && isValidAudioFeature(t.audio_features, y_audio_feature)
-            && isNumber(t.audio_features[x_audio_feature])
-            && isNumber(t.audio_features[y_audio_feature])
-        ) {
-
-            let x = t.audio_features[x_audio_feature];
-            let y = t.audio_features[y_audio_feature];
-            if (isNumber(x) && isNumber(y)) {
-                return { id: t.id, x: x, y: y }
-            } else {
-                console.error('TrackTable/tracks_as_sp: Audio feature is a string for (' + x_audio_feature + ', ' + y_audio_feature + ') from ' + t.id);
-                return { id: t.id, x: 0, y: 0 }
-            }
-
+        if (t.audio_features !== undefined) {
+            let x = (t.audio_features[(x_audio_feature as keyof SpotifyApi.AudioFeaturesObject)] as number); // We know better than the compiler
+            let y = (t.audio_features[(y_audio_feature as keyof SpotifyApi.AudioFeaturesObject)] as number);
+            return { id: t.id, x: x, y: y }
         } else { // Commonly occurs as t.audioFeatures === null on first playlist selection
             return { id: t.id, x: 0, y: 0 }
         }
