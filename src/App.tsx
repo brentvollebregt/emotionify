@@ -75,6 +75,8 @@ export const App: React.FunctionComponent<IProps> = (props: IProps) => {
                 user: spotifyData.user,
                 playlists: spotifyData.playlists
             }));
+        } else {
+            localStorage.removeItem(localStorageKey);
         }
     }, [token, spotifyData.user, spotifyData.playlists]);
 
