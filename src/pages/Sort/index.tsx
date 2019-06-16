@@ -145,7 +145,7 @@ export const Sort: React.FunctionComponent<IProps> = (props: IProps) => {
 
                 {playlists[selectedPlaylist].tracks.total !== sortedTrackIds.length && 
                     <Alert variant="warning" style={{display: 'inline-block'}}>
-                        Warning: Duplicates in this playlist will be removed
+                        Warning: Duplicate songs will be removed in the new playlist
                     </Alert>
                 }
 
