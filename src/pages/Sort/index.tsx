@@ -14,6 +14,7 @@ import TrackTable from './TrackTable';
 import TrackSortControl from './TrackSortControl';
 import AccordionDynamicHeader from './AccordionDynamicHeader';
 import Export from './Export';
+import SpotifyLoginStatusButton from '../../components/SpotifyLoginStatusButton';
 
 interface IProps {
     token: Token | undefined,
@@ -103,9 +104,9 @@ export const Sort: React.FunctionComponent<IProps> = (props: IProps) => {
         return <>
             {header}
             <Container className="text-center">
-                <h2>Login to Spotify</h2>
+                <h2>Sign into Spotify</h2>
                 <p>To get access to your playlists and the ability to create playlists, you need to sign into Spotify.</p>
-                <Button onClick={authorize}>Sign Into Spotify</Button>
+                <SpotifyLoginStatusButton user={user} onLoggedInClick={() => {}} />
             </Container>
         </>
     }

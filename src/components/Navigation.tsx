@@ -1,12 +1,11 @@
 import React from 'react';
+import { navigate } from 'hookrouter';
 import banner from '../img/banner.png';
 import Navbar from 'react-bootstrap/Navbar';
 import Nav from 'react-bootstrap/Nav';
 import Container from 'react-bootstrap/Container';
 import NavItem from 'react-bootstrap/NavItem';
-import Button from 'react-bootstrap/Button';
-import { navigate } from 'hookrouter';
-import SpotifyLogoRound from '../img/spotify-logo-round.png';
+import SpotifyLoginStatusButton from './SpotifyLoginStatusButton'
 
 interface IProps {
   user: SpotifyApi.CurrentUsersProfileResponse | undefined
@@ -20,14 +19,7 @@ const Navigation: React.FunctionComponent<IProps> = (props: IProps) => {
   const goToSort = () => navigate('/sort');
   const goToAbout = () => navigate('/about');
 
-  const loggedInStatusButtonClick = () => {
-    if (user === undefined) {
-      navigate('/spotify-authorization');
-    } else {
-      // TODO Dialog: "Are you sure you want to logout?"
-      onLogOut();
-    }
-  }
+  const logout = () => onLogOut(); // TODO Dialog: "Are you sure you want to logout?"
 
   return (
     <Navbar collapseOnSelect expand="sm" bg="light" variant="light" sticky="top">
@@ -54,27 +46,7 @@ const Navigation: React.FunctionComponent<IProps> = (props: IProps) => {
             </Nav.Link>
           </Nav>
           <Nav>
-            <Button variant="outline-secondary" onClick={loggedInStatusButtonClick}>
-              <img 
-                src={
-                  user !== undefined && user.images !== undefined && user.images.length > 0
-                    ? user.images[0].url
-                    : SpotifyLogoRound
-                }
-                alt={
-                  user !== undefined && user.images !== undefined && user.images.length > 0
-                    ? user.display_name + ' Logo'
-                    : 'Spotify Logo Round'
-                }
-                style={{ height: 20, width: 20, borderRadius: '50%' }} 
-                className="mr-2" 
-              />
-              {
-                user !== undefined && user.images !== undefined && user.images.length > 0
-                ? user.display_name
-                : 'Sign In With Spotify'
-              }
-            </Button>
+            <SpotifyLoginStatusButton user={user} onLoggedInClick={logout} />
           </Nav>
         </Navbar.Collapse>
       </Container>
