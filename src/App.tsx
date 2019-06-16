@@ -11,7 +11,7 @@ import { Token, SpotifyData, PlaylistObjectSimplifiedWithTrackIds, TrackWithAudi
 import { getAllSpotifyUsersPlaylists, getAllTracksInPlaylist, getAudioFeaturesForTracks } from './logic/Spotify';
 import { arrayToObject } from './logic/Utils';
 
-// const local_storage_key = 'emotionify-app';
+const localStorageKey = 'emotionify-app';
 
 const emptySpotifyData = {
     user: undefined,
@@ -22,11 +22,15 @@ const emptySpotifyData = {
 
 interface IProps { }
 
+interface IStorage {
+    token: Token,
+    user: SpotifyApi.UserObjectPrivate | undefined,
+    playlists: { [key: string]: PlaylistObjectSimplifiedWithTrackIds }
+}
+
 export const App: React.FunctionComponent<IProps> = (props: IProps) => {
     const [token, setToken] = useState<Token | undefined>(undefined);
     const [spotifyData, setSpotifyData] = useState<SpotifyData>(emptySpotifyData);
-
-    // TODO: Possible data preservation in localStorage
 
     // TODO: Notice on token expiry (Get a new token before the old expires - 5min)
 
@@ -63,6 +67,30 @@ export const App: React.FunctionComponent<IProps> = (props: IProps) => {
                 .catch(err => console.error(err));
         }
     }
+
+    useEffect(() => { // Store part of state in localStorage
+        if (token !== undefined) {
+            localStorage.setItem(localStorageKey, JSON.stringify({
+                token: token,
+                user: spotifyData.user,
+                playlists: spotifyData.playlists
+            }));
+        }
+    }, [token, spotifyData.user, spotifyData.playlists]);
+
+    useEffect(() => { // Retrieve part of state from localStorage on startup
+        let stored_data: string | null = localStorage.getItem(localStorageKey);
+
+        if (stored_data !== null) {
+            let stored_data_parsed: IStorage = JSON.parse(stored_data);
+            stored_data_parsed.token.expiry = new Date(stored_data_parsed.token.expiry);
+            if (stored_data_parsed.token.expiry > new Date()) {
+                setToken(stored_data_parsed.token);
+                setSpotifyData({ ...emptySpotifyData, user: stored_data_parsed.user, playlists: stored_data_parsed.playlists });
+                refreshUsersPlaylists();
+            }
+        }
+    }, []);
 
     useEffect(() => { // Request the user when the token changes
         if (token === undefined) {
@@ -110,9 +138,6 @@ export const App: React.FunctionComponent<IProps> = (props: IProps) => {
                 .catch(err => console.error(err));
         }
     }, [spotifyData.tracks]);
-
-    (window as any).a = () => console.log('token', token, 'spotifyData', spotifyData);
-    (window as any).b = (playlist: SpotifyApi.PlaylistObjectSimplified) => refreshPlaylist(playlist);
 
     const routes = {
         '/': () => <Home />,

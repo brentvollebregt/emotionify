@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { navigate, useTitle } from 'hookrouter';
+import { useTitle } from 'hookrouter';
 import Container from 'react-bootstrap/Container';
-import Button from 'react-bootstrap/Button';
 import Alert from 'react-bootstrap/Alert';
 import { availableSortingMethods, IndexedTrackId, sort, SpotifyTrackWithIndexes } from '../../logic/PointSorting';
 import { createPlaylist } from '../../logic/Spotify';
@@ -40,8 +39,6 @@ export const Sort: React.FunctionComponent<IProps> = (props: IProps) => {
     const [sortingMethod, setSortingMethod] = useState<string>('Distance From Origin');
     const [sortedTrackIds, setSortedTrackIds] = useState<IndexedTrackId[]>([]);
 
-    const authorize = () => navigate('/spotify-authorization');
-
     const onPlaylistSelected = (playlist_id: string) => {
         setSelectedPlaylist(playlist_id);
         refreshPlaylist(playlists[playlist_id]);
@@ -52,7 +49,6 @@ export const Sort: React.FunctionComponent<IProps> = (props: IProps) => {
 
     useEffect(() => {
         if (selectedPlaylist !== undefined && selectedPlaylist in playlists) {
-            console.log(selectedPlaylist, selectedAxis, sortingMethod);
             const selected_playlist_track_ids: string[] = playlists[selectedPlaylist].track_ids;
             const selected_playlist_tracks: TrackWithAudioFeatures[] = Object.values(tracks)
                 .filter(t => selected_playlist_track_ids.indexOf(t.id) !== -1)
@@ -96,7 +92,7 @@ export const Sort: React.FunctionComponent<IProps> = (props: IProps) => {
     }
 
     const header = <Container className="mt-3 mb-4">
-        <h1 className="text-center" onClick={() => {console.log('props:', props)}}>Playlist Sort</h1>
+        <h1 className="text-center">Playlist Sort</h1>
         <p className="text-center lead col-md-7 mx-auto">Here you can select a playlist and look at how the new playlist is sorted. You can then create the new playlist or select a different playlist.</p>
     </Container>;
 
