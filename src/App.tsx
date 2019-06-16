@@ -68,19 +68,6 @@ export const App: React.FunctionComponent<IProps> = (props: IProps) => {
         }
     }
 
-    useEffect(() => { // Store part of state in localStorage
-        if (token !== undefined) {
-            let data_to_store: IStorage = {
-                token: token,
-                user: spotifyData.user,
-                playlists: arrayToObject<PlaylistObjectSimplifiedWithTrackIds>(Object.values(spotifyData.playlists).map(p => { return { ...p, track_ids: [] }}), "id") // Empty track_id lists in playlist objects
-            }
-            localStorage.setItem(localStorageKey, JSON.stringify(data_to_store));
-        } else {
-            localStorage.removeItem(localStorageKey);
-        }
-    }, [token, spotifyData.user, spotifyData.playlists]);
-
     useEffect(() => { // Retrieve part of state from localStorage on startup
         let stored_data: string | null = localStorage.getItem(localStorageKey);
 
@@ -94,6 +81,19 @@ export const App: React.FunctionComponent<IProps> = (props: IProps) => {
             }
         }
     }, []);
+
+    useEffect(() => { // Store part of state in localStorage
+        if (token !== undefined) {
+            let data_to_store: IStorage = {
+                token: token,
+                user: spotifyData.user,
+                playlists: arrayToObject<PlaylistObjectSimplifiedWithTrackIds>(Object.values(spotifyData.playlists).map(p => { return { ...p, track_ids: [] }}), "id") // Empty track_id lists in playlist objects
+            }
+            localStorage.setItem(localStorageKey, JSON.stringify(data_to_store));
+        } else {
+            localStorage.removeItem(localStorageKey);
+        }
+    }, [token, spotifyData.user, spotifyData.playlists]);
 
     useEffect(() => { // Request the user when the token changes
         if (token === undefined) {
