@@ -3,7 +3,7 @@ import { encodeData, randomString } from '../../logic/Utils';
 import Container from 'react-bootstrap/Container';
 import Spinner from 'react-bootstrap/Spinner';
 import settings from '../../settings.json';
-import { Token } from '../../Models';
+import { Token } from '../../models/Spotify';
 import { navigate } from 'hookrouter';
 
 // Based off https://developer.spotify.com/documentation/general/guides/authorization-guide/#implicit-grant-flow

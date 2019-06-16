@@ -20,17 +20,9 @@ interface TrackPoint extends Point {
         id: string,
         title: string,
         artist: string,
-        length: number // Could use this for size? (make it a toggle)
+        length: number
     },
 }
-
-const isValidAudioFeature = (audioFeatures: SpotifyApi.AudioFeaturesObject, audioFeature: string): audioFeature is keyof SpotifyApi.AudioFeaturesObject => {
-    return audioFeature in audioFeatures;
-};
-
-const isNumber = (value: any): value is number => {
-    return typeof value === "number";
-};
 
 function getDistancePercentageAlongLineTheOfClosestPointOnLineToAnArbitaryPoint(start: Point, end: Point, point: Point): number {
     // Modified from https://jsfiddle.net/soulwire/UA6H5/
@@ -71,20 +63,10 @@ const PlotTracks: React.SFC<IProps> = (props: IProps) => {
             length: t.duration_ms
         }
 
-        if (t.audio_features !== undefined 
-            && isValidAudioFeature(t.audio_features, props.selected_x_axis) 
-            && isValidAudioFeature(t.audio_features, props.selected_y_axis)
-        ) {
-
-            let x = t.audio_features[props.selected_x_axis];
-            let y = t.audio_features[props.selected_y_axis];
-            if (isNumber(x) && isNumber(y)) {
-                return { x: x, y: y, track: track }
-            } else {
-                console.error('TrackTable/tracks_as_sp: Audio feature is a string for (' + props.selected_x_axis + ', ' + props.selected_y_axis + ') from ' + t.id);
-                return { x: 0, y: 0, track: track }
-            }
-
+        if (t.audio_features !== undefined) {
+            let x = (t.audio_features[(props.selected_x_axis as keyof SpotifyApi.AudioFeaturesObject)] as number);
+            let y = (t.audio_features[(props.selected_y_axis as keyof SpotifyApi.AudioFeaturesObject)] as number);
+            return { x: x, y: y, track: track }
         } else { // Commonly occurs as t.audioFeatures === null on first playlist selection
             return { x: 0, y: 0, track: track }
         }

@@ -1,17 +1,10 @@
-import { getUserPlaylists, getPlaylistTracks, getFeaturesForTracks, createPlaylist } from '../../logic/Spotify';
-import { arrayToObject } from '../../logic/Utils';
-import { putStoredState, getStoredState, deleteStoredState } from '../../logic/StateStore';
-import { SpotifyUser, SpotifyPlaylist, SpotifyTrack } from '../../Models';
-
-
-
 import React, { useState } from 'react';
 import { navigate, useTitle } from 'hookrouter';
 import Container from 'react-bootstrap/Container';
 import Button from 'react-bootstrap/Button';
-import Spinner from 'react-bootstrap/Spinner';
 import Alert from 'react-bootstrap/Alert';
 import { availableSortingMethods, IndexedTrackId, sort, SpotifyTrackWithIndexes } from '../../logic/PointSorting';
+import { createPlaylist } from '../../logic/Spotify';
 import { PlaylistObjectSimplifiedWithTrackIds, availableTrackAudioFeatures, TrackWithAudioFeatures } from '../../models/Spotify';
 import { Token } from '../../models/Spotify'
 import PlaylistSelectionTable from './PlaylistSelectionTable';
@@ -57,8 +50,9 @@ export const Sort: React.FunctionComponent<IProps> = (props: IProps) => {
     const onSortMethodSelect = (selection: string) => setSortingMethod(selection);
 
     // Sort tracks
-    let sortedTrackIds: IndexedTrackId[] | undefined = undefined;
-    if (selectedPlaylist !== undefined) {
+    let sortedTrackIds: IndexedTrackId[] = [];
+    if (selectedPlaylist !== undefined && selectedPlaylist in playlists) {
+        console.log(selectedPlaylist, selectedAxis.x, selectedAxis.y, sortingMethod);
         const selected_playlist_track_ids: string[] = playlists[selectedPlaylist].track_ids;
         const selected_playlist_tracks: TrackWithAudioFeatures[] = Object.values(tracks)
             .filter(t => selected_playlist_track_ids.indexOf(t.id) !== -1)
@@ -74,6 +68,8 @@ export const Sort: React.FunctionComponent<IProps> = (props: IProps) => {
             availableSortingMethods[sortingMethod]
         )
     }
+    const sorted_tracks: TrackWithAudioFeatures[] = sortedTrackIds.map(t => tracks[t.id]);
+    const sorted_tracks_with_indexes: SpotifyTrackWithIndexes[] = sortedTrackIds.map(it => { return { ...tracks[it.id], ...it } });
 
     const onExport = (name: string, isPublic: boolean): Promise<boolean> => {
         return new Promise(async (resolve, reject) => {
@@ -119,14 +115,14 @@ export const Sort: React.FunctionComponent<IProps> = (props: IProps) => {
 
             <hr />
 
-            {selectedPlaylist !== undefined && <>
+            {selectedPlaylist !== undefined && selectedPlaylist in playlists && <>
                 <div className="mb-4">
                     <PlaylistDetails playlist={playlists[selectedPlaylist]} />
                 </div>
 
                 <div className="mb-4">
                     <PlotTracks 
-                        tracks={sortedTrackIds !== undefined ? sortedTrackIds.map(t => tracks[t.id]) : []}
+                        tracks={sorted_tracks}
                         selected_x_axis={availableTrackAudioFeatures[selectedAxis.x]}
                         selected_y_axis={availableTrackAudioFeatures[selectedAxis.y]}
                         selected_x_axis_name={selectedAxis.x}
@@ -147,7 +143,7 @@ export const Sort: React.FunctionComponent<IProps> = (props: IProps) => {
                     />
                 </div>
 
-                {sortedTrackIds !== undefined && playlists[selectedPlaylist].tracks.total !== sortedTrackIds.length && 
+                {playlists[selectedPlaylist].tracks.total !== sortedTrackIds.length && 
                     <Alert variant="warning" style={{display: 'inline-block'}}>
                         Warning: Duplicates in this playlist will be removed
                     </Alert>
@@ -161,7 +157,7 @@ export const Sort: React.FunctionComponent<IProps> = (props: IProps) => {
                         initiallyExpanded={false}
                     >
                         <TrackTable 
-                            tracks={sortedTrackIds !== undefined ? sortedTrackIds.map(t => { return {...tracks[t.id], ...t }}) : []}
+                            tracks={sorted_tracks_with_indexes}
                             x_audio_feature={availableTrackAudioFeatures[selectedAxis.x]}
                             x_audio_feature_name={selectedAxis.x}
                             y_audio_feature={availableTrackAudioFeatures[selectedAxis.y]}
