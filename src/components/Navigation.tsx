@@ -16,8 +16,8 @@ const Navigation: React.FunctionComponent<IProps> = (props: IProps) => {
   const { user, onLogOut } = props;
 
   const goToHome = () => navigate('/');
-  const goToSort = () => navigate('/sort');
-  const goToAbout = () => navigate('/about');
+  const goToSort = () => navigate('/sort/');
+  const goToAbout = () => navigate('/about/');
 
   const logout = () => onLogOut(); // TODO Dialog: "Are you sure you want to logout?"
 

@@ -13,7 +13,7 @@ const SpotifyLoginStatusButton: React.FunctionComponent<IProps> = (props: IProps
 
     const loggedInStatusButtonClick = () => {
         if (user === undefined) {
-            navigate('/spotify-authorization');
+            navigate('/spotify-authorization/');
         } else {
             onLoggedInClick();
         }

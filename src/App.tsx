@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useRoutes } from 'hookrouter';
+import { useRoutes, useRedirect } from 'hookrouter';
 import SpotifyWebApi from 'spotify-web-api-js';
 import Navigation from './components/Navigation';
 import SpotifyAuthorization from './pages/SpotifyAuthorization';
@@ -144,11 +144,14 @@ export const App: React.FunctionComponent<IProps> = (props: IProps) => {
 
     const routes = {
         '/': () => <Home />,
-        '/spotify-authorization': () => <SpotifyAuthorization onTokenChange={onTokenChange} />,
-        '/sort': () => <Sort token={token} user={spotifyData.user} playlists={spotifyData.playlists} tracks={spotifyData.tracks} refreshPlaylist={refreshPlaylist} refreshUsersPlaylists={refreshUsersPlaylists} />,
-        '/about': () => <About />,
+        '/spotify-authorization/': () => <SpotifyAuthorization onTokenChange={onTokenChange} />,
+        '/sort/': () => <Sort token={token} user={spotifyData.user} playlists={spotifyData.playlists} tracks={spotifyData.tracks} refreshPlaylist={refreshPlaylist} refreshUsersPlaylists={refreshUsersPlaylists} />,
+        '/about/': () => <About />,
     };
     const routeResult = useRoutes(routes);
+    useRedirect('/spotify-authorization', '/spotify-authorization/');
+    useRedirect('/sort', '/sort/');
+    useRedirect('/about', '/about/');
 
     return <>
         <Navigation user={spotifyData.user} onLogOut={onLogOut} />
