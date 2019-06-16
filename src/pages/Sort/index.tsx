@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { navigate, useTitle } from 'hookrouter';
 import Container from 'react-bootstrap/Container';
 import Button from 'react-bootstrap/Button';
@@ -37,7 +37,7 @@ export const Sort: React.FunctionComponent<IProps> = (props: IProps) => {
     const [selectedPlaylist, setSelectedPlaylist] = useState<string | undefined>(undefined);
     const [selectedAxis, setSelectedAxis] = useState<selectedAxis>({ x: 'Valence', y: 'Energy' });
     const [sortingMethod, setSortingMethod] = useState<string>('Distance From Origin');
-    // const [sortedTracks, setSortedTracks] = useState<string>('Distance From Origin');
+    const [sortedTrackIds, setSortedTrackIds] = useState<IndexedTrackId[]>([]);
 
     const authorize = () => navigate('/spotify-authorization');
 
@@ -49,25 +49,28 @@ export const Sort: React.FunctionComponent<IProps> = (props: IProps) => {
     const onYAxisSelect = (selection: string) => setSelectedAxis({ ...selectedAxis, y: selection });
     const onSortMethodSelect = (selection: string) => setSortingMethod(selection);
 
-    // Sort tracks
-    let sortedTrackIds: IndexedTrackId[] = [];
-    if (selectedPlaylist !== undefined && selectedPlaylist in playlists) {
-        console.log(selectedPlaylist, selectedAxis.x, selectedAxis.y, sortingMethod);
-        const selected_playlist_track_ids: string[] = playlists[selectedPlaylist].track_ids;
-        const selected_playlist_tracks: TrackWithAudioFeatures[] = Object.values(tracks)
-            .filter(t => selected_playlist_track_ids.indexOf(t.id) !== -1)
-            .sort((a: TrackWithAudioFeatures, b: TrackWithAudioFeatures): number => { // Do a sort to put them in the correct order again (fixes incorrect order due to overlapping playlists)
-                const aIndex = selected_playlist_track_ids.indexOf(a.id);
-                const bIndex = selected_playlist_track_ids.indexOf(b.id);
-                return aIndex === bIndex ? 0 : aIndex > bIndex ? 1 : -1
-            });
-        sortedTrackIds = sort(
-            selected_playlist_tracks, 
-            availableTrackAudioFeatures[selectedAxis.x], 
-            availableTrackAudioFeatures[selectedAxis.y], 
-            availableSortingMethods[sortingMethod]
-        )
-    }
+    useEffect(() => {
+        if (selectedPlaylist !== undefined && selectedPlaylist in playlists) {
+            console.log(selectedPlaylist, selectedAxis, sortingMethod);
+            const selected_playlist_track_ids: string[] = playlists[selectedPlaylist].track_ids;
+            const selected_playlist_tracks: TrackWithAudioFeatures[] = Object.values(tracks)
+                .filter(t => selected_playlist_track_ids.indexOf(t.id) !== -1)
+                .sort((a: TrackWithAudioFeatures, b: TrackWithAudioFeatures): number => { // Do a sort to put them in the correct order again (fixes incorrect order due to overlapping playlists)
+                    const aIndex = selected_playlist_track_ids.indexOf(a.id);
+                    const bIndex = selected_playlist_track_ids.indexOf(b.id);
+                    return aIndex === bIndex ? 0 : aIndex > bIndex ? 1 : -1
+                });
+            setSortedTrackIds(sort(
+                selected_playlist_tracks, 
+                availableTrackAudioFeatures[selectedAxis.x], 
+                availableTrackAudioFeatures[selectedAxis.y], 
+                availableSortingMethods[sortingMethod]
+            ));
+        } else {
+            setSortedTrackIds([]);
+        }
+    }, [selectedPlaylist, selectedAxis, sortingMethod, playlists, tracks]);
+
     const sorted_tracks: TrackWithAudioFeatures[] = sortedTrackIds.map(t => tracks[t.id]);
     const sorted_tracks_with_indexes: SpotifyTrackWithIndexes[] = sortedTrackIds.map(it => { return { ...tracks[it.id], ...it } });
 

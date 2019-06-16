@@ -50,9 +50,10 @@ export const App: React.FunctionComponent<IProps> = (props: IProps) => {
         if (token !== undefined) {
             getAllTracksInPlaylist(token, playlist)
                 .then(tracks => {
+                    let new_tracks = tracks.filter(t => !(t.id in spotifyData.tracks));
                     setSpotifyData({ 
                         ...spotifyData,
-                        tracks: { ...spotifyData.tracks, ...arrayToObject<TrackWithAudioFeatures>(tracks, "id") },
+                        tracks: { ...spotifyData.tracks, ...arrayToObject<TrackWithAudioFeatures>(new_tracks, "id") },
                         playlists: { 
                             ...spotifyData.playlists, 
                             [playlist.id]: { ...spotifyData.playlists[playlist.id], track_ids: tracks.map(t => t.id) } 
