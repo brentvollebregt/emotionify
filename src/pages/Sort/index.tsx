@@ -151,7 +151,6 @@ export const Sort: React.FunctionComponent<IProps> = (props: IProps) => {
 
                 <div className="mb-5">
                     <AccordionDynamicHeader
-                        name={'tracks'}
                         contractedHeader={'Songs in Playlist (click to expand)'}
                         expandedHeader={'Songs in Playlist (click to collapse)'}
                         initiallyExpanded={false}

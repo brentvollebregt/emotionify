@@ -4,7 +4,7 @@ import { useTitle } from 'hookrouter';
 
 interface IProps { }
 
-const About: React.SFC<IProps> = (props: IProps) => {
+const About: React.FunctionComponent<IProps> = (props: IProps) => {
     useTitle('Emotionify - About');
 
     return <Container className="text-center">

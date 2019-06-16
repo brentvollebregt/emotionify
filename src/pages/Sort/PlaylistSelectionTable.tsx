@@ -7,7 +7,7 @@ interface IProps {
     onPlaylistSelected: (id: string) => void
 }
 
-const PlaylistSelection: React.SFC<IProps> = (props: IProps) => {
+const PlaylistSelection: React.FunctionComponent<IProps> = (props: IProps) => {
     return <>
         <h3 className="mb-3">Select a Playlist</h3>
         <Table responsive striped hover>

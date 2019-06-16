@@ -1,49 +1,32 @@
-import React from 'react';
+import React, { useState } from 'react';
 import Accordion from 'react-bootstrap/Accordion';
 import Card from 'react-bootstrap/Card';
-
+import { randomString } from '../../logic/Utils';
 
 interface IProps {
-    name: string,
     contractedHeader: string,
     expandedHeader: string,
     children: React.ReactNode,
     initiallyExpanded: boolean
 }
 
-interface IState {
-    expanded: boolean
-}
+export const AccordionDynamicHeader: React.FunctionComponent<IProps> = (props: IProps) => {
+    const { contractedHeader, expandedHeader, children, initiallyExpanded } = props;
 
-class AccordionDynamicHeader extends React.Component<IProps, IState> {
-    constructor(props: IProps) {
-        super(props);
+    const [randomEventKey, setRandomEventKey] = useState(randomString(16));
+    const [expanded, setExpanded] = useState(initiallyExpanded);
+    const toggleExpansion = () => setExpanded(!expanded);
 
-        this.state = {
-            expanded: props.initiallyExpanded
-        }
-
-        this.onHeaderClick = this.onHeaderClick.bind(this);
-    }
-
-    onHeaderClick() {
-        this.setState({ expanded: !this.state.expanded });
-    }
-
-    render() {
-        const { expanded: open } = this.state;
-        const { name, contractedHeader, expandedHeader, children, initiallyExpanded } = this.props;
-        return <Accordion defaultActiveKey={initiallyExpanded ? name : undefined} onClick={this.onHeaderClick}>
-            <Card>
-                <Accordion.Toggle as={Card.Header} eventKey={name}>{open ? expandedHeader : contractedHeader}</Accordion.Toggle>
-                <Accordion.Collapse eventKey={name}>
-                    <Card.Body className="p-0" style={{ cursor: 'padding' }}>
-                        {children}
-                    </Card.Body>
-                </Accordion.Collapse>
-            </Card>
-        </Accordion>
-    }
+    return <Accordion defaultActiveKey={initiallyExpanded ? randomEventKey : undefined}>
+        <Card>
+            <Accordion.Toggle as={Card.Header} eventKey={randomEventKey} onClick={toggleExpansion}>{expanded ? expandedHeader : contractedHeader}</Accordion.Toggle>
+            <Accordion.Collapse eventKey={randomEventKey}>
+                <Card.Body className="p-0" style={{ cursor: 'padding' }}>
+                    {children}
+                </Card.Body>
+            </Accordion.Collapse>
+        </Card>
+    </Accordion>
 }
 
 export default AccordionDynamicHeader;

@@ -6,7 +6,7 @@ interface IProps {
     playlist: PlaylistObjectSimplifiedWithTrackIds
 }
 
-const PlaylistDetails: React.SFC<IProps> = (props: IProps) => {
+const PlaylistDetails: React.FunctionComponent<IProps> = (props: IProps) => {
     const { playlist } = props;
     return <>
         <h3 className="mt-4 mb-0">{playlist.name}</h3>

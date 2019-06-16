@@ -54,7 +54,7 @@ function getPointAlongColourGradient(start_hex_colour: string, end_hex_colour: s
     return hex(r) + hex(g) + hex(b);
 }
 
-const PlotTracks: React.SFC<IProps> = (props: IProps) => {
+const PlotTracks: React.FunctionComponent<IProps> = (props: IProps) => {
     const points: TrackPoint[] = props.tracks.map(t => {
         let track = {
             id: t.id,
@@ -67,7 +67,7 @@ const PlotTracks: React.SFC<IProps> = (props: IProps) => {
             let x = (t.audio_features[(props.selected_x_axis as keyof SpotifyApi.AudioFeaturesObject)] as number);
             let y = (t.audio_features[(props.selected_y_axis as keyof SpotifyApi.AudioFeaturesObject)] as number);
             return { x: x, y: y, track: track }
-        } else { // Commonly occurs as t.audioFeatures === null on first playlist selection
+        } else { // Commonly occurs as t.audioFeatures === undefined on first playlist selection
             return { x: 0, y: 0, track: track }
         }
     });
@@ -103,7 +103,6 @@ const PlotTracks: React.SFC<IProps> = (props: IProps) => {
             maxWidth: 700,
             height: 450,
             margin: 'auto',
-            // background: 'linear-gradient(to right top, rgba(0, 82, 157, 0.2), rgba(111, 70, 165, 0.2), rgba(179, 34, 143, 0.2), rgba(223, 0, 95, 0.2), rgba(235, 18, 27, 0.2))',
             border: '2px solid #6c757d',
             overflow: 'hidden',
             borderRadius: 10

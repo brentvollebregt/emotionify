@@ -5,7 +5,7 @@ import Container from 'react-bootstrap/Container';
 
 interface IProps { }
 
-const NotFound: React.SFC<IProps> = (props: IProps) => {
+const NotFound: React.FunctionComponent<IProps> = (props: IProps) => {
     useTitle('Emotionify - Page Not Found');
 
     const navigateHome = () => navigate('/');

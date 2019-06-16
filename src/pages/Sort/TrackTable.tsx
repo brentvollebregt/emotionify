@@ -18,7 +18,7 @@ const header_cell_style: React.CSSProperties = {
     borderTop: 0
 }
 
-const TrackTable: React.SFC<IProps> = (props: IProps) => {
+const TrackTable: React.FunctionComponent<IProps> = (props: IProps) => {
     return <div style={{maxHeight: 400, overflowY: 'auto', borderTop: '1px solid #dee2e6'}}>
         <Table bordered striped size="sm" style={{borderTop: 0}}>
             <thead>
