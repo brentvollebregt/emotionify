@@ -62,9 +62,9 @@ const TokenRefreshWarning: React.FunctionComponent<IProps> = (props: IProps) => 
                 <Modal.Body>
                     {expired
                         ? <>
-                            Your Spotify token has now expired and we can no longer access your data.
+                            Your Spotify token has now expired and we can no longer access your data; sign back in with Spotify to get an new token.
                             <br />
-                            Sign back in with Spotify to get an new token and access your playlists.
+                            We will leave you logged in here so you can still view your data but we will not be able to get data from Spotify for you.
                         </>
                         : <>
                             Since Spotify issues client side tokens for upto an hour, you will need a new token soon. Your current token expires at {token.expiry.toLocaleTimeString()}.

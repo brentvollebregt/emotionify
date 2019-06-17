@@ -47,7 +47,7 @@ const SpotifyAuthorization: React.FunctionComponent<IProps> = (props: IProps) =>
             'response_type': 'token',
             'redirect_uri': window.location.href,
             'state': random_state,
-            'scope': 'user-library-read playlist-read-private user-read-private playlist-modify-private playlist-modify-public',
+            'scope': settings.spotify_premission_scope,
             'show_dialog': true,
         }
         const url_parameters_encoded = encodeData(url_parameters);
