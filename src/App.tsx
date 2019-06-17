@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useRoutes } from 'hookrouter';
 import SpotifyWebApi from 'spotify-web-api-js';
 import Navigation from './components/Navigation';
+import TokenRefreshWarning from './components/TokenRefreshWarning';
 import SpotifyAuthorization from './pages/SpotifyAuthorization';
 import Home from './pages/Home';
 import About from './pages/About';
@@ -152,6 +153,7 @@ export const App: React.FunctionComponent<IProps> = (props: IProps) => {
     const routeResult = useRoutes(routes);
 
     return <>
+        <TokenRefreshWarning token={token} onLogOut={onLogOut} />
         <Navigation user={spotifyData.user} onLogOut={onLogOut} />
         {routeResult || <NotFound />}
     </>
