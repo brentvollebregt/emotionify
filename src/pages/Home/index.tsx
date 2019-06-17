@@ -9,7 +9,7 @@ interface IProps { }
 const Home: React.FunctionComponent<IProps> = (props: IProps) => {
     useTitle('Emotionify');
 
-    const goToSort = () => navigate('/sort/');
+    const goToSort = () => navigate('/sort');
 
     return <>
         <section className="jumbotron jumbotron-fluid text-center">
