@@ -3,6 +3,7 @@ import { useRoutes } from 'hookrouter';
 import SpotifyWebApi from 'spotify-web-api-js';
 import Navigation from './components/Navigation';
 import TokenRefreshWarning from './components/TokenRefreshWarning';
+import StoredDataDialog from './components/StoredDataDialog';
 import SpotifyAuthorization from './pages/SpotifyAuthorization';
 import Home from './pages/Home';
 import About from './pages/About';
@@ -32,11 +33,12 @@ interface IStorage {
 export const App: React.FunctionComponent<IProps> = (props: IProps) => {
     const [token, setToken] = useState<Token | undefined>(undefined);
     const [spotifyData, setSpotifyData] = useState<SpotifyData>(emptySpotifyData);
-
-    // TODO: Notice on token expiry (Get a new token before the old expires - 5min)
+    const [storedDataDialogOpen, setStoredDataDialogOpen] = useState(false);
 
     const onTokenChange = (newToken: Token | undefined) => setToken(newToken);
     const onLogOut = () => onTokenChange(undefined);
+    const openStoredDataDialog = () => setStoredDataDialogOpen(true);
+    const closeStoredDataDialog = () => setStoredDataDialogOpen(false);
 
     const refreshUsersPlaylists = () => {
         if (token !== undefined && spotifyData.user !== undefined) {
@@ -154,7 +156,17 @@ export const App: React.FunctionComponent<IProps> = (props: IProps) => {
 
     return <>
         <TokenRefreshWarning token={token} onLogOut={onLogOut} />
-        <Navigation user={spotifyData.user} onLogOut={onLogOut} />
+        {token !== undefined && spotifyData.user !== undefined && storedDataDialogOpen && 
+            <StoredDataDialog 
+                token={token}
+                user={spotifyData.user}
+                playlists={spotifyData.playlists}
+                tracks={spotifyData.tracks}
+                onClose={closeStoredDataDialog} 
+                onLogOut={onLogOut} 
+            />
+        }
+        <Navigation user={spotifyData.user} onAuthButtonLoggedInClick={openStoredDataDialog} />
         {routeResult || <NotFound />}
     </>
 }
