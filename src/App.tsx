@@ -14,6 +14,7 @@ import { getAllSpotifyUsersPlaylists, getAllTracksInPlaylist, getAudioFeaturesFo
 import { arrayToObject } from './logic/Utils';
 
 const localStorageKey = 'emotionify-app';
+const storageVersion = 1;
 
 const emptySpotifyData = {
     user: undefined,
@@ -25,6 +26,7 @@ const emptySpotifyData = {
 interface IProps { }
 
 interface IStorage {
+    version: number,
     token: Token,
     user: SpotifyApi.UserObjectPrivate | undefined,
     playlists: { [key: string]: PlaylistObjectSimplifiedWithTrackIds }
@@ -73,14 +75,17 @@ export const App: React.FunctionComponent<IProps> = (props: IProps) => {
 
     useEffect(() => { // Retrieve part of state from localStorage on startup
         let stored_data: string | null = localStorage.getItem(localStorageKey);
-
         if (stored_data !== null) {
-            let stored_data_parsed: IStorage = JSON.parse(stored_data);
-            stored_data_parsed.token.expiry = new Date(stored_data_parsed.token.expiry);
-            if (stored_data_parsed.token.expiry > new Date()) {
-                setToken(stored_data_parsed.token);
-                setSpotifyData({ ...emptySpotifyData, user: stored_data_parsed.user, playlists: stored_data_parsed.playlists });
-                refreshUsersPlaylists();
+            try {
+                const stored_data_parsed: IStorage = JSON.parse(stored_data);
+                stored_data_parsed.token.expiry = new Date(stored_data_parsed.token.expiry);
+                if (stored_data_parsed.version === storageVersion && stored_data_parsed.token.expiry > new Date()) {
+                    setToken(stored_data_parsed.token);
+                    setSpotifyData({ ...emptySpotifyData, user: stored_data_parsed.user, playlists: stored_data_parsed.playlists });
+                    refreshUsersPlaylists();
+                }
+            } catch {
+                console.error('Failed to read state from localStorage');
             }
         }
     }, []);
@@ -88,6 +93,7 @@ export const App: React.FunctionComponent<IProps> = (props: IProps) => {
     useEffect(() => { // Store part of state in localStorage
         if (token !== undefined) {
             let data_to_store: IStorage = {
+                version: storageVersion,
                 token: token,
                 user: spotifyData.user,
                 playlists: arrayToObject<PlaylistObjectSimplifiedWithTrackIds>(Object.values(spotifyData.playlists).map(p => { return { ...p, track_ids: [] }}), "id") // Empty track_id lists in playlist objects
