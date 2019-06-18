@@ -3,7 +3,6 @@ import { navigate, useTitle } from 'hookrouter';
 import Container from 'react-bootstrap/Container';
 import Button from 'react-bootstrap/Button';
 import SortComparisonImage from '../../img/sort-comparison.png';
-import SortComparisonSolidLinesImage from '../../img/sort-comparison-solid-lines.png';
 import BannerImage from '../../img/banner.png';
 
 interface IProps { }
