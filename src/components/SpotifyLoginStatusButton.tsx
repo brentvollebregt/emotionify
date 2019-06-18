@@ -1,18 +1,23 @@
 import React from 'react';
 import { navigate } from 'hookrouter';
 import Button from 'react-bootstrap/Button';
+import { localStorageRedirectKey } from '../pages/SpotifyAuthorization';
 import SpotifyLogoRound from '../img/spotify-logo-round.png';
 
 interface IProps {
-    user: SpotifyApi.CurrentUsersProfileResponse | undefined
+    user: SpotifyApi.CurrentUsersProfileResponse | undefined,
+    onLoggedInRedirectTo?: string | undefined
     onLoggedInClick: () => void
 }
 
 const SpotifyLoginStatusButton: React.FunctionComponent<IProps> = (props: IProps) => {
-    const { user, onLoggedInClick } = props;
+    const { user, onLoggedInRedirectTo, onLoggedInClick } = props;
 
     const loggedInStatusButtonClick = () => {
         if (user === undefined) {
+            if (onLoggedInRedirectTo !== undefined) {
+                localStorage.setItem(localStorageRedirectKey, onLoggedInRedirectTo);
+            }
             navigate('/spotify-authorization');
         } else {
             onLoggedInClick();

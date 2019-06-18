@@ -9,7 +9,7 @@ import { navigate } from 'hookrouter';
 // Based off https://developer.spotify.com/documentation/general/guides/authorization-guide/#implicit-grant-flow
 
 const localStorageStateKey = 'spotify-auth-random-state';
-const localStorageRedirectKey = 'auth-local-redirect';
+export const localStorageRedirectKey = 'auth-local-redirect';
 
 interface IProps {
     onTokenChange: (newToken: Token | undefined) => void,
