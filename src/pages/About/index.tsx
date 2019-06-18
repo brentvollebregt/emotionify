@@ -14,24 +14,18 @@ const About: React.FunctionComponent<IProps> = (props: IProps) => {
             <Col className="col-md-10 col-lg-8">
                 <h1 className="text-center">About</h1>
                 <p>Emotionify is application I had though about for a few years after doing a project at university on attempting to detect emotion in music and portraying it in an interactive environment.</p>
-                <p>By default, chosing a playlist on the Sort page will sort your music by "Valence" and "Energy" which are <a href="https://developer.spotify.com/documentation/web-api/reference/tracks/get-audio-features/">audio features calculated by Spotify</a>. When conducting research for my project, this is was the some of the best public and easily accessible data that related to emotion in music. Also with Spotify being so large and active among many people, it allows for people to easily organise thier own playlists.</p>
+                <p>By default, chosing a playlist on the Sort page will sort your music by <code>Valence</code> and <code>Energy</code> which are <a href="https://developer.spotify.com/documentation/web-api/reference/tracks/get-audio-features/">audio features calculated by Spotify</a>. When conducting research for my project, this is was the some of the best public and easily accessible data that related to emotion in music. Also with Spotify being so large and active among many people, it allows for people to easily organise thier own playlists.</p>
                 <p>Emotionify is not 100% accurate as emotion is highly opinion based and the values used to sort songs are averages over the whole song. This tool however does give insight on how well a computer can plot an emotional gradient with a list of songs.</p>
                 <p>I made this project because I was curious if this data really did mean anything and if my guess of the data being able to be used to sort playlists by emotion was correct. I can leave that up to you to decide!</p>
-                <p>As you can see in the sort tab, I have also made the other audio features avaiable for you to play around with.</p>
+                <p>As you can see on the Sort page, I have also made the other audio features avaiable for you to play around with.</p>
 
                 <h2 className="text-center">Stored Data</h2>
                 <p>I am fully tranparent with the data that is stored here and what is done with it. None of your data is sent off this site and when stored, it stored in local storage.</p>
-                {/* <p>Here is an overview of the data that is currently stored:</p>
-                <ul>
-                    <li>Spotify Token: Expires at</li>
-                    <li>Playlists: x public and y private</li>
-                    <li>Tracks (songs) with audio features: x</li>
-                </ul> */}
-                <p>To clear this data at any time, simply sign out by clicking your name in the top right.</p>
+                <p>To view a summary of the stored data, simply click your name in the top right. To clear this data, simply logout using the same dialog that appears.</p>
 
                 <h2 className="text-center">FAQ</h2>
                 <h5>Why is this a thing?</h5>
-                <p>Because I wanted it to be.</p>
+                <p>I was curious.</p>
                 <h5>Will this remove duplicates?</h5>
                 <p>Yes, if this tool didn't then the duplicate songs would be bunched up by each other. Removing these allows for proper transitions into a different song.</p>
                 <h5>How do I clear all my data?</h5>
