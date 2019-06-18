@@ -1,8 +1,10 @@
 import React from 'react';
+import { navigate, useTitle } from 'hookrouter';
 import Container from 'react-bootstrap/Container';
 import Button from 'react-bootstrap/Button';
+import SortComparisonImage from '../../img/sort-comparison.png';
+import SortComparisonSolidLinesImage from '../../img/sort-comparison-solid-lines.png';
 import BannerImage from '../../img/banner.png';
-import { navigate, useTitle } from 'hookrouter';
 
 interface IProps { }
 
@@ -19,23 +21,18 @@ const Home: React.FunctionComponent<IProps> = (props: IProps) => {
                 <p className="lead col-md-7 mt-2 mx-auto">Easily create emotionally gradiented Spotify playlists for smoother emotional transitions in your listening</p>
             </Container>
         </section>
+        
         <section>
-            <Container>
+            <Container style={{ textAlign: 'center', marginBottom: 40 }}>
                 <h2>Sort Your Playlist</h2>
-                <p>Using features calculated by Spotify for each song, sort your playlist on an emotional gradient.</p>
-                <p>You can also change what your songs are sorted by and how to explore different sorting methods for your playlists.</p>
-                <Button onClick={goToSort}>Sort My Playlist &rarr;</Button>
+                <img src={SortComparisonImage} alt="Emotionify Sort Comparison" style={{ maxWidth: '100%', width: 900 }} />
+                <div style={{ maxWidth: 800, margin: '30px auto' }}>
+                    <p className="lead">Using features calculated by Spotify for each song, sort your playlist on an emotional gradient.</p>
+                    <p className="lead">You can also change how and what your songs are sorted by to explore different methods of sorting playlists and discover new ways to listen to your playlists.</p>
+                </div>
+                <Button variant="outline-dark" onClick={goToSort}>Sort My Playlist &rarr;</Button>
             </Container>
         </section>
-
-        {/* Testing */}
-        {/* <section>
-            <Container>
-                <h2 className="text-center">Testing</h2>
-                <Link to="/spotify-authorization"><Button>/spotify-authorization</Button></Link>
-                <Button onClick={() => {localStorage.clear(); window.location.reload(true);}}>Clean and refresh</Button>
-            </Container>
-        </section> */}
     </>
 }
 
