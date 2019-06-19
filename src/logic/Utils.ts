@@ -33,9 +33,26 @@ export function arrayToObject<T>(array: T[], keyField: keyof T): {[key: string]:
     }, {});
 }
 
+// Convert milliseconds to a formatted minutes and seconds string
 export function millisecondsToMinSecString(milliseconds: number): string {
     let total_seconds = milliseconds / 1000;
     let minutes = Math.floor(total_seconds / 60);
     let seconds = Math.round(total_seconds - minutes * 60);
     return minutes + ':' + ('0' + seconds).substr(('0' + seconds).length - 2); // Zero padding on the seconds
+}
+
+// Get an object representing the current state of the URL hash (modified from https://stackoverflow.com/a/2880929 + https://stackoverflow.com/a/4198132)
+export function getHashParameters(): {[key: string]: string} {
+    let hashParams: {[key: string]: string} = {};
+    let plus = /\+/g; // Regex for replacing addition symbol with a space
+    let search = /([^&;=]+)=?([^&;]*)/g;
+    const decode = (s: string) => decodeURIComponent(s.replace(plus, " "));
+    let hash = window.location.hash.substring(1);
+
+    let match;
+    while (match = search.exec(hash)) {
+        hashParams[decode(match[1])] = decode(match[2]);
+    }
+
+    return hashParams;
 }
