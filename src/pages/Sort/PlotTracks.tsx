@@ -81,7 +81,7 @@ const PlotTracks: React.FunctionComponent<IProps> = (props: IProps) => {
         data={[{
             y: points.map(p => p.y),
             x: points.map(p => p.x),
-            text: points.map(p => p.track.title + ' by ' + p.track.artist + '<br>' + props.selected_x_axis_name + ': ' + p.x + '<br>' + props.selected_y_axis_name + ': ' + p.y),
+            text: points.map(p => 'Title: ' + p.track.title + '<br>Artist: ' + p.track.artist + '<br>' + props.selected_x_axis_name + ': ' + p.x + '<br>' + props.selected_y_axis_name + ': ' + p.y),
             hoverinfo: "text",
             mode: "lines+markers",
             marker: {
