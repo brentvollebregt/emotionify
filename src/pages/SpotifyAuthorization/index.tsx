@@ -3,7 +3,7 @@ import { navigate } from 'hookrouter';
 import Container from 'react-bootstrap/Container';
 import Spinner from 'react-bootstrap/Spinner';
 import settings from '../../settings.json';
-import { encodeData, randomString, getHashParameters } from '../../logic/Utils';
+import { encodeData, randomString } from '../../logic/Utils';
 import { Token } from '../../models/Spotify';
 
 // Based off https://developer.spotify.com/documentation/general/guides/authorization-guide/#implicit-grant-flow
@@ -58,10 +58,10 @@ const SpotifyAuthorization: React.FunctionComponent<IProps> = (props: IProps) =>
         </>;
 
     } else { // We have recieved the token, read it from the URL
-        const hashParams = getHashParameters();
-        const access_token = hashParams['access_token'];
-        const expires_in = hashParams['expires_in'];
-        const state = hashParams['state'];
+        const params = new URLSearchParams(hash.substr(1));
+        const access_token = params.get('access_token');
+        const expires_in = params.get('expires_in');
+        const state = params.get('state');
 
         if (access_token !== null && expires_in !== null && state !== null) { // All parameters are present
             const stored_random_state = localStorage.getItem(localStorageStateKey);
