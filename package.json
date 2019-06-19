@@ -1,6 +1,7 @@
 {
   "name": "emotionify-app",
   "version": "0.1.0",
+  "homepage": "https://emotionify.nitratine.net/",
   "private": true,
   "dependencies": {
     "@types/hookrouter": "^2.2.1",
