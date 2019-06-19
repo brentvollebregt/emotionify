@@ -28,6 +28,7 @@ const Navigation: React.FunctionComponent<IProps> = (props: IProps) => {
           height="30"
           className="d-inline-block align-top"
           alt="Emotionify Banner Logo"
+          style={{ cursor: 'pointer' }}
         />
       </Navbar.Brand>
       <Navbar.Toggle aria-controls="responsive-navbar-nav" />
