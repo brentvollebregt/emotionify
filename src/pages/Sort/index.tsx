@@ -40,7 +40,9 @@ export const Sort: React.FunctionComponent<IProps> = (props: IProps) => {
 
     const onPlaylistSelected = (playlist_id: string) => {
         setSelectedPlaylist(playlist_id);
-        refreshPlaylist(playlists[playlist_id]);
+        if (playlists[playlist_id].track_ids.length === 0) {
+            refreshPlaylist(playlists[playlist_id]);
+        }
     }
     const onXAxisSelect = (selection: string) => setSelectedAxis({ ...selectedAxis, x: selection });
     const onYAxisSelect = (selection: string) => setSelectedAxis({ ...selectedAxis, y: selection });
