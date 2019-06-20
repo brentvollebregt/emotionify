@@ -69,8 +69,9 @@ export const Sort: React.FunctionComponent<IProps> = (props: IProps) => {
         }
     }, [selectedPlaylist, selectedAxis, sortingMethod, playlists, tracks]);
 
-    const sorted_tracks: TrackWithAudioFeatures[] = sortedTrackIds.map(t => tracks[t.id]);
-    const sorted_tracks_with_indexes: SpotifyTrackWithIndexes[] = sortedTrackIds.map(it => { return { ...tracks[it.id], ...it } });
+    const sortedTrackIdsThatExist = sortedTrackIds.filter(t => tracks[t.id] !== undefined); // Need to check if the tracks currently exist (some of these track id's don't match to tracks when selecting different playlists quickly)
+    const sorted_tracks: TrackWithAudioFeatures[] = sortedTrackIdsThatExist.map(t => tracks[t.id]);
+    const sorted_tracks_with_indexes: SpotifyTrackWithIndexes[] = sortedTrackIdsThatExist.map(it => { return { ...tracks[it.id], ...it } });
 
     const onExport = (name: string, isPublic: boolean): Promise<boolean> => {
         return new Promise(async (resolve, reject) => {
