@@ -36,6 +36,7 @@ export const App: React.FunctionComponent<IProps> = (props: IProps) => {
     const [token, setToken] = useState<Token | undefined>(undefined);
     const [spotifyData, setSpotifyData] = useState<SpotifyData>(emptySpotifyData);
     const [storedDataDialogOpen, setStoredDataDialogOpen] = useState(false);
+    const [playlistsLoading, setPlaylistsLoading] = useState<Set<string>>(new Set());
 
     const onTokenChange = (newToken: Token | undefined) => setToken(newToken);
     const onLogOut = () => onTokenChange(undefined);
@@ -56,7 +57,8 @@ export const App: React.FunctionComponent<IProps> = (props: IProps) => {
     }
 
     const refreshPlaylist = (playlist: SpotifyApi.PlaylistObjectSimplified) => {
-        if (token !== undefined) {
+        if (token !== undefined && !playlistsLoading.has(playlist.id) ) {
+            setPlaylistsLoading(new Set([ ...Array.from(playlistsLoading), playlist.id ]));
             getAllTracksInPlaylist(token, playlist)
                 .then(tracks => {
                     let new_tracks = tracks.filter(t => !(t.id in spotifyData.tracks));
@@ -69,7 +71,8 @@ export const App: React.FunctionComponent<IProps> = (props: IProps) => {
                         }
                     });
                 })
-                .catch(err => console.error(err));
+                .catch(err => console.error(err))
+                .finally(() => setPlaylistsLoading(new Set([ ...Array.from(playlistsLoading).filter(p => p !== playlist.id) ])));
         }
     }
 
