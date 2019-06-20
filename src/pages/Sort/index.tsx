@@ -19,6 +19,7 @@ interface IProps {
     user: SpotifyApi.UserObjectPrivate | undefined,
     playlists: { [key: string]: PlaylistObjectSimplifiedWithTrackIds },
     tracks: { [key: string]: TrackWithAudioFeatures },
+    playlistsLoading: Set<string>,
     refreshPlaylist: (playlist: SpotifyApi.PlaylistObjectSimplified) => void,
     refreshUsersPlaylists: () => void
 }
@@ -29,7 +30,7 @@ interface selectedAxis {
 }
 
 export const Sort: React.FunctionComponent<IProps> = (props: IProps) => {
-    const { token, user, playlists, tracks } = props;
+    const { token, user, playlists, tracks, playlistsLoading } = props;
     const { refreshPlaylist, refreshUsersPlaylists } = props;
 
     useTitle('Emotionify - Sort');
@@ -123,7 +124,10 @@ export const Sort: React.FunctionComponent<IProps> = (props: IProps) => {
 
             {selectedPlaylist !== undefined && selectedPlaylist in playlists && <>
                 <div className="mb-4">
-                    <PlaylistDetails playlist={playlists[selectedPlaylist]} />
+                    <PlaylistDetails 
+                        playlist={playlists[selectedPlaylist]}
+                        tracksLoading={playlistsLoading.has(selectedPlaylist)}
+                    />
                 </div>
 
                 <div className="mb-4">

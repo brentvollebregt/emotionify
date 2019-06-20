@@ -1,13 +1,15 @@
 import React from 'react';
 import Badge from 'react-bootstrap/Badge';
+import Spinner from 'react-bootstrap/Spinner';
 import { PlaylistObjectSimplifiedWithTrackIds } from '../../models/Spotify';
 
 interface IProps {
-    playlist: PlaylistObjectSimplifiedWithTrackIds
+    playlist: PlaylistObjectSimplifiedWithTrackIds,
+    tracksLoading: boolean
 }
 
 const PlaylistDetails: React.FunctionComponent<IProps> = (props: IProps) => {
-    const { playlist } = props;
+    const { playlist, tracksLoading } = props;
     return <>
         <h3 className="mt-4 mb-0">{playlist.name}</h3>
         <div>
@@ -16,6 +18,9 @@ const PlaylistDetails: React.FunctionComponent<IProps> = (props: IProps) => {
             <a href={playlist.external_urls.spotify} className="ml-1"><Badge variant="success">Spotify</Badge></a>
             <Badge variant="danger" className="ml-1">{playlist.public ? 'Public' : 'Private'}</Badge>
         </div>
+        {tracksLoading && <div className="text-center mt-3">
+            <Spinner animation="border" />
+        </div>}
     </>
 }
 
