@@ -1,7 +1,9 @@
-import React from 'react';
+import React, { useState } from 'react';
 import Table from 'react-bootstrap/Table';
-import { millisecondsToMinSecString } from '../../logic/Utils';
+import Accordion from 'react-bootstrap/Accordion';
+import Card from 'react-bootstrap/Card';
 import { SpotifyTrackWithIndexes } from '../../logic/PointSorting';
+import { randomString } from '../../logic/Utils';
 
 interface IProps {
     tracks: SpotifyTrackWithIndexes[], // These are sorted using the current method when they come in
@@ -18,35 +20,46 @@ const header_cell_style: React.CSSProperties = {
     borderTop: 0
 }
 
+const expandedDefault = false;
+
 const TrackTable: React.FunctionComponent<IProps> = (props: IProps) => {
-    return <div style={{maxHeight: 400, overflowY: 'auto', borderTop: '1px solid #dee2e6'}}>
-        <Table bordered striped size="sm" style={{borderTop: 0}}>
-            <thead>
-                <tr>
-                    <th style={header_cell_style}>Moved</th>
-                    <th style={header_cell_style}>Title</th>
-                    <th style={header_cell_style} className="d-none d-md-table-cell">Artists</th>
-                    <th style={header_cell_style} className="d-none d-lg-table-cell">Length</th>
-                    <th style={header_cell_style}>{props.x_audio_feature_name}</th>
-                    <th style={header_cell_style}>{props.y_audio_feature_name}</th>
-                </tr>
-            </thead>
-            <tbody>
-                {props.tracks.map(
-                    track => (<tr key={track.id}>
-                        <td style={track.index.after - track.index.before === 0 ? {color: 'black'} : track.index.after - track.index.before < 0 ? {color: 'green'} : {color: 'red'}}>
-                            {track.index.before - track.index.after}
-                        </td>
-                        <td>{track.name}</td>
-                        <td className="d-none d-md-table-cell">{track.artists.map(a => a.name).join(', ')}</td>
-                        <td className="d-none d-lg-table-cell">{millisecondsToMinSecString(track.duration_ms)}</td>
-                        <td>{track.audio_features !== undefined && track.audio_features[(props.x_audio_feature as keyof SpotifyApi.AudioFeaturesObject)]}</td>
-                        <td>{track.audio_features !== undefined && track.audio_features[(props.y_audio_feature as keyof SpotifyApi.AudioFeaturesObject)]}</td>
-                    </tr>)
-                )}
-            </tbody>
-        </Table>
-    </div>
+    const {tracks, x_audio_feature, x_audio_feature_name, y_audio_feature, y_audio_feature_name} = props;
+
+    const [randomEventKey, setRandomEventKey] = useState(randomString(16));
+    const [expanded, setExpanded] = useState(expandedDefault);
+    const toggleExpansion = () => setExpanded(!expanded);
+
+    return <Accordion defaultActiveKey={expandedDefault ? randomEventKey : undefined} style={{ maxWidth: 900, margin: 'auto' }}>
+        <Card>
+            <Accordion.Toggle as={Card.Header} eventKey={randomEventKey} onClick={toggleExpansion}>{expanded ? 'Songs in Playlist (click to collapse)' : 'Songs in Playlist (click to expand)'}</Accordion.Toggle>
+            <Accordion.Collapse eventKey={randomEventKey}>
+                <Card.Body className="p-0" style={{ maxHeight: 400, overflowY: 'auto', borderTop: '1px solid #dee2e6' }}>
+                    <Table bordered striped size="sm" style={{borderTop: 0}}>
+                        <thead>
+                            <tr>
+                                <th style={header_cell_style}>Moved</th>
+                                <th style={header_cell_style}>Title</th>
+                                <th style={header_cell_style} className="d-none d-md-table-cell">Artists</th>
+                                <th style={header_cell_style}>{x_audio_feature_name}</th>
+                                <th style={header_cell_style}>{y_audio_feature_name}</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {tracks.map(track => <tr key={track.id}>
+                                <td style={track.index.after - track.index.before === 0 ? {color: 'black'} : track.index.after - track.index.before < 0 ? {color: 'green'} : {color: 'red'}}>
+                                    {track.index.before - track.index.after}
+                                </td>
+                                <td>{track.name}</td>
+                                <td className="d-none d-md-table-cell">{track.artists.map(a => a.name).join(', ')}</td>
+                                <td>{track.audio_features !== undefined && track.audio_features[(x_audio_feature as keyof SpotifyApi.AudioFeaturesObject)]}</td>
+                                <td>{track.audio_features !== undefined && track.audio_features[(y_audio_feature as keyof SpotifyApi.AudioFeaturesObject)]}</td>
+                            </tr>)}
+                        </tbody>
+                    </Table>
+                </Card.Body>
+            </Accordion.Collapse>
+        </Card>
+    </Accordion>
 }
 
 export default TrackTable;

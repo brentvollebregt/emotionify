@@ -32,11 +32,3 @@ export function arrayToObject<T>(array: T[], keyField: keyof T): {[key: string]:
         return obj;
     }, {});
 }
-
-// Convert milliseconds to a formatted minutes and seconds string
-export function millisecondsToMinSecString(milliseconds: number): string {
-    let total_seconds = milliseconds / 1000;
-    let minutes = Math.floor(total_seconds / 60);
-    let seconds = Math.round(total_seconds - minutes * 60);
-    return minutes + ':' + ('0' + seconds).substr(('0' + seconds).length - 2); // Zero padding on the seconds
-}

@@ -11,7 +11,6 @@ import PlaylistDetails from './PlaylistDetails';
 import PlotTracks from './PlotTracks';
 import TrackTable from './TrackTable';
 import TrackSortControl from './TrackSortControl';
-import AccordionDynamicHeader from './AccordionDynamicHeader';
 import Export from './Export';
 import SpotifyLoginStatusButton from '../../components/SpotifyLoginStatusButton';
 
@@ -150,19 +149,13 @@ export const Sort: React.FunctionComponent<IProps> = (props: IProps) => {
                 }
 
                 <div className="mb-5">
-                    <AccordionDynamicHeader
-                        contractedHeader={'Songs in Playlist (click to expand)'}
-                        expandedHeader={'Songs in Playlist (click to collapse)'}
-                        initiallyExpanded={false}
-                    >
-                        <TrackTable 
-                            tracks={sorted_tracks_with_indexes}
-                            x_audio_feature={availableTrackAudioFeatures[selectedAxis.x]}
-                            x_audio_feature_name={selectedAxis.x}
-                            y_audio_feature={availableTrackAudioFeatures[selectedAxis.y]}
-                            y_audio_feature_name={selectedAxis.y}
-                        />
-                    </AccordionDynamicHeader>
+                    <TrackTable 
+                        tracks={sorted_tracks_with_indexes}
+                        x_audio_feature={availableTrackAudioFeatures[selectedAxis.x]}
+                        x_audio_feature_name={selectedAxis.x}
+                        y_audio_feature={availableTrackAudioFeatures[selectedAxis.y]}
+                        y_audio_feature_name={selectedAxis.y}
+                    />
                 </div>
 
                 <div className="mb-5">
