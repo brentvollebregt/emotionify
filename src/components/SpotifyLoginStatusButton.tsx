@@ -13,7 +13,6 @@ const SpotifyLoginStatusButton: React.FunctionComponent<IProps> = (props: IProps
     const { user, onLoggedInClick } = props;
 
     const path = usePath();
-    console.log(path);
 
     const loggedInStatusButtonClick = () => {
         if (user === undefined) {

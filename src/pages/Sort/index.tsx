@@ -110,7 +110,11 @@ export const Sort: React.FunctionComponent<IProps> = (props: IProps) => {
         {header}
         <Container className="text-center mb-5">
 
-            {playlists && <PlaylistSelectionTable playlists={Object.values(playlists)} onPlaylistSelected={onPlaylistSelected} />}
+            {playlists && <PlaylistSelectionTable 
+                playlists={Object.values(playlists)}
+                selectedPlaylist={selectedPlaylist}
+                onPlaylistSelected={onPlaylistSelected} 
+            />}
 
             <hr />
 
