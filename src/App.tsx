@@ -10,6 +10,7 @@ import Home from './pages/Home';
 import About from './pages/About';
 import Sort from './pages/Sort';
 import NotFound from './pages/NotFound';
+import useNavigatorOnline from './hooks/NavigatorOnline';
 import { Token, SpotifyData, PlaylistObjectSimplifiedWithTrackIds, TrackWithAudioFeatures } from './models/Spotify';
 import { getAllSpotifyUsersPlaylists, getAllTracksInPlaylist, getAudioFeaturesForTracks } from './logic/Spotify';
 import { arrayToObject } from './logic/Utils';
@@ -38,6 +39,7 @@ export const App: React.FunctionComponent<IProps> = (props: IProps) => {
     const [spotifyData, setSpotifyData] = useState<SpotifyData>(emptySpotifyData);
     const [storedDataDialogOpen, setStoredDataDialogOpen] = useState(false);
     const [playlistsLoading, setPlaylistsLoading] = useState<Set<string>>(new Set());
+    const isOnline = useNavigatorOnline();
 
     const onTokenChange = (newToken: Token | undefined) => setToken(newToken);
     const onLogOut = () => onTokenChange(undefined);
@@ -178,6 +180,15 @@ export const App: React.FunctionComponent<IProps> = (props: IProps) => {
                 ));
         }
     }, [spotifyData.tracks]);
+
+    useEffect(() => { // Display a warning when offline
+        if (!isOnline) {
+            cogoToast.warn(
+                'You are now offline. You will not be able to request data from Spotify unless you are connected to the internet.',
+                { position: "bottom-center", heading: 'Offline', hideAfter: 10, onClick: (hide: any) => hide() }
+            );
+        }
+    }, [isOnline]);
 
     const routes = {
         '/': () => <Home />,
