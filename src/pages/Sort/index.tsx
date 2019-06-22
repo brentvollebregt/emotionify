@@ -95,7 +95,7 @@ export const Sort: React.FunctionComponent<IProps> = (props: IProps) => {
     }
 
     const header = <Container className="mt-3 mb-4">
-        <h1 className="text-center">Playlist Sort</h1>
+        <h1 className="text-center">Playlist Sorting</h1>
         <p className="text-center lead col-md-7 mx-auto">Here you can select a playlist and look at how the new playlist is sorted. You can then create the new playlist or select a different playlist.</p>
     </Container>;
 
@@ -114,15 +114,15 @@ export const Sort: React.FunctionComponent<IProps> = (props: IProps) => {
         {header}
         <Container className="text-center mb-5">
 
-            {playlists && <PlaylistSelectionTable 
+            <PlaylistSelectionTable 
                 playlists={Object.values(playlists)}
                 selectedPlaylist={selectedPlaylist}
                 onPlaylistSelected={onPlaylistSelected} 
-            />}
-
-            <hr />
+            />
 
             {selectedPlaylist !== undefined && selectedPlaylist in playlists && <>
+                <hr />
+                
                 <div className="mb-4">
                     <PlaylistDetails 
                         playlist={playlists[selectedPlaylist]}
