@@ -70,10 +70,12 @@ const PlotTracks: React.FunctionComponent<IProps> = (props: IProps) => {
             let x = (t.audio_features[(selected_x_axis as keyof SpotifyApi.AudioFeaturesObject)] as number);
             let y = (t.audio_features[(selected_y_axis as keyof SpotifyApi.AudioFeaturesObject)] as number);
             return { x: x, y: y, track: track }
-        } else { // Commonly occurs as t.audioFeatures === undefined on first playlist selection
+        } else if (t.audio_features === undefined) { // Commonly occurs as t.audio_features === undefined on first playlist selection
             return { x: 0, y: 0, track: track }
+        } else { // t.audio_features === null when no audio features could be found (ignore these then - we should not plot them)
+            return null;
         }
-    });
+    }).filter((sp): sp is TrackPoint => sp !== null);
 
     let min_x: number = Math.min(...points.map(p => p.x));
     let min_y: number = Math.min(...points.map(p => p.y));

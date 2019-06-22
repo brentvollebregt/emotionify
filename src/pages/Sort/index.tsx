@@ -34,24 +34,26 @@ export const Sort: React.FunctionComponent<IProps> = (props: IProps) => {
     const { refreshPlaylist, refreshUsersPlaylists } = props;
 
     useTitle('Emotionify - Sort');
-    const [selectedPlaylist, setSelectedPlaylist] = useState<string | undefined>(undefined);
+    const [selectedPlaylistIds, setSelectedPlaylistIds] = useState<string[]>([]);
     const [selectedAxis, setSelectedAxis] = useState<selectedAxis>({ x: 'Valence', y: 'Energy' });
     const [sortingMethod, setSortingMethod] = useState<string>('Distance From Origin');
     const [sortedTrackIds, setSortedTrackIds] = useState<IndexedTrackId[]>([]);
 
-    const onPlaylistSelected = (playlist_id: string) => {
-        setSelectedPlaylist(playlist_id);
-        if (playlists[playlist_id].track_ids.length === 0) {
-            refreshPlaylist(playlists[playlist_id]);
-        }
+    const onPlaylistSelectionChange = (playlist_ids: string[]) => {
+        setSelectedPlaylistIds(playlist_ids);
+        playlist_ids.forEach(playlist_id => {
+            if (playlists[playlist_id].track_ids.length === 0) {
+                refreshPlaylist(playlists[playlist_id]);
+            }
+        });
     }
     const onXAxisSelect = (selection: string) => setSelectedAxis({ ...selectedAxis, x: selection });
     const onYAxisSelect = (selection: string) => setSelectedAxis({ ...selectedAxis, y: selection });
     const onSortMethodSelect = (selection: string) => setSortingMethod(selection);
 
     useEffect(() => {
-        if (selectedPlaylist !== undefined && selectedPlaylist in playlists) {
-            const selected_playlist_track_ids: string[] = playlists[selectedPlaylist].track_ids;
+        if (selectedPlaylistIds.length > 0) {
+            const selected_playlist_track_ids: string[] = selectedPlaylistIds.map(pid => pid in playlists ? playlists[pid].track_ids : []).flat();
             const selected_playlist_tracks: TrackWithAudioFeatures[] = Object.values(tracks)
                 .filter(t => selected_playlist_track_ids.indexOf(t.id) !== -1)
                 .sort((a: TrackWithAudioFeatures, b: TrackWithAudioFeatures): number => { // Do a sort to put them in the correct order again (fixes incorrect order due to overlapping playlists)
@@ -68,7 +70,7 @@ export const Sort: React.FunctionComponent<IProps> = (props: IProps) => {
         } else {
             setSortedTrackIds([]);
         }
-    }, [selectedPlaylist, selectedAxis, sortingMethod, playlists, tracks]);
+    }, [selectedPlaylistIds, selectedAxis, sortingMethod, playlists, tracks]);
 
     const sortedTrackIdsThatExist = sortedTrackIds.filter(t => tracks[t.id] !== undefined); // Need to check if the tracks currently exist (some of these track id's don't match to tracks when selecting different playlists quickly)
     const sorted_tracks: TrackWithAudioFeatures[] = sortedTrackIdsThatExist.map(t => tracks[t.id]);
@@ -116,17 +118,17 @@ export const Sort: React.FunctionComponent<IProps> = (props: IProps) => {
 
             <PlaylistSelectionTable 
                 playlists={Object.values(playlists)}
-                selectedPlaylist={selectedPlaylist}
-                onPlaylistSelected={onPlaylistSelected} 
+                selectedPlaylistIds={selectedPlaylistIds}
+                onPlaylistSelectionChange={onPlaylistSelectionChange} 
             />
 
-            {selectedPlaylist !== undefined && selectedPlaylist in playlists && <>
+            {selectedPlaylistIds.length > 0 && <>
                 <hr />
-                
+
                 <div className="mb-4">
                     <PlaylistDetails 
-                        playlist={playlists[selectedPlaylist]}
-                        tracksLoading={playlistsLoading.has(selectedPlaylist)}
+                        playlists={selectedPlaylistIds.map(pid => pid in playlists ? playlists[pid] : null).filter((p: PlaylistObjectSimplifiedWithTrackIds | null): p is PlaylistObjectSimplifiedWithTrackIds => p !== null)}
+                        tracksLoading={selectedPlaylistIds.map(pid => playlistsLoading.has(pid)).reduce((a, b) => a || b)}
                     />
                 </div>
 
@@ -153,7 +155,7 @@ export const Sort: React.FunctionComponent<IProps> = (props: IProps) => {
                     />
                 </div>
 
-                {playlists[selectedPlaylist].track_ids.length > 0 && playlists[selectedPlaylist].tracks.total !== sortedTrackIds.length && 
+                {selectedPlaylistIds.map(pid => pid in playlists ? playlists[pid].track_ids.length : 0).reduce((a, b) => a + b) > 0 && selectedPlaylistIds.map(pid => pid in playlists ? playlists[pid].tracks.total : 0).reduce((a, b) => a + b) !== sortedTrackIds.length && 
                     <Alert variant="warning" style={{display: 'inline-block'}}>
                         Warning: Duplicate songs will be removed in the new playlist
                     </Alert>

@@ -110,12 +110,10 @@ export function sort(tracks: TrackWithAudioFeatures[], x_audio_feature: string, 
             let x = (t.audio_features[(x_audio_feature as keyof SpotifyApi.AudioFeaturesObject)] as number); // We know better than the compiler
             let y = (t.audio_features[(y_audio_feature as keyof SpotifyApi.AudioFeaturesObject)] as number);
             return { id: t.id, x: x, y: y }
-        } else if (t.audio_features === undefined) { // Commonly occurs as t.audio_features === undefined on first playlist selection
+        } else { // Commonly occurs as t.audioFeatures === undefined on first playlist selection
             return { id: t.id, x: 0, y: 0 }
-        } else { // t.audio_features === null when no audio features could be found (ignore these then - we should not plot them)
-            return null;
         }
-    }).filter((sp): sp is SortablePoint => sp !== null);
+    });
 
     // Sort the sortable points
     let tracks_as_sp_sorted: SortablePoint[] = sorting_method(tracks_as_sp);
