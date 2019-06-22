@@ -1,11 +1,12 @@
 import React, { useState } from 'react';
-import InputGroup from 'react-bootstrap/InputGroup'
-import FormControl from 'react-bootstrap/FormControl'
-import Button from 'react-bootstrap/Button'
-import DropdownButton from 'react-bootstrap/DropdownButton'
-import Dropdown from 'react-bootstrap/Dropdown'
-import { BsPrefixProps, ReplaceProps } from 'react-bootstrap/helpers'
-import { FormControlProps } from 'react-bootstrap/FormControl'
+import cogoToast from 'cogo-toast';
+import InputGroup from 'react-bootstrap/InputGroup';
+import FormControl from 'react-bootstrap/FormControl';
+import Button from 'react-bootstrap/Button';
+import DropdownButton from 'react-bootstrap/DropdownButton';
+import Dropdown from 'react-bootstrap/Dropdown';
+import { BsPrefixProps, ReplaceProps } from 'react-bootstrap/helpers';
+import { FormControlProps } from 'react-bootstrap/FormControl';
 
 interface IProps {
     onExport: (name: string, makePublic: boolean) => Promise<boolean>
@@ -17,12 +18,11 @@ export const Export: React.FunctionComponent<IProps> = (props: IProps) => {
     const [name, setName] = useState('');
     const [makePublic, setMakePublic] = useState(false);
     const [nameInvalid, setNameInvalid] = useState(false);
-    const [complete, setComplete] = useState(false);
 
     const onNameChange = (e: React.FormEvent<ReplaceProps<"input", BsPrefixProps<"input"> & FormControlProps>>) => {
-        if (e.currentTarget.value !== undefined && !complete) { // No entry in the time the form is green
+        if (e.currentTarget.value !== undefined) {
             setName(e.currentTarget.value);
-            setNameInvalid(e.currentTarget.value === '' );
+            setNameInvalid(e.currentTarget.value === '');
         }
     }
 
@@ -35,13 +35,16 @@ export const Export: React.FunctionComponent<IProps> = (props: IProps) => {
             onExport(name, makePublic)
                 .then(success => {
                     if (success) {
-                        setComplete(true);
-                        setTimeout(() => {
-                            setComplete(false);
-                            setName('');
-                        }, 2500);
+                        setName('');
+                        cogoToast.success(
+                            'Playlist has been created. You can go to Spotify to see your new playlist.',
+                            { position: "bottom-center", heading: 'Playlist Created', hideAfter: 10, onClick: (hide: any) => hide() }
+                        );
                     } else {
-                        alert('Failed to create playlist.\nPlease make sure you have an internet connection.');
+                        cogoToast.error(
+                            'Failed to create playlist. Make sure you are connected to the internet and that your token is valid.',
+                            { position: "bottom-center", heading: 'Failed To Create Playlist', hideAfter: 10, onClick: (hide: any) => hide() }
+                        );
                     }
                 });
         }
@@ -60,11 +63,10 @@ export const Export: React.FunctionComponent<IProps> = (props: IProps) => {
                 value={name}
                 onChange={onNameChange}
                 isInvalid={nameInvalid}
-                isValid={complete}
             />
             <DropdownButton
                 as={InputGroup.Append}
-                variant={complete ? 'outline-success' : 'outline-secondary'}
+                variant={'outline-secondary'}
                 title={makePublic ? 'Public' : 'Private'}
                 id="make-private"
             >
@@ -72,7 +74,7 @@ export const Export: React.FunctionComponent<IProps> = (props: IProps) => {
                 <Dropdown.Item onClick={onMakePublicSelect(true)}>Public</Dropdown.Item>
             </DropdownButton>
             <InputGroup.Append>
-                <Button variant={complete ? 'outline-success' : 'outline-secondary'} onClick={onCreate}>Create</Button>
+                <Button variant={'outline-secondary'} onClick={onCreate}>Create</Button>
             </InputGroup.Append>
         </InputGroup>
 
@@ -87,13 +89,12 @@ export const Export: React.FunctionComponent<IProps> = (props: IProps) => {
                 value={name}
                 onChange={onNameChange}
                 isInvalid={nameInvalid}
-                isValid={complete}
             />
         </InputGroup>
         <InputGroup className="mb-3 d-inline-flex d-sm-none" style={{ maxWidth: 500, justifyContent: 'center' }}>
             <DropdownButton
                 as={InputGroup.Prepend}
-                variant={complete ? 'outline-success' : 'outline-secondary'}
+                variant={'outline-secondary'}
                 title={makePublic ? 'Public' : 'Private'}
                 id="make-private"
             >
@@ -101,7 +102,7 @@ export const Export: React.FunctionComponent<IProps> = (props: IProps) => {
                 <Dropdown.Item onClick={onMakePublicSelect(true)}>Public</Dropdown.Item>
             </DropdownButton>
             <InputGroup.Append>
-                <Button variant={complete ? 'outline-success' : 'outline-secondary'} onClick={onCreate}>Create</Button>
+                <Button variant={'outline-secondary'} onClick={onCreate}>Create</Button>
             </InputGroup.Append>
         </InputGroup>
     </>

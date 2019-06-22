@@ -21,7 +21,7 @@ interface IProps {
     tracks: { [key: string]: TrackWithAudioFeatures },
     playlistsLoading: Set<string>,
     refreshPlaylist: (playlist: SpotifyApi.PlaylistObjectSimplified) => void,
-    refreshUsersPlaylists: () => void
+    refreshUsersPlaylists: (hard: boolean) => void
 }
 
 interface selectedAxis {
@@ -84,7 +84,7 @@ export const Sort: React.FunctionComponent<IProps> = (props: IProps) => {
                 // Create the playlist
                 let success: boolean = await createPlaylist(token.value, user, name, isPublic, track_uris)
                     .then(playlist => {
-                        refreshUsersPlaylists(); // Get the new playlist by updating the playlist list
+                        refreshUsersPlaylists(false); // Get the new playlist by refreshing the playlist list (keep current track ids to not loose plot data)
                         return true;
                     }, err => {
                         console.error(err);

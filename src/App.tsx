@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useRoutes } from 'hookrouter';
 import SpotifyWebApi from 'spotify-web-api-js';
+import cogoToast from 'cogo-toast';
 import Navigation from './components/Navigation';
 import TokenRefreshWarning from './components/TokenRefreshWarning';
 import StoredDataDialog from './components/StoredDataDialog';
@@ -43,16 +44,20 @@ export const App: React.FunctionComponent<IProps> = (props: IProps) => {
     const openStoredDataDialog = () => setStoredDataDialogOpen(true);
     const closeStoredDataDialog = () => setStoredDataDialogOpen(false);
 
-    const refreshUsersPlaylists = () => {
+    const refreshUsersPlaylists = (hard: boolean = true) => {
         if (token !== undefined && spotifyData.user !== undefined) {
             getAllSpotifyUsersPlaylists(token, spotifyData.user)
                 .then(playlists => {
+                    // Remove all requested playlist track ids if we are refreshing hard
                     setSpotifyData({ 
                         ...spotifyData,
-                        playlists: arrayToObject<PlaylistObjectSimplifiedWithTrackIds>(playlists, "id")
+                        playlists: { ...arrayToObject<PlaylistObjectSimplifiedWithTrackIds>(playlists.map(p => p.id in spotifyData.playlists && !hard ? { ...p, track_ids: spotifyData.playlists[p.id].track_ids } : p), "id") }
                     });
                 })
-                .catch(err => console.error(err));
+                .catch(err => cogoToast.error(
+                    'Could not get your playlists. Make sure you are connected to the internet and that your token is valid.',
+                    { position: "bottom-center", heading: 'Error When Fetching Playlists', hideAfter: 20, onClick: (hide: any) => hide() }
+                ));
         }
     }
 
@@ -71,7 +76,10 @@ export const App: React.FunctionComponent<IProps> = (props: IProps) => {
                         }
                     });
                 })
-                .catch(err => console.error(err))
+                .catch(err => cogoToast.error(
+                    `Could not get songs for the playlist "${playlist.name}". Make sure you are connected to the internet and that your token is valid.`,
+                    { position: "bottom-center", heading: 'Error When Fetching Playlist\'s Songs', hideAfter: 20, onClick: (hide: any) => hide() }
+                ))
                 .finally(() => setPlaylistsLoading(new Set([ ...Array.from(playlistsLoading).filter(p => p !== playlist.id) ])));
         }
     }
@@ -123,7 +131,10 @@ export const App: React.FunctionComponent<IProps> = (props: IProps) => {
                         setSpotifyData({ ...spotifyData, user: user });
                     }
                 })
-                .catch(err => console.error(err));
+                .catch(err => cogoToast.error(
+                    'Could not get your profile. Make sure you are connected to the internet and that your token is valid.',
+                    { position: "bottom-center", heading: 'Error When Fetching Your Profile', hideAfter: 20, onClick: (hide: any) => hide() }
+                ));
         }
     }, [token]);
 
@@ -161,7 +172,10 @@ export const App: React.FunctionComponent<IProps> = (props: IProps) => {
                         tracks: { ...spotifyData.tracks, ...arrayToObject<TrackWithAudioFeatures>(tracks_with_new_audio_features, "id") }
                     });
                 })
-                .catch(err => console.error(err));
+                .catch(err => cogoToast.error(
+                    'Could not get audio features for some songs. Make sure you are connected to the internet and that your token is valid.',
+                    { position: "bottom-center", heading: 'Error When Fetching Song Audio Features', hideAfter: 20, onClick: (hide: any) => hide() }
+                ));
         }
     }, [spotifyData.tracks]);
 
