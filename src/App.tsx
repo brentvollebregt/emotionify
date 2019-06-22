@@ -142,8 +142,19 @@ export const App: React.FunctionComponent<IProps> = (props: IProps) => {
 
         if (token !== undefined && track_ids_with_no_audio_features.length > 0) {
             getAudioFeaturesForTracks(token, track_ids_with_no_audio_features)
-                .then(audio_features => {
-                    const tracks_with_new_audio_features: TrackWithAudioFeatures[] = audio_features.map(af => { return {...spotifyData.tracks[af.id], audio_features: af} });
+                .then((audio_features: (SpotifyApi.AudioFeaturesObject | null)[]) => { // Some tracks will return null audio features
+                    // Check if any tracks do not have audio features
+                    const audio_features_by_track_id = arrayToObject<SpotifyApi.AudioFeaturesObject>(audio_features.filter((af): af is SpotifyApi.AudioFeaturesObject => af !== null), "id");
+                    const tracks_with_new_audio_features: TrackWithAudioFeatures[] = track_ids_with_no_audio_features.map(tid => ({
+                        ...spotifyData.tracks[tid], 
+                        audio_features: tid in audio_features_by_track_id ? audio_features_by_track_id[tid] : null
+                    }));
+
+                    // Show a warning if there were tracks with no audio features
+                    const null_audio_feature_tracks = tracks_with_new_audio_features.filter(t => t.audio_features === null);
+                    if (null_audio_feature_tracks.length > 0) {
+                        console.warn(`Some audio features are null: ${null_audio_feature_tracks.map(t => t.id).join(', ')}`);
+                    }
 
                     setSpotifyData({
                         ...spotifyData,

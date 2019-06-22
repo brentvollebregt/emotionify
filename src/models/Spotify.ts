@@ -18,7 +18,7 @@ export interface PlaylistObjectSimplifiedWithTrackIds extends SpotifyApi.Playlis
 }
 
 export interface TrackWithAudioFeatures extends SpotifyApi.TrackObjectFull {
-    audio_features: SpotifyApi.AudioFeaturesObject | undefined
+    audio_features: SpotifyApi.AudioFeaturesObject | null | undefined // undefined when none have been requested, null when they don't exist (after requesting)
 }
 
 export const availableTrackAudioFeatures: {[key: string]: string} = {
