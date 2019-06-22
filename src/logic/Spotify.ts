@@ -30,16 +30,18 @@ export function getAllSpotifyUsersPlaylists(token: Token, user: SpotifyApi.UserO
         spotifyApi.setAccessToken(token.value);
 
         let playlists: SpotifyApi.PlaylistObjectSimplified[] = [];
-        let offset = 0;
-        let limit = playlistRequestLimit;
+        const offset = 0;
+        const limit = playlistRequestLimit;
+
+        let rejected = false;
 
         spotifyApi.getUserPlaylists(user.id, { offset, limit })
             .then(async data => {
                 playlists = [...playlists, ...data.items]; // Store data from initial request
 
                 // Calculate requests to be made and chunk them
-                let request_blocks = offsetCalculation(limit, data.total).splice(1); // Ignore the first as we have already made that request
-                let request_blocks_chunked = chunkList(request_blocks, maxRequestsSentAtOnce);
+                const request_blocks = offsetCalculation(limit, data.total).splice(1); // Ignore the first as we have already made that request
+                const request_blocks_chunked = chunkList(request_blocks, maxRequestsSentAtOnce);
 
                 for (let i = 0; i < request_blocks_chunked.length; i++) {
                     // Start all requests in this chunk
@@ -48,8 +50,12 @@ export function getAllSpotifyUsersPlaylists(token: Token, user: SpotifyApi.UserO
                         promises.push( spotifyApi.getUserPlaylists(user.id, request_blocks_chunked[i][j]) );
                     }
                     // Wait for each request and get data
-                    let promise_data = await Promise.all(promises); // TODO: Catch errors
-                    playlists = [...playlists, ...promise_data.map(i => i.items).flat()];
+                    await Promise.all(promises)
+                        .then(new_playlists => { playlists = [...playlists, ...new_playlists.map(i => i.items).flat()]; })
+                        .catch(err => { reject(err); rejected = true; });
+                    if (rejected) {
+                        break
+                    }
                 }
 
                 // Convert to PlaylistObjectSimplifiedWithTrackIds using a blank list
@@ -68,16 +74,18 @@ export function getAllTracksInPlaylist(token: Token, playlist: SpotifyApi.Playli
         spotifyApi.setAccessToken(token.value);
 
         let tracks: SpotifyApi.TrackObjectFull[] = [];
-        let offset = 0;
-        let limit = playlistTrackRequestLimit;
+        const offset = 0;
+        const limit = playlistTrackRequestLimit;
+
+        let rejected = false;
 
         spotifyApi.getPlaylistTracks(playlist.id, { offset, limit })
             .then(async data => {
                 tracks = [...tracks, ...data.items.map(i => i.track)]; // Store data from initial request
 
                 // Calculate requests to be made and chunk them
-                let request_blocks = offsetCalculation(limit, data.total).splice(1); // Ignore the first as we have already made that request
-                let request_blocks_chunked = chunkList(request_blocks, maxRequestsSentAtOnce);
+                const request_blocks = offsetCalculation(limit, data.total).splice(1); // Ignore the first as we have already made that request
+                const request_blocks_chunked = chunkList(request_blocks, maxRequestsSentAtOnce);
 
                 for (let i = 0; i < request_blocks_chunked.length; i++) {
                     // Start all requests in this chunk
@@ -86,8 +94,12 @@ export function getAllTracksInPlaylist(token: Token, playlist: SpotifyApi.Playli
                         promises.push( spotifyApi.getPlaylistTracks(playlist.id, request_blocks_chunked[i][j]) );
                     }
                     // Wait for each request and get data
-                    let promise_data = await Promise.all(promises); // TODO: Catch errors
-                    tracks = [...tracks, ...promise_data.map(i => i.items).flat().map(i => i.track)];
+                    await Promise.all(promises)
+                        .then(new_tracks => { tracks = [...tracks, ...new_tracks.map(i => i.items).flat().map(i => i.track)]; })
+                        .catch(err => { reject(err); rejected = true; });
+                    if (rejected) {
+                        break
+                    }
                 }
 
                 resolve(tracks.map(t => { return { ...t, audio_features: undefined } }));
@@ -101,12 +113,14 @@ export function getAllTracksInPlaylist(token: Token, playlist: SpotifyApi.Playli
 export function getAudioFeaturesForTracks(token: Token, track_ids: string[]): Promise<SpotifyApi.AudioFeaturesObject[]> {
     // Gets all the audio features for a list of tracks. Fast as it makes more than one request a time.
     return new Promise(async (resolve, reject) => {
-        let spotifyApi = new SpotifyWebApi();
+        const spotifyApi = new SpotifyWebApi();
         spotifyApi.setAccessToken(token.value);
 
         let features: SpotifyApi.AudioFeaturesObject[] = [];
-        let track_groups = chunkList(track_ids, trackFeaturesRequestLimit); // Tracks for each request
-        let track_groups_chunked = chunkList(track_groups, maxRequestsSentAtOnce); // Batches of requests
+        const track_groups = chunkList(track_ids, trackFeaturesRequestLimit); // Tracks for each request
+        const track_groups_chunked = chunkList(track_groups, maxRequestsSentAtOnce); // Batches of requests
+
+        let rejected = false;
 
         for (let i = 0; i < track_groups_chunked.length; i++) {
             // Start all requests in this chunk
@@ -115,10 +129,17 @@ export function getAudioFeaturesForTracks(token: Token, track_ids: string[]): Pr
                 promises.push( spotifyApi.getAudioFeaturesForTracks(track_groups_chunked[i][j]) );
             }
             // Wait for each request and get data
-            let promise_data = await Promise.all(promises); // TODO: Catch errors
-            features = [...features, ...promise_data.map(i => i.audio_features).flat()];
+            await Promise.all(promises)
+                .then(new_features => { features = [...features, ...new_features.map(i => i.audio_features).flat()]; })
+                .catch(err => { reject(err); rejected = true; });
+            if (rejected) {
+                break
+            }
         }
 
+        // if (!rejected) {
+
+        // }
         resolve(features);
 
     });
@@ -127,7 +148,7 @@ export function getAudioFeaturesForTracks(token: Token, track_ids: string[]): Pr
 export function createPlaylist(token: string, user: SpotifyApi.UserObjectPrivate, name: string, isPublic: boolean, track_uris: string[]): Promise<PlaylistObjectSimplifiedWithTrackIds> {
     return new Promise((resolve, reject) => {
 
-        let spotifyApi = new SpotifyWebApi();
+        const spotifyApi = new SpotifyWebApi();
         spotifyApi.setAccessToken(token);
         
         return spotifyApi.createPlaylist(user.id, {
@@ -137,7 +158,7 @@ export function createPlaylist(token: string, user: SpotifyApi.UserObjectPrivate
         })
             .then(async playlist => {
                 // Chunk into blocks of 100
-                let chunks: string[][] = chunkList(track_uris, 100);
+                const chunks: string[][] = chunkList(track_uris, 100);
 
                 // Add tracks in order
                 for (let i = 0; i < chunks.length; i++) {
