@@ -6,7 +6,7 @@ import { availableSortingMethods, IndexedTrackId, sort, SpotifyTrackWithIndexes 
 import { createPlaylist } from '../../logic/Spotify';
 import { PlaylistObjectSimplifiedWithTrackIds, availableTrackAudioFeatures, TrackWithAudioFeatures } from '../../models/Spotify';
 import { Token } from '../../models/Spotify'
-import PlaylistSelectionTable from './PlaylistSelectionTable';
+import PlaylistSelectionTable from './PlaylistSelection';
 import PlaylistDetails from './PlaylistDetails';
 import PlotTracks from './PlotTracks';
 import TrackTable from './TrackTable';
@@ -119,6 +119,7 @@ export const Sort: React.FunctionComponent<IProps> = (props: IProps) => {
             <PlaylistSelectionTable 
                 playlists={Object.values(playlists)}
                 selectedPlaylistIds={selectedPlaylistIds}
+                multipleSelectionsAllowed={true}
                 onPlaylistSelectionChange={onPlaylistSelectionChange} 
             />
 

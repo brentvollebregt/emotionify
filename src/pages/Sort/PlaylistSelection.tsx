@@ -11,13 +11,14 @@ import useWindowSize from '../../hooks/WindowSize';
 interface IProps {
     playlists: PlaylistObjectSimplifiedWithTrackIds[],
     selectedPlaylistIds: string[],
+    multipleSelectionsAllowed: boolean,
     onPlaylistSelectionChange: (playlist_ids: string[]) => void
 }
 
 const selectedBackground = 'linear-gradient(to right, rgba(0, 82, 157, 0.3), rgba(235, 18, 27, 0.3))';
 
 const PlaylistSelection: React.FunctionComponent<IProps> = (props: IProps) => {
-    const {playlists, selectedPlaylistIds, onPlaylistSelectionChange} = props;
+    const {playlists, selectedPlaylistIds, multipleSelectionsAllowed, onPlaylistSelectionChange} = props;
 
     const [singlePlaylistSelection, setSinglePlaylistSelection] = useState(true);
     const [search, setSearch] = useState('');
@@ -31,7 +32,7 @@ const PlaylistSelection: React.FunctionComponent<IProps> = (props: IProps) => {
         setSinglePlaylistSelection(value)
     };
     const onComponentPlaylistSelected = (playlist_id: string) => () => {
-        if (singlePlaylistSelection) {
+        if (singlePlaylistSelection || !multipleSelectionsAllowed) {
             onPlaylistSelectionChange([playlist_id]);
         } else {
             if (selectedPlaylistIds.indexOf(playlist_id) === -1) {
@@ -55,7 +56,7 @@ const PlaylistSelection: React.FunctionComponent<IProps> = (props: IProps) => {
                     <InputGroup.Text>{bootstrapBreakpointBiggerThanSm() ? 'Search Playlists': 'Search'}</InputGroup.Text>
                 </InputGroup.Prepend>
                 <FormControl placeholder="Playlist name..." value={search} onChange={onSearchChange} />
-                <DropdownButton
+                {multipleSelectionsAllowed && <DropdownButton
                     as={InputGroup.Append}
                     variant="outline-secondary"
                     title={singlePlaylistSelection ? 'Single' : 'Multiple'}
@@ -64,7 +65,7 @@ const PlaylistSelection: React.FunctionComponent<IProps> = (props: IProps) => {
                 >
                     <Dropdown.Item onClick={singlePlaylistSelectionChange(true)}>Single Playlist Selection</Dropdown.Item>
                     <Dropdown.Item onClick={singlePlaylistSelectionChange(false)}>Multiple Playlist Selection</Dropdown.Item>
-                </DropdownButton>
+                </DropdownButton>}
             </InputGroup>
 
             <div style={{ maxHeight: 450, overflowX: 'auto' }}>
