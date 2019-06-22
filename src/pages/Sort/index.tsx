@@ -132,7 +132,7 @@ export const Sort: React.FunctionComponent<IProps> = (props: IProps) => {
                     />
                 </div>
 
-                <div className="mb-4">
+                <div className="mb-3">
                     <PlotTracks 
                         tracks={sorted_tracks}
                         selected_x_axis={availableTrackAudioFeatures[selectedAxis.x]}

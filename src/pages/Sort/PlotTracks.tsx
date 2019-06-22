@@ -1,5 +1,6 @@
 import React from 'react';
 import Plot from 'react-plotly.js';
+import Alert from 'react-bootstrap/Alert';
 import { TrackWithAudioFeatures } from '../../models/Spotify';
 
 interface IProps {
@@ -55,7 +56,9 @@ function getPointAlongColourGradient(start_hex_colour: string, end_hex_colour: s
 }
 
 const PlotTracks: React.FunctionComponent<IProps> = (props: IProps) => {
-    const points: TrackPoint[] = props.tracks.map(t => {
+    const { tracks, selected_x_axis, selected_y_axis, selected_x_axis_name, selected_y_axis_name } = props;
+
+    const points: TrackPoint[] = tracks.map(t => {
         let track = {
             id: t.id,
             title: t.name,
@@ -63,51 +66,57 @@ const PlotTracks: React.FunctionComponent<IProps> = (props: IProps) => {
             length: t.duration_ms
         }
 
-        if (t.audio_features !== undefined) {
-            let x = (t.audio_features[(props.selected_x_axis as keyof SpotifyApi.AudioFeaturesObject)] as number);
-            let y = (t.audio_features[(props.selected_y_axis as keyof SpotifyApi.AudioFeaturesObject)] as number);
+        if (t.audio_features !== undefined && t.audio_features !== null) {
+            let x = (t.audio_features[(selected_x_axis as keyof SpotifyApi.AudioFeaturesObject)] as number);
+            let y = (t.audio_features[(selected_y_axis as keyof SpotifyApi.AudioFeaturesObject)] as number);
             return { x: x, y: y, track: track }
         } else { // Commonly occurs as t.audioFeatures === undefined on first playlist selection
             return { x: 0, y: 0, track: track }
         }
     });
-    
+
     let min_x: number = Math.min(...points.map(p => p.x));
     let min_y: number = Math.min(...points.map(p => p.y));
     let max_x: number = Math.max(...points.map(p => p.x));
     let max_y: number = Math.max(...points.map(p => p.y));
 
-    return <Plot
-        data={[{
-            y: points.map(p => p.y),
-            x: points.map(p => p.x),
-            text: points.map(p => 'Title: ' + p.track.title + '<br>Artist: ' + p.track.artist + '<br>' + props.selected_x_axis_name + ': ' + p.x + '<br>' + props.selected_y_axis_name + ': ' + p.y),
-            hoverinfo: "text",
-            mode: "lines+markers",
-            marker: {
-                size: 10,
-                color: points.map(p => {
-                    let distanceAlongGradient = getDistancePercentageAlongLineTheOfClosestPointOnLineToAnArbitaryPoint({x: min_x, y: min_y}, {x: max_x, y: max_y}, {x: p.x, y: p.y});
-                    return '#' + getPointAlongColourGradient('00529d', 'eb121b', distanceAlongGradient);
-                })
-            },
-            line: {
-                color: 'rgba(44, 48, 51, 0.5)',
-                width: 1
-            }
-        }]}
-        layout={{ hovermode: "closest", margin: {t: 0, b: 0, l: 0, r: 0}, plot_bgcolor: 'transparent', paper_bgcolor: 'transparent' }}
-        useResizeHandler={true}
-        style={{ 
-            width: "100%",
-            maxWidth: 700,
-            height: 450,
-            margin: 'auto',
-            border: '2px solid #6c757d',
-            overflow: 'hidden',
-            borderRadius: 10
-        }}
-    />
+    return <>
+        <Plot
+            data={[{
+                y: points.map(p => p.y),
+                x: points.map(p => p.x),
+                text: points.map(p => 'Title: ' + p.track.title + '<br>Artist: ' + p.track.artist + '<br>' + selected_x_axis_name + ': ' + p.x + '<br>' + selected_y_axis_name + ': ' + p.y),
+                hoverinfo: "text",
+                mode: "lines+markers",
+                marker: {
+                    size: 10,
+                    color: points.map(p => {
+                        let distanceAlongGradient = getDistancePercentageAlongLineTheOfClosestPointOnLineToAnArbitaryPoint({x: min_x, y: min_y}, {x: max_x, y: max_y}, {x: p.x, y: p.y});
+                        return '#' + getPointAlongColourGradient('00529d', 'eb121b', distanceAlongGradient);
+                    })
+                },
+                line: {
+                    color: 'rgba(44, 48, 51, 0.5)',
+                    width: 1
+                }
+            }]}
+            layout={{ hovermode: "closest", margin: {t: 0, b: 0, l: 0, r: 0}, plot_bgcolor: 'transparent', paper_bgcolor: 'transparent' }}
+            useResizeHandler={true}
+            style={{ 
+                width: "100%",
+                maxWidth: 700,
+                height: 450,
+                margin: 'auto',
+                border: '2px solid #6c757d',
+                overflow: 'hidden',
+                borderRadius: 10
+            }}
+        />
+        {tracks.filter(a => a.audio_features === null).length > 0 && <Alert variant="warning" className="mt-2 d-inline-block">
+            Warning: Some songs are missing audio features.
+            <br />Look in the table below to identify these songs (they will have no values beside them).
+        </Alert>}
+    </>
 }
 
 export default PlotTracks;
