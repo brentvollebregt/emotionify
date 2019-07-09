@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useRoutes } from 'hookrouter';
+import { useRoutes, useRedirect } from 'hookrouter';
 import SpotifyWebApi from 'spotify-web-api-js';
 import cogoToast from 'cogo-toast';
 import Navigation from './components/Navigation';
@@ -198,6 +198,8 @@ export const App: React.FunctionComponent<IProps> = (props: IProps) => {
         '/about': () => <About />,
     };
     const routeResult = useRoutes(routes);
+    useRedirect('/sort/', '/sort');
+    useRedirect('/about/', '/about');
 
     return <>
         <TokenRefreshWarning token={token} onLogOut={onLogOut} />
