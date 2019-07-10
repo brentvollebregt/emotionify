@@ -1,10 +1,9 @@
 import React from 'react';
-import { navigate } from 'hookrouter';
+import { navigate, usePath } from 'hookrouter';
 import banner from '../img/banner.png';
 import Navbar from 'react-bootstrap/Navbar';
 import Nav from 'react-bootstrap/Nav';
 import Container from 'react-bootstrap/Container';
-import NavItem from 'react-bootstrap/NavItem';
 import SpotifyLoginStatusButton from './SpotifyLoginStatusButton';
 
 interface IProps {
@@ -12,17 +11,23 @@ interface IProps {
   onAuthButtonLoggedInClick: () => void
 }
 
+const navbarLinks: {[key: string]: string} = {
+  '/' : 'Home',
+  '/sort' : 'Sort',
+  '/about' : 'About',
+};
+
 const Navigation: React.FunctionComponent<IProps> = (props: IProps) => {
   const { user } = props;
   const { onAuthButtonLoggedInClick } = props;
 
-  const goToHome = () => navigate('/');
-  const goToSort = () => navigate('/sort');
-  const goToAbout = () => navigate('/about');
+  const currentPath = usePath();
+
+  const goTo = (location: string) => () => navigate(location);
 
   return <Navbar collapseOnSelect expand="sm" bg="light" variant="light" sticky="top">
     <Container>
-      <Navbar.Brand onClick={goToHome}>
+      <Navbar.Brand onClick={goTo('/')}>
         <img
           src={banner}
           height="30"
@@ -34,15 +39,9 @@ const Navigation: React.FunctionComponent<IProps> = (props: IProps) => {
       <Navbar.Toggle aria-controls="responsive-navbar-nav" />
       <Navbar.Collapse id="responsive-navbar-nav">
         <Nav className="mr-auto">
-          <Nav.Link>
-            <NavItem onClick={goToHome}>Home</NavItem>
-          </Nav.Link>
-          <Nav.Link>
-            <NavItem onClick={goToSort}>Sort</NavItem>
-          </Nav.Link>
-          <Nav.Link>
-            <NavItem onClick={goToAbout}>About</NavItem>
-          </Nav.Link>
+          {Object.keys(navbarLinks).map(path => 
+            <Nav.Link href="#" onClick={goTo(path)} active={currentPath === path}>{navbarLinks[path]}</Nav.Link>
+          )}
         </Nav>
         <Nav>
           <SpotifyLoginStatusButton user={user} onLoggedInClick={onAuthButtonLoggedInClick} />
