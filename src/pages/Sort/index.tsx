@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useTitle } from 'hookrouter';
 import Container from 'react-bootstrap/Container';
 import Alert from 'react-bootstrap/Alert';
@@ -38,14 +38,28 @@ export const Sort: React.FunctionComponent<IProps> = (props: IProps) => {
     const [selectedAxis, setSelectedAxis] = useState<selectedAxis>({ x: 'Valence', y: 'Energy' });
     const [sortingMethod, setSortingMethod] = useState<string>('Distance From Origin');
     const [sortedTrackIds, setSortedTrackIds] = useState<IndexedTrackId[]>([]);
+    const [firstPlaylistSelection, setFirstPlaylistSelection] = useState(true);
+    const playlistDetailsWrapperNode = useRef<HTMLHeadingElement | null>(null);
 
-    const onPlaylistSelectionChange = (playlist_ids: string[]) => {
+    const onPlaylistSelectionChange = (playlist_ids: string[], scrollOnFirstSelection: boolean = false) => {
         setSelectedPlaylistIds(playlist_ids);
         playlist_ids.forEach(playlist_id => {
             if (playlists[playlist_id].track_ids.length === 0) {
                 refreshPlaylist(playlists[playlist_id]);
             }
         });
+        // Scroll on first selection
+        if (scrollOnFirstSelection && firstPlaylistSelection) {
+            setTimeout(() => {
+                if (playlistDetailsWrapperNode.current !== null) {
+                    window.scroll({
+                        top: playlistDetailsWrapperNode.current.getBoundingClientRect().top + window.scrollY - 50,
+                        behavior: 'smooth'
+                    });
+                }
+            }, 300); // Wait for elements below to appear
+        }
+        setFirstPlaylistSelection(false);
     }
     const onXAxisSelect = (selection: string) => setSelectedAxis({ ...selectedAxis, x: selection });
     const onYAxisSelect = (selection: string) => setSelectedAxis({ ...selectedAxis, y: selection });
@@ -126,7 +140,7 @@ export const Sort: React.FunctionComponent<IProps> = (props: IProps) => {
             {selectedPlaylistIds.length > 0 && <>
                 <hr />
 
-                <div className="mb-4">
+                <div className="mb-4" ref={playlistDetailsWrapperNode}>
                     <PlaylistDetails 
                         playlists={selectedPlaylistIds.map(pid => pid in playlists ? playlists[pid] : null).filter((p: PlaylistObjectSimplifiedWithTrackIds | null): p is PlaylistObjectSimplifiedWithTrackIds => p !== null)}
                         tracksLoading={selectedPlaylistIds.map(pid => playlistsLoading.has(pid)).reduce((a, b) => a || b)}

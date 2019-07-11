@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import Table from 'react-bootstrap/Table';
 import Badge from 'react-bootstrap/Badge';
 import InputGroup from 'react-bootstrap/InputGroup';
@@ -12,7 +12,7 @@ interface IProps {
     playlists: PlaylistObjectSimplifiedWithTrackIds[],
     selectedPlaylistIds: string[],
     multipleSelectionsAllowed: boolean,
-    onPlaylistSelectionChange: (playlist_ids: string[]) => void
+    onPlaylistSelectionChange: (playlist_ids: string[], scrollOnFirstSelection: boolean) => void
 }
 
 const selectedBackground = 'linear-gradient(to right, rgba(0, 82, 157, 0.3), rgba(235, 18, 27, 0.3))';
@@ -26,19 +26,19 @@ const PlaylistSelection: React.FunctionComponent<IProps> = (props: IProps) => {
 
     const onSearchChange = (event: React.FormEvent<any>) => setSearch(event.currentTarget.value);
     const singlePlaylistSelectionChange = (value: boolean) => () => {
-        if (value) {
-            onPlaylistSelectionChange(selectedPlaylistIds.length > 0 ? [selectedPlaylistIds[0]] : [])
+        if (value && selectedPlaylistIds.length > 1) {
+            onPlaylistSelectionChange(selectedPlaylistIds.length > 0 ? [selectedPlaylistIds[0]] : [], false);
         }
         setSinglePlaylistSelection(value)
     };
     const onComponentPlaylistSelected = (playlist_id: string) => () => {
         if (singlePlaylistSelection || !multipleSelectionsAllowed) {
-            onPlaylistSelectionChange([playlist_id]);
+            onPlaylistSelectionChange([playlist_id], true);
         } else {
             if (selectedPlaylistIds.indexOf(playlist_id) === -1) {
-                onPlaylistSelectionChange([ ...selectedPlaylistIds, playlist_id ]);
+                onPlaylistSelectionChange([ ...selectedPlaylistIds, playlist_id ], false);
             } else {
-                onPlaylistSelectionChange([ ...selectedPlaylistIds.filter(pid => pid !== playlist_id) ]);
+                onPlaylistSelectionChange([ ...selectedPlaylistIds.filter(pid => pid !== playlist_id) ], false);
             }
         }
     };
