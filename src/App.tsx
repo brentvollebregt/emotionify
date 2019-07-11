@@ -51,10 +51,10 @@ export const App: React.FunctionComponent<IProps> = (props: IProps) => {
             getAllSpotifyUsersPlaylists(token, spotifyData.user)
                 .then(playlists => {
                     // Remove all requested playlist track ids if we are refreshing hard
-                    setSpotifyData({ 
-                        ...spotifyData,
-                        playlists: { ...arrayToObject<PlaylistObjectSimplifiedWithTrackIds>(playlists.map(p => p.id in spotifyData.playlists && !hard ? { ...p, track_ids: spotifyData.playlists[p.id].track_ids } : p), "id") }
-                    });
+                    setSpotifyData(prevState => ({ 
+                        ...prevState,
+                        playlists: { ...arrayToObject<PlaylistObjectSimplifiedWithTrackIds>(playlists.map(p => p.id in prevState.playlists && !hard ? { ...p, track_ids: prevState.playlists[p.id].track_ids } : p), "id") }
+                    }));
                 })
                 .catch(err => cogoToast.error(
                     'Could not get your playlists. Make sure you are connected to the internet and that your token is valid.',
@@ -65,24 +65,29 @@ export const App: React.FunctionComponent<IProps> = (props: IProps) => {
 
     const refreshPlaylist = (playlist: SpotifyApi.PlaylistObjectSimplified) => {
         if (token !== undefined && !playlistsLoading.has(playlist.id) ) {
-            setPlaylistsLoading(new Set([ ...Array.from(playlistsLoading), playlist.id ]));
+            setPlaylistsLoading(prevState => new Set([ ...Array.from(prevState), playlist.id ]));
             getAllTracksInPlaylist(token, playlist)
                 .then(tracks => {
-                    let new_tracks = tracks.filter(t => !(t.id in spotifyData.tracks));
-                    setSpotifyData({ 
-                        ...spotifyData,
-                        tracks: { ...spotifyData.tracks, ...arrayToObject<TrackWithAudioFeatures>(new_tracks, "id") },
+                    setSpotifyData(prevState => {
+                        const new_tracks = tracks.filter(t => !(t.id in prevState.tracks));
+                        return { 
+                        ...prevState,
+                        tracks: { ...prevState.tracks, ...arrayToObject<TrackWithAudioFeatures>(new_tracks, "id") },
                         playlists: { 
-                            ...spotifyData.playlists, 
-                            [playlist.id]: { ...spotifyData.playlists[playlist.id], track_ids: tracks.map(t => t.id) } 
+                            ...prevState.playlists, 
+                            [playlist.id]: { ...prevState.playlists[playlist.id], track_ids: tracks.map(t => t.id) } 
                         }
-                    });
+                    }});
                 })
                 .catch(err => cogoToast.error(
                     `Could not get songs for the playlist "${playlist.name}". Make sure you are connected to the internet and that your token is valid.`,
                     { position: "bottom-center", heading: 'Error When Fetching Playlist\'s Songs', hideAfter: 20, onClick: (hide: any) => hide() }
                 ))
-                .finally(() => setPlaylistsLoading(new Set([ ...Array.from(playlistsLoading).filter(p => p !== playlist.id) ])));
+                .finally(() => setPlaylistsLoading(prevState => {
+                    const updatedPlaylistsLoading = new Set(prevState);
+                    updatedPlaylistsLoading.delete(playlist.id);
+                    return updatedPlaylistsLoading;
+                }));
         }
     }
 
@@ -119,18 +124,18 @@ export const App: React.FunctionComponent<IProps> = (props: IProps) => {
 
     useEffect(() => { // Request the user when the token changes
         if (token === undefined) {
-            setSpotifyData({ ...spotifyData, user: undefined });
+            setSpotifyData(prevState => ({ ...prevState, user: undefined }));
         } else {
             const spotifyApi = new SpotifyWebApi();
             spotifyApi.setAccessToken(token.value);
             spotifyApi.getMe()
                 .then(user => {
                     if (spotifyData.user === undefined) { // If there is currently no user, clear the playlists and put the new user in
-                        setSpotifyData({ ...spotifyData, playlists: {}, user: user });
+                        setSpotifyData(prevState => ({ ...prevState, playlists: {}, user: user }));
                     } else if (spotifyData.user.id !== user.id) { // If this is a new user
-                        setSpotifyData({ ...spotifyData, playlists: {}, user: user });
+                        setSpotifyData(prevState => ({ ...prevState, playlists: {}, user: user }));
                     } else { // Same user, new token
-                        setSpotifyData({ ...spotifyData, user: user });
+                        setSpotifyData(prevState => ({ ...prevState, user: user }));
                     }
                 })
                 .catch(err => cogoToast.error(
@@ -142,7 +147,7 @@ export const App: React.FunctionComponent<IProps> = (props: IProps) => {
 
     useEffect(() => { // Request playlists on user change
         if (spotifyData.user === undefined) {
-            setSpotifyData({ ...spotifyData, playlists: {} });
+            setSpotifyData(prevState => ({ ...prevState, playlists: {} }));
         } else {
             refreshUsersPlaylists();
         }
@@ -169,10 +174,10 @@ export const App: React.FunctionComponent<IProps> = (props: IProps) => {
                         console.warn(`Some audio features are null: ${null_audio_feature_tracks.map(t => t.id).join(', ')}`);
                     }
 
-                    setSpotifyData({
-                        ...spotifyData,
-                        tracks: { ...spotifyData.tracks, ...arrayToObject<TrackWithAudioFeatures>(tracks_with_new_audio_features, "id") }
-                    });
+                    setSpotifyData(prevState => ({
+                        ...prevState,
+                        tracks: { ...prevState.tracks, ...arrayToObject<TrackWithAudioFeatures>(tracks_with_new_audio_features, "id") }
+                    }));
                 })
                 .catch(err => cogoToast.error(
                     'Could not get audio features for some songs. Make sure you are connected to the internet and that your token is valid.',
