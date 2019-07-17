@@ -40,7 +40,7 @@ const Navigation: React.FunctionComponent<IProps> = (props: IProps) => {
       <Navbar.Collapse id="responsive-navbar-nav">
         <Nav className="mr-auto">
           {Object.keys(navbarLinks).map(path => 
-            <Nav.Link href="#" onClick={goTo(path)} active={currentPath === path}>{navbarLinks[path]}</Nav.Link>
+            <Nav.Link key={path} href="#" onClick={goTo(path)} active={currentPath === path}>{navbarLinks[path]}</Nav.Link>
           )}
         </Nav>
         <Nav>

@@ -102,7 +102,7 @@ export const App: React.FunctionComponent<IProps> = (props: IProps) => {
                     setSpotifyData({ ...emptySpotifyData, user: stored_data_parsed.user, playlists: stored_data_parsed.playlists });
                     refreshUsersPlaylists();
                 }
-            } catch {
+            } catch (error) {
                 console.error('Failed to read state from localStorage');
             }
         }
