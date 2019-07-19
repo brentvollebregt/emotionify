@@ -18,7 +18,7 @@ const TrackSortControl: React.FunctionComponent<IProps> = (props: IProps) => {
     return <>
         <InputGroup className="mr-3 mt-1" style={{display: 'inline-flex', width: 'auto'}}>
             <InputGroup.Prepend>
-                <InputGroup.Text>X-Axis</InputGroup.Text>
+                <InputGroup.Text>X-Axis ( ↔ )</InputGroup.Text>
             </InputGroup.Prepend>
             <DropdownButton
                 as={InputGroup.Append}
@@ -34,7 +34,7 @@ const TrackSortControl: React.FunctionComponent<IProps> = (props: IProps) => {
 
         <InputGroup className="mr-3 mt-1" style={{display: 'inline-flex', width: 'auto'}}>
             <InputGroup.Prepend>
-                <InputGroup.Text>Y-Axis</InputGroup.Text>
+                <InputGroup.Text>Y-Axis ( ↕ )</InputGroup.Text>
             </InputGroup.Prepend>
             <DropdownButton
                 as={InputGroup.Append}

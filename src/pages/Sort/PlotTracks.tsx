@@ -7,6 +7,10 @@ interface IProps {
     tracks: TrackWithAudioFeatures[],
     selected_x_axis: string,
     selected_y_axis: string,
+    selected_x_axis_min: number | undefined,
+    selected_x_axis_max: number | undefined,
+    selected_y_axis_min: number | undefined,
+    selected_y_axis_max: number | undefined,
     selected_x_axis_name: string,
     selected_y_axis_name: string
 }
@@ -57,9 +61,10 @@ function getPointAlongColourGradient(start_hex_colour: string, end_hex_colour: s
 
 const PlotTracks: React.FunctionComponent<IProps> = (props: IProps) => {
     const { tracks, selected_x_axis, selected_y_axis, selected_x_axis_name, selected_y_axis_name } = props;
+    const { selected_x_axis_min, selected_x_axis_max, selected_y_axis_min, selected_y_axis_max } = props;
 
     const points: TrackPoint[] = tracks.map(t => {
-        let track = {
+        const track = {
             id: t.id,
             title: t.name,
             artist: t.artists.map(a => a.name).join(', '),
@@ -67,8 +72,8 @@ const PlotTracks: React.FunctionComponent<IProps> = (props: IProps) => {
         }
 
         if (t.audio_features !== undefined && t.audio_features !== null) {
-            let x = (t.audio_features[(selected_x_axis as keyof SpotifyApi.AudioFeaturesObject)] as number);
-            let y = (t.audio_features[(selected_y_axis as keyof SpotifyApi.AudioFeaturesObject)] as number);
+            const x = (t.audio_features[(selected_x_axis as keyof SpotifyApi.AudioFeaturesObject)] as number);
+            const y = (t.audio_features[(selected_y_axis as keyof SpotifyApi.AudioFeaturesObject)] as number);
             return { x: x, y: y, track: track }
         } else if (t.audio_features === undefined) { // Commonly occurs as t.audio_features === undefined on first playlist selection
             return { x: 0, y: 0, track: track }
@@ -77,10 +82,23 @@ const PlotTracks: React.FunctionComponent<IProps> = (props: IProps) => {
         }
     }).filter((sp): sp is TrackPoint => sp !== null);
 
-    let min_x: number = Math.min(...points.map(p => p.x));
-    let min_y: number = Math.min(...points.map(p => p.y));
-    let max_x: number = Math.max(...points.map(p => p.x));
-    let max_y: number = Math.max(...points.map(p => p.y));
+    // Max and min points in the data
+    const points_min_x: number = Math.min(...points.map(p => p.x));
+    const points_min_y: number = Math.min(...points.map(p => p.y));
+    const points_max_x: number = Math.max(...points.map(p => p.x));
+    const points_max_y: number = Math.max(...points.map(p => p.y));
+
+    // Mix expected and actual min's and max's to defined the colour gradient 
+    const colour_x_min: number = selected_x_axis_min !== undefined ? Math.min(selected_x_axis_min, points_min_x) : points_min_x;
+    const colour_x_max: number = selected_x_axis_max !== undefined ? Math.max(selected_x_axis_max, points_max_x) : points_max_x;
+    const colour_y_min: number = selected_y_axis_min !== undefined ? Math.min(selected_y_axis_min, points_min_y) : points_min_y;
+    const colour_y_max: number = selected_y_axis_max !== undefined ? Math.max(selected_y_axis_max, points_max_y) : points_max_y;
+
+    // The min and max are passed in, but still take the points into account just incase there are values outside of the defined range
+    const scale_x_min: number | undefined = selected_x_axis_min !== undefined ? Math.min(selected_x_axis_min, points_min_x) : undefined;
+    const scale_x_max: number | undefined = selected_x_axis_max !== undefined ? Math.max(selected_x_axis_max, points_max_x) : undefined;
+    const scale_y_min: number | undefined = selected_y_axis_min !== undefined ? Math.min(selected_y_axis_min, points_min_y) : undefined;
+    const scale_y_max: number | undefined = selected_y_axis_max !== undefined ? Math.max(selected_y_axis_max, points_max_y) : undefined;
 
     return <>
         <Plot
@@ -93,7 +111,7 @@ const PlotTracks: React.FunctionComponent<IProps> = (props: IProps) => {
                 marker: {
                     size: 10,
                     color: points.map(p => {
-                        let distanceAlongGradient = getDistancePercentageAlongLineTheOfClosestPointOnLineToAnArbitaryPoint({x: min_x, y: min_y}, {x: max_x, y: max_y}, {x: p.x, y: p.y});
+                        let distanceAlongGradient = getDistancePercentageAlongLineTheOfClosestPointOnLineToAnArbitaryPoint({x: colour_x_min, y: colour_y_min}, {x: colour_x_max, y: colour_y_max}, {x: p.x, y: p.y});
                         return '#' + getPointAlongColourGradient('00529d', 'eb121b', distanceAlongGradient);
                     })
                 },
@@ -102,7 +120,18 @@ const PlotTracks: React.FunctionComponent<IProps> = (props: IProps) => {
                     width: 1
                 }
             }]}
-            layout={{ hovermode: "closest", margin: {t: 0, b: 0, l: 0, r: 0}, plot_bgcolor: 'transparent', paper_bgcolor: 'transparent' }}
+            layout={{ 
+                hovermode: "closest", 
+                margin: {t: 0, b: 0, l: 0, r: 0}, 
+                plot_bgcolor: 'transparent', 
+                paper_bgcolor: 'transparent',
+                xaxis: {
+                    range: [scale_x_min, scale_x_max]
+                },
+                yaxis: {
+                    range: [scale_y_min, scale_y_max]
+                }
+            }}
             useResizeHandler={true}
             style={{ 
                 width: "100%",

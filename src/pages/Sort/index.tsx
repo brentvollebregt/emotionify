@@ -77,8 +77,8 @@ export const Sort: React.FunctionComponent<IProps> = (props: IProps) => {
                 });
             setSortedTrackIds(sort(
                 selected_playlist_tracks, 
-                availableTrackAudioFeatures[selectedAxis.x], 
-                availableTrackAudioFeatures[selectedAxis.y], 
+                availableTrackAudioFeatures[selectedAxis.x].key, 
+                availableTrackAudioFeatures[selectedAxis.y].key, 
                 availableSortingMethods[sortingMethod]
             ));
         } else {
@@ -150,8 +150,12 @@ export const Sort: React.FunctionComponent<IProps> = (props: IProps) => {
                 <div className="mb-3">
                     <PlotTracks 
                         tracks={sorted_tracks}
-                        selected_x_axis={availableTrackAudioFeatures[selectedAxis.x]}
-                        selected_y_axis={availableTrackAudioFeatures[selectedAxis.y]}
+                        selected_x_axis={availableTrackAudioFeatures[selectedAxis.x].key}
+                        selected_y_axis={availableTrackAudioFeatures[selectedAxis.y].key}
+                        selected_x_axis_min={availableTrackAudioFeatures[selectedAxis.x].min}
+                        selected_x_axis_max={availableTrackAudioFeatures[selectedAxis.x].max}
+                        selected_y_axis_min={availableTrackAudioFeatures[selectedAxis.y].min}
+                        selected_y_axis_max={availableTrackAudioFeatures[selectedAxis.x].max}
                         selected_x_axis_name={selectedAxis.x}
                         selected_y_axis_name={selectedAxis.y}
                     />
@@ -159,7 +163,7 @@ export const Sort: React.FunctionComponent<IProps> = (props: IProps) => {
 
                 <div className="mb-3">
                     <TrackSortControl 
-                        available_audio_features={Object.keys(availableTrackAudioFeatures)} 
+                        available_audio_features={Object.keys(availableTrackAudioFeatures).filter(audio_feature_name => availableTrackAudioFeatures[audio_feature_name].show_in_sort)} 
                         available_track_sorting_methods={Object.keys(availableSortingMethods)}
                         selected_x_axis={selectedAxis.x}
                         selected_y_axis={selectedAxis.y}
@@ -179,9 +183,9 @@ export const Sort: React.FunctionComponent<IProps> = (props: IProps) => {
                 <div className="mb-5">
                     <TrackTable 
                         tracks={sorted_tracks_with_indexes}
-                        x_audio_feature={availableTrackAudioFeatures[selectedAxis.x]}
+                        x_audio_feature={availableTrackAudioFeatures[selectedAxis.x].key}
                         x_audio_feature_name={selectedAxis.x}
-                        y_audio_feature={availableTrackAudioFeatures[selectedAxis.y]}
+                        y_audio_feature={availableTrackAudioFeatures[selectedAxis.y].key}
                         y_audio_feature_name={selectedAxis.y}
                     />
                 </div>
