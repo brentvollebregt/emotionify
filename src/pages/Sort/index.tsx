@@ -150,14 +150,14 @@ export const Sort: React.FunctionComponent<IProps> = (props: IProps) => {
                 <div className="mb-3">
                     <PlotTracks 
                         tracks={sorted_tracks}
-                        selected_x_axis={availableTrackAudioFeatures[selectedAxis.x].key}
-                        selected_y_axis={availableTrackAudioFeatures[selectedAxis.y].key}
-                        selected_x_axis_min={availableTrackAudioFeatures[selectedAxis.x].min}
-                        selected_x_axis_max={availableTrackAudioFeatures[selectedAxis.x].max}
-                        selected_y_axis_min={availableTrackAudioFeatures[selectedAxis.y].min}
-                        selected_y_axis_max={availableTrackAudioFeatures[selectedAxis.x].max}
-                        selected_x_axis_name={selectedAxis.x}
-                        selected_y_axis_name={selectedAxis.y}
+                        x_audio_feature_key={availableTrackAudioFeatures[selectedAxis.x].key}
+                        y_audio_feature_key={availableTrackAudioFeatures[selectedAxis.y].key}
+                        x_audio_feature_min={availableTrackAudioFeatures[selectedAxis.x].min}
+                        x_audio_feature_max={availableTrackAudioFeatures[selectedAxis.x].max}
+                        y_audio_feature_min={availableTrackAudioFeatures[selectedAxis.y].min}
+                        y_audio_feature_max={availableTrackAudioFeatures[selectedAxis.x].max}
+                        x_audio_feature_name={selectedAxis.x}
+                        y_audio_feature_name={selectedAxis.y}
                     />
                 </div>
 

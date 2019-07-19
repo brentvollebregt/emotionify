@@ -5,14 +5,14 @@ import { TrackWithAudioFeatures } from '../../models/Spotify';
 
 interface IProps {
     tracks: TrackWithAudioFeatures[],
-    selected_x_axis: string,
-    selected_y_axis: string,
-    selected_x_axis_min: number | undefined,
-    selected_x_axis_max: number | undefined,
-    selected_y_axis_min: number | undefined,
-    selected_y_axis_max: number | undefined,
-    selected_x_axis_name: string,
-    selected_y_axis_name: string
+    x_audio_feature_key: string,
+    y_audio_feature_key: string,
+    x_audio_feature_min: number | undefined,
+    x_audio_feature_max: number | undefined,
+    y_audio_feature_min: number | undefined,
+    y_audio_feature_max: number | undefined,
+    x_audio_feature_name: string,
+    y_audio_feature_name: string
 }
 
 interface Point {
@@ -60,8 +60,8 @@ function getPointAlongColourGradient(start_hex_colour: string, end_hex_colour: s
 }
 
 const PlotTracks: React.FunctionComponent<IProps> = (props: IProps) => {
-    const { tracks, selected_x_axis, selected_y_axis, selected_x_axis_name, selected_y_axis_name } = props;
-    const { selected_x_axis_min, selected_x_axis_max, selected_y_axis_min, selected_y_axis_max } = props;
+    const { tracks, x_audio_feature_key, y_audio_feature_key, x_audio_feature_name, y_audio_feature_name } = props;
+    const { x_audio_feature_min, x_audio_feature_max, y_audio_feature_min, y_audio_feature_max } = props;
 
     const points: TrackPoint[] = tracks.map(t => {
         const track = {
@@ -72,8 +72,8 @@ const PlotTracks: React.FunctionComponent<IProps> = (props: IProps) => {
         }
 
         if (t.audio_features !== undefined && t.audio_features !== null) {
-            const x = (t.audio_features[(selected_x_axis as keyof SpotifyApi.AudioFeaturesObject)] as number);
-            const y = (t.audio_features[(selected_y_axis as keyof SpotifyApi.AudioFeaturesObject)] as number);
+            const x = (t.audio_features[(x_audio_feature_key as keyof SpotifyApi.AudioFeaturesObject)] as number);
+            const y = (t.audio_features[(y_audio_feature_key as keyof SpotifyApi.AudioFeaturesObject)] as number);
             return { x: x, y: y, track: track }
         } else if (t.audio_features === undefined) { // Commonly occurs as t.audio_features === undefined on first playlist selection
             return { x: 0, y: 0, track: track }
@@ -83,29 +83,29 @@ const PlotTracks: React.FunctionComponent<IProps> = (props: IProps) => {
     }).filter((sp): sp is TrackPoint => sp !== null);
 
     // Max and min points in the data
-    const points_min_x: number = Math.min(...points.map(p => p.x));
-    const points_min_y: number = Math.min(...points.map(p => p.y));
-    const points_max_x: number = Math.max(...points.map(p => p.x));
-    const points_max_y: number = Math.max(...points.map(p => p.y));
+    const points_x_min: number = Math.min(...points.map(p => p.x));
+    const points_y_min: number = Math.min(...points.map(p => p.y));
+    const points_x_max: number = Math.max(...points.map(p => p.x));
+    const points_y_max: number = Math.max(...points.map(p => p.y));
 
     // Mix expected and actual min's and max's to defined the colour gradient 
-    const colour_x_min: number = selected_x_axis_min !== undefined ? Math.min(selected_x_axis_min, points_min_x) : points_min_x;
-    const colour_x_max: number = selected_x_axis_max !== undefined ? Math.max(selected_x_axis_max, points_max_x) : points_max_x;
-    const colour_y_min: number = selected_y_axis_min !== undefined ? Math.min(selected_y_axis_min, points_min_y) : points_min_y;
-    const colour_y_max: number = selected_y_axis_max !== undefined ? Math.max(selected_y_axis_max, points_max_y) : points_max_y;
+    const colour_x_min: number = x_audio_feature_min !== undefined ? Math.min(x_audio_feature_min, points_x_min) : points_x_min;
+    const colour_x_max: number = x_audio_feature_max !== undefined ? Math.max(x_audio_feature_max, points_x_max) : points_x_max;
+    const colour_y_min: number = y_audio_feature_min !== undefined ? Math.min(y_audio_feature_min, points_y_min) : points_y_min;
+    const colour_y_max: number = y_audio_feature_max !== undefined ? Math.max(y_audio_feature_max, points_y_max) : points_y_max;
 
     // The min and max are passed in, but still take the points into account just incase there are values outside of the defined range
-    const scale_x_min: number | undefined = selected_x_axis_min !== undefined ? Math.min(selected_x_axis_min, points_min_x) : undefined;
-    const scale_x_max: number | undefined = selected_x_axis_max !== undefined ? Math.max(selected_x_axis_max, points_max_x) : undefined;
-    const scale_y_min: number | undefined = selected_y_axis_min !== undefined ? Math.min(selected_y_axis_min, points_min_y) : undefined;
-    const scale_y_max: number | undefined = selected_y_axis_max !== undefined ? Math.max(selected_y_axis_max, points_max_y) : undefined;
+    const scale_x_min: number | undefined = x_audio_feature_min !== undefined ? Math.min(x_audio_feature_min, points_x_min) : undefined;
+    const scale_x_max: number | undefined = x_audio_feature_max !== undefined ? Math.max(x_audio_feature_max, points_x_max) : undefined;
+    const scale_y_min: number | undefined = y_audio_feature_min !== undefined ? Math.min(y_audio_feature_min, points_y_min) : undefined;
+    const scale_y_max: number | undefined = y_audio_feature_max !== undefined ? Math.max(y_audio_feature_max, points_y_max) : undefined;
 
     return <>
         <Plot
             data={[{
                 y: points.map(p => p.y),
                 x: points.map(p => p.x),
-                text: points.map(p => 'Title: ' + p.track.title + '<br>Artist: ' + p.track.artist + '<br>' + selected_x_axis_name + ': ' + p.x + '<br>' + selected_y_axis_name + ': ' + p.y),
+                text: points.map(p => 'Title: ' + p.track.title + '<br>Artist: ' + p.track.artist + '<br>' + x_audio_feature_name + ': ' + p.x + '<br>' + y_audio_feature_name + ': ' + p.y),
                 hoverinfo: "text",
                 mode: "lines+markers",
                 marker: {
