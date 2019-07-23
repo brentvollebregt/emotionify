@@ -1,5 +1,3 @@
-import { min } from "d3";
-
 export interface SpotifyData {
     user: SpotifyApi.UserObjectPrivate | undefined,
     playlists: {

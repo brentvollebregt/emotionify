@@ -25,7 +25,7 @@ const expandedDefault = false;
 const TrackTable: React.FunctionComponent<IProps> = (props: IProps) => {
     const {tracks, x_audio_feature, x_audio_feature_name, y_audio_feature, y_audio_feature_name} = props;
 
-    const [randomEventKey, setRandomEventKey] = useState(randomString(16));
+    const [randomEventKey] = useState(randomString(16));
     const [expanded, setExpanded] = useState(expandedDefault);
     const toggleExpansion = () => setExpanded(!expanded);
 
