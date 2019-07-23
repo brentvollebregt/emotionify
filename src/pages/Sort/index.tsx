@@ -121,7 +121,7 @@ export const Sort: React.FunctionComponent<IProps> = (props: IProps) => {
             <Container className="text-center">
                 <h2>Sign into Spotify</h2>
                 <p>To get access to your playlists and the ability to create playlists, you need to sign into Spotify.</p>
-                <SpotifyLoginStatusButton user={user} onLoggedInClick={() => {}} />
+                <SpotifyLoginStatusButton user={user} />
             </Container>
         </>
     }

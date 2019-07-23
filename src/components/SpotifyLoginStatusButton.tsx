@@ -6,7 +6,7 @@ import SpotifyLogoRound from '../img/spotify-logo-round.png';
 
 interface IProps {
     user: SpotifyApi.CurrentUsersProfileResponse | undefined,
-    onLoggedInClick: () => void
+    onLoggedInClick?: () => void
 }
 
 const SpotifyLoginStatusButton: React.FunctionComponent<IProps> = (props: IProps) => {
@@ -19,7 +19,9 @@ const SpotifyLoginStatusButton: React.FunctionComponent<IProps> = (props: IProps
             localStorage.setItem(localStorageRedirectKey, path);
             navigate('/spotify-authorization');
         } else {
-            onLoggedInClick();
+            if (onLoggedInClick) {
+                onLoggedInClick();
+            }
         }
     }
 
