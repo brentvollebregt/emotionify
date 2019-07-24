@@ -7,8 +7,9 @@ import TokenRefreshWarning from './components/TokenRefreshWarning';
 import StoredDataDialog from './components/StoredDataDialog';
 import SpotifyAuthorization from './pages/SpotifyAuthorization';
 import Home from './pages/Home';
-import About from './pages/About';
 import Sort from './pages/Sort';
+import Analyse from './pages/Analyse';
+import About from './pages/About';
 import NotFound from './pages/NotFound';
 import useNavigatorOnline from './hooks/NavigatorOnline';
 import { Token, SpotifyData, PlaylistObjectSimplifiedWithTrackIds, TrackWithAudioFeatures } from './models/Spotify';
@@ -200,10 +201,12 @@ export const App: React.FunctionComponent<IProps> = (props: IProps) => {
         '/spotify-authorization': () => <SpotifyAuthorization onTokenChange={onTokenChange} />,
         '/spotify-authorization/': () => <SpotifyAuthorization onTokenChange={onTokenChange} />,
         '/sort': () => <Sort token={token} user={spotifyData.user} playlists={spotifyData.playlists} tracks={spotifyData.tracks} playlistsLoading={playlistsLoading} refreshPlaylist={refreshPlaylist} refreshUsersPlaylists={refreshUsersPlaylists} />,
+        '/analyse': () => <Analyse user={spotifyData.user} playlists={spotifyData.playlists} tracks={spotifyData.tracks} playlistsLoading={playlistsLoading} refreshPlaylist={refreshPlaylist} />,
         '/about': () => <About />,
     };
     const routeResult = useRoutes(routes);
     useRedirect('/sort/', '/sort');
+    useRedirect('/analyse/', '/analyse');
     useRedirect('/about/', '/about');
 
     return <>

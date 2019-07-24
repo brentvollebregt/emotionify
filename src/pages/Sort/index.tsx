@@ -6,8 +6,8 @@ import { availableSortingMethods, IndexedTrackId, sort, SpotifyTrackWithIndexes 
 import { createPlaylist } from '../../logic/Spotify';
 import { PlaylistObjectSimplifiedWithTrackIds, availableTrackAudioFeatures, TrackWithAudioFeatures } from '../../models/Spotify';
 import { Token } from '../../models/Spotify'
-import PlaylistSelectionTable from './PlaylistSelection';
-import PlaylistDetails from './PlaylistDetails';
+import PlaylistSelectionTable from '../../components/PlaylistSelection';
+import PlaylistDetails from '../../components/PlaylistDetails';
 import PlotTracks from './PlotTracks';
 import TrackTable from './TrackTable';
 import TrackSortControl from './TrackSortControl';

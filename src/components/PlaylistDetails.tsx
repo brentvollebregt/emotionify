@@ -1,7 +1,7 @@
 import React from 'react';
 import Badge from 'react-bootstrap/Badge';
 import Spinner from 'react-bootstrap/Spinner';
-import { PlaylistObjectSimplifiedWithTrackIds } from '../../models/Spotify';
+import { PlaylistObjectSimplifiedWithTrackIds } from '../models/Spotify';
 
 interface IProps {
     playlists: PlaylistObjectSimplifiedWithTrackIds[],
@@ -13,7 +13,7 @@ const PlaylistDetails: React.FunctionComponent<IProps> = (props: IProps) => {
 
     if (playlists.length === 1) {
         const playlist = playlists[0];
-        return <>
+        return <div>
             <h3 className="mt-4 mb-0">{playlist.name}</h3>
             <div>
                 <a href={playlist.owner.external_urls.spotify}><Badge variant="primary">{playlist.owner.display_name}</Badge></a>
@@ -24,9 +24,9 @@ const PlaylistDetails: React.FunctionComponent<IProps> = (props: IProps) => {
             {tracksLoading && <div className="text-center mt-3">
                 <Spinner animation="border" />
             </div>}
-        </>;
+        </div>;
     } else {
-        return <>
+        return <div>
             <h3 className="mt-4 mb-0">{playlists.length} Playlist{playlists.length > 1 && 's'} Selected</h3>
             <div>
                 <Badge variant="dark" className="ml-1">Songs: {playlists.map(p => p.tracks.total).reduce((a, b) => a + b)}</Badge>
@@ -34,7 +34,7 @@ const PlaylistDetails: React.FunctionComponent<IProps> = (props: IProps) => {
             {tracksLoading && <div className="text-center mt-3">
                 <Spinner animation="border" />
             </div>}
-        </>;
+        </div>;
     }
 }
 
