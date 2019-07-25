@@ -14,7 +14,7 @@ interface IProps {
 const navbarLinks: {[key: string]: string} = {
   '/' : 'Home',
   '/sort' : 'Sort',
-  '/analyse' : 'Analyse',
+  '/compare' : 'Compare',
   '/about' : 'About',
 };
 

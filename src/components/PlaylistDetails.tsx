@@ -14,7 +14,7 @@ const PlaylistDetails: React.FunctionComponent<IProps> = (props: IProps) => {
     if (playlists.length === 1) {
         const playlist = playlists[0];
         return <div>
-            <h3 className="mt-4 mb-0">{playlist.name}</h3>
+            <h3 className="mb-0">{playlist.name}</h3>
             <div>
                 <a href={playlist.owner.external_urls.spotify}><Badge variant="primary">{playlist.owner.display_name}</Badge></a>
                 <Badge variant="dark" className="ml-1">Songs: {playlist.tracks.total}</Badge>
@@ -27,7 +27,7 @@ const PlaylistDetails: React.FunctionComponent<IProps> = (props: IProps) => {
         </div>;
     } else {
         return <div>
-            <h3 className="mt-4 mb-0">{playlists.length} Playlist{playlists.length > 1 && 's'} Selected</h3>
+            <h3 className="mb-0">{playlists.length} Playlist{playlists.length > 1 && 's'} Selected</h3>
             <div>
                 <Badge variant="dark" className="ml-1">Songs: {playlists.map(p => p.tracks.total).reduce((a, b) => a + b)}</Badge>
             </div>

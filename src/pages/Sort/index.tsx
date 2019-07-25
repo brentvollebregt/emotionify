@@ -133,7 +133,8 @@ export const Sort: React.FunctionComponent<IProps> = (props: IProps) => {
             <PlaylistSelectionTable 
                 playlists={Object.values(playlists)}
                 selectedPlaylistIds={selectedPlaylistIds}
-                multipleSelectionsAllowed={true}
+                selectionsAllowed="All"
+                defaultSelectionType="Single"
                 onPlaylistSelectionChange={onPlaylistSelectionChange} 
             />
 
