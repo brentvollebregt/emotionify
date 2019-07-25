@@ -1,15 +1,15 @@
 import React, { useState } from 'react';
 import { useTitle } from 'hookrouter';
-import Plot from 'react-plotly.js';
 import Container from 'react-bootstrap/Container';
+import InputGroup from 'react-bootstrap/InputGroup';
+import DropdownButton from 'react-bootstrap/DropdownButton';
+import Dropdown from 'react-bootstrap/Dropdown';
 import PlaylistSelectionTable from '../../components/PlaylistSelection';
-import PlaylistDetails from '../../components/PlaylistDetails';
 import SpotifyLoginStatusButton from '../../components/SpotifyLoginStatusButton';
 import BoxPlotAudioFeatureComparison from './BoxPlotAudioFeatureComparison';
-import { PlaylistObjectSimplifiedWithTrackIds, TrackWithAudioFeatures } from '../../models/Spotify';
+import { PlaylistObjectSimplifiedWithTrackIds, availableTrackAudioFeatures, TrackWithAudioFeatures } from '../../models/Spotify';
 
-const max_playlists_selected = 3;
-const playlist_colours = ['#ed7d31', '#4372c4', '#7bc443'];
+const playlist_colours = ['rgb(93, 164, 214)', 'rgb(255, 144, 14)', 'rgb(44, 160, 101)', 'rgb(255, 65, 54)', 'rgb(207, 114, 255)', 'rgb(127, 96, 0)', 'rgb(255, 140, 184)', 'rgb(79, 90, 117)', 'rgb(222, 223, 0)'];
 
 interface IProps {
     user: SpotifyApi.UserObjectPrivate | undefined,
@@ -24,9 +24,10 @@ const Compare: React.FunctionComponent<IProps> = (props: IProps) => {
 
     useTitle('Compare - Emotionify');
     const [selectedPlaylistIds, setSelectedPlaylistIds] = useState<string[]>([]);
+    const [oneDimensonComparisonAudioFeature, setOneDimensonComparisonAudioFeature] = useState('Valence');
 
     const onPlaylistSelectionChange = (playlist_ids: string[], scrollOnFirstSelection: boolean = false) => {
-        if (playlist_ids.length <= max_playlists_selected) {
+        if (playlist_ids.length <= playlist_colours.length) {
             setSelectedPlaylistIds(playlist_ids);
             playlist_ids.forEach(playlist_id => {
                 if (playlists[playlist_id].track_ids.length === 0) {
@@ -35,6 +36,7 @@ const Compare: React.FunctionComponent<IProps> = (props: IProps) => {
             });
         }
     }
+    const onOneDimensonComparisonAudioFeatureSelection = (audio_feature: string) => () => setOneDimensonComparisonAudioFeature(audio_feature);
 
     const selectedPlaylists = selectedPlaylistIds.map(pid => playlists[pid]);
     const selectedPlaylistColours: {[key: string]: string} = selectedPlaylistIds.map((pid: string, index: number) => ({ [pid]: playlist_colours[index] })).reduce((a, b) => ({ ...a, ...b }), {});
@@ -70,28 +72,32 @@ const Compare: React.FunctionComponent<IProps> = (props: IProps) => {
             {selectedPlaylistIds.length > 0 && <>
                 <hr />
 
-                <div className="d-block d-md-flex mb-5">
-                    {selectedPlaylists.map((playlist: PlaylistObjectSimplifiedWithTrackIds) => <div key={playlist.id} style={{ width: '100%', padding: '0 5px' }}>
-                        <PlaylistDetails 
-                            playlists={[playlist]}
-                            tracksLoading={playlistsLoading.has(playlist.id)}
-                        />
-                        <hr style={{ border: 'solid 2px ' + selectedPlaylistColours[playlist.id], margin: '5px 0 0 0' }} />
-                    </div>)}
-                </div>
-
                 <div>
-                    <h4 className="mb-2">Single Audio Feature</h4>
+                    <h4 className="mb-3">Single Audio Feature Comparison</h4>
 
-                    {/* TODO Add dropdown to select audio feature */}
-                    
+                    <InputGroup className="mb-3" style={{display: 'inline-flex', width: 'auto'}}>
+                        <InputGroup.Prepend>
+                            <InputGroup.Text>Audio Feature</InputGroup.Text>
+                        </InputGroup.Prepend>
+                        <DropdownButton
+                            as={InputGroup.Append}
+                            variant="outline-secondary"
+                            title={oneDimensonComparisonAudioFeature}
+                            id="X-Axis"
+                        >
+                            {Object.keys(availableTrackAudioFeatures).map(audio_feature =>
+                                <Dropdown.Item key={audio_feature} onClick={onOneDimensonComparisonAudioFeatureSelection(audio_feature)}>{audio_feature}</Dropdown.Item>
+                            )}
+                        </DropdownButton>
+                    </InputGroup>
+
                     <BoxPlotAudioFeatureComparison
                         selectedPlaylists={selectedPlaylists}
                         tracks={tracks}
                         playlistColours={selectedPlaylistColours}
-                        audioFeature="valence"
-                        min={0}
-                        max={1}
+                        audioFeature={availableTrackAudioFeatures[oneDimensonComparisonAudioFeature].key as keyof SpotifyApi.AudioFeaturesObject}
+                        min={availableTrackAudioFeatures[oneDimensonComparisonAudioFeature].min}
+                        max={availableTrackAudioFeatures[oneDimensonComparisonAudioFeature].max}
                     />
                 </div>
 

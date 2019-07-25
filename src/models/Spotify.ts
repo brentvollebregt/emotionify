@@ -73,7 +73,7 @@ export const availableTrackAudioFeatures: {[key: string]: AudioFeatureProperty} 
     },
     'Loudness': {
         key: 'loudness',
-        min: -60,
+        min: undefined,
         max: 0,
         show_in_sort: true
     },
