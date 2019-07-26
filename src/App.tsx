@@ -69,7 +69,14 @@ export const App: React.FunctionComponent<IProps> = (props: IProps) => {
             getAllTracksInPlaylist(token, playlist)
                 .then(tracks => {
                     setSpotifyData(prevState => {
-                        const new_tracks = tracks.filter(t => !(t.id in prevState.tracks));
+                        const tracks_with_data = tracks.filter(t => Object.values(t).length !== 1) // Filter out tracks that don't have data (can happen with vidoes - will only be {audio_features: undefined})
+                        if (tracks.length !== tracks_with_data.length) {
+                            cogoToast.warn(
+                                `Could not get data for ${tracks.length - tracks_with_data.length} song(s) from "${playlist.name}". These are most likely videos in the playlist which are not supported.`,
+                                { position: "bottom-center", heading: 'Possible Missing Songs', hideAfter: 20, onClick: (hide: any) => hide() }
+                            )
+                        }
+                        const new_tracks = tracks_with_data.filter(t => !(t.id in prevState.tracks));
                         return { 
                         ...prevState,
                         tracks: { ...prevState.tracks, ...arrayToObject<TrackWithAudioFeatures>(new_tracks, "id") },
