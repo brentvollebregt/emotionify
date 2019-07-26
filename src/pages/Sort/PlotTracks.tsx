@@ -5,8 +5,8 @@ import { TrackWithAudioFeatures } from '../../models/Spotify';
 
 interface IProps {
     tracks: TrackWithAudioFeatures[],
-    x_audio_feature_key: string,
-    y_audio_feature_key: string,
+    x_audio_feature_key: keyof SpotifyApi.AudioFeaturesObject,
+    y_audio_feature_key: keyof SpotifyApi.AudioFeaturesObject,
     x_audio_feature_min: number | undefined,
     x_audio_feature_max: number | undefined,
     y_audio_feature_min: number | undefined,
@@ -72,8 +72,8 @@ const PlotTracks: React.FunctionComponent<IProps> = (props: IProps) => {
         }
 
         if (t.audio_features !== undefined && t.audio_features !== null) {
-            const x = (t.audio_features[(x_audio_feature_key as keyof SpotifyApi.AudioFeaturesObject)] as number);
-            const y = (t.audio_features[(y_audio_feature_key as keyof SpotifyApi.AudioFeaturesObject)] as number);
+            const x = (t.audio_features[x_audio_feature_key] as number);
+            const y = (t.audio_features[y_audio_feature_key] as number);
             return { x: x, y: y, track: track }
         } else if (t.audio_features === undefined) { // Commonly occurs as t.audio_features === undefined on first playlist selection
             return { x: 0, y: 0, track: track }

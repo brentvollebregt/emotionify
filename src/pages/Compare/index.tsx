@@ -95,7 +95,7 @@ const Compare: React.FunctionComponent<IProps> = (props: IProps) => {
                         selectedPlaylists={selectedPlaylists}
                         tracks={tracks}
                         playlistColours={selectedPlaylistColours}
-                        audioFeature={availableTrackAudioFeatures[oneDimensonComparisonAudioFeature].key as keyof SpotifyApi.AudioFeaturesObject}
+                        audioFeature={availableTrackAudioFeatures[oneDimensonComparisonAudioFeature].key}
                         min={availableTrackAudioFeatures[oneDimensonComparisonAudioFeature].min}
                         max={availableTrackAudioFeatures[oneDimensonComparisonAudioFeature].max}
                     />

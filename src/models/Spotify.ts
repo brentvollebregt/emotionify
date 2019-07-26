@@ -22,7 +22,7 @@ export interface TrackWithAudioFeatures extends SpotifyApi.TrackObjectFull {
 }
 
 export interface AudioFeatureProperty {
-    key: string,
+    key: keyof SpotifyApi.AudioFeaturesObject,
     min: number | undefined,
     max: number | undefined,
     show_in_sort: boolean

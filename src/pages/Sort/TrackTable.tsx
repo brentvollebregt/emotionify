@@ -7,9 +7,9 @@ import { randomString } from '../../logic/Utils';
 
 interface IProps {
     tracks: SpotifyTrackWithIndexes[], // These are sorted using the current method when they come in
-    x_audio_feature: string,
+    x_audio_feature: keyof SpotifyApi.AudioFeaturesObject,
     x_audio_feature_name: string,
-    y_audio_feature: string,
+    y_audio_feature: keyof SpotifyApi.AudioFeaturesObject,
     y_audio_feature_name: string
 }
 
@@ -51,8 +51,8 @@ const TrackTable: React.FunctionComponent<IProps> = (props: IProps) => {
                                 </td>
                                 <td>{track.name}</td>
                                 <td className="d-none d-md-table-cell">{track.artists.map(a => a.name).join(', ')}</td>
-                                <td>{track.audio_features !== undefined && track.audio_features !== null && track.audio_features[(x_audio_feature as keyof SpotifyApi.AudioFeaturesObject)]}</td>
-                                <td>{track.audio_features !== undefined && track.audio_features !== null && track.audio_features[(y_audio_feature as keyof SpotifyApi.AudioFeaturesObject)]}</td>
+                                <td>{track.audio_features !== undefined && track.audio_features !== null && track.audio_features[x_audio_feature]}</td>
+                                <td>{track.audio_features !== undefined && track.audio_features !== null && track.audio_features[y_audio_feature]}</td>
                             </tr>)}
                         </tbody>
                     </Table>
