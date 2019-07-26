@@ -4,12 +4,12 @@ import Container from 'react-bootstrap/Container';
 import InputGroup from 'react-bootstrap/InputGroup';
 import DropdownButton from 'react-bootstrap/DropdownButton';
 import Dropdown from 'react-bootstrap/Dropdown';
+import Spinner from 'react-bootstrap/Spinner';
 import PlaylistSelectionTable from '../../components/PlaylistSelection';
 import SpotifyLoginStatusButton from '../../components/SpotifyLoginStatusButton';
 import BoxPlotAudioFeatureComparison from './BoxPlotAudioFeatureComparison';
 import RadarChartAudioFeatureComparison from './RadarChartAudioFeatureComparison';
 import { PlaylistObjectSimplifiedWithTrackIds, availableTrackAudioFeatures, TrackWithAudioFeatures } from '../../models/Spotify';
-import Plot from 'react-plotly.js';
 
 const playlist_colours = ['rgb(93, 164, 214)', 'rgb(255, 144, 14)', 'rgb(44, 160, 101)', 'rgb(255, 65, 54)', 'rgb(207, 114, 255)', 'rgb(127, 96, 0)', 'rgb(255, 140, 184)', 'rgb(79, 90, 117)', 'rgb(222, 223, 0)'];
 
@@ -28,7 +28,7 @@ const Compare: React.FunctionComponent<IProps> = (props: IProps) => {
     const [selectedPlaylistIds, setSelectedPlaylistIds] = useState<string[]>([]);
     const [oneDimensonComparisonAudioFeature, setOneDimensonComparisonAudioFeature] = useState('Valence');
 
-    const onPlaylistSelectionChange = (playlist_ids: string[], scrollOnFirstSelection: boolean = false) => {
+    const onPlaylistSelectionChange = (playlist_ids: string[]) => {
         if (playlist_ids.length <= playlist_colours.length) {
             setSelectedPlaylistIds(playlist_ids);
             playlist_ids.forEach(playlist_id => {
@@ -70,6 +70,10 @@ const Compare: React.FunctionComponent<IProps> = (props: IProps) => {
                 selectionsAllowed="Multiple"
                 onPlaylistSelectionChange={onPlaylistSelectionChange} 
             />
+
+            {playlistsLoading.size > 0 && <div className="my-4">
+                <Spinner animation="border" />
+            </div>}
 
             {selectedPlaylistIds.length > 0 && <>
                 <hr />
