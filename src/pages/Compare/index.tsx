@@ -7,7 +7,9 @@ import Dropdown from 'react-bootstrap/Dropdown';
 import PlaylistSelectionTable from '../../components/PlaylistSelection';
 import SpotifyLoginStatusButton from '../../components/SpotifyLoginStatusButton';
 import BoxPlotAudioFeatureComparison from './BoxPlotAudioFeatureComparison';
+import RadarChartAudioFeatureComparison from './RadarChartAudioFeatureComparison';
 import { PlaylistObjectSimplifiedWithTrackIds, availableTrackAudioFeatures, TrackWithAudioFeatures } from '../../models/Spotify';
+import Plot from 'react-plotly.js';
 
 const playlist_colours = ['rgb(93, 164, 214)', 'rgb(255, 144, 14)', 'rgb(44, 160, 101)', 'rgb(255, 65, 54)', 'rgb(207, 114, 255)', 'rgb(127, 96, 0)', 'rgb(255, 140, 184)', 'rgb(79, 90, 117)', 'rgb(222, 223, 0)'];
 
@@ -72,7 +74,7 @@ const Compare: React.FunctionComponent<IProps> = (props: IProps) => {
             {selectedPlaylistIds.length > 0 && <>
                 <hr />
 
-                <div>
+                <div className="mb-5">
                     <h4 className="mb-3">Single Audio Feature Comparison</h4>
 
                     <InputGroup className="mb-3" style={{display: 'inline-flex', width: 'auto'}}>
@@ -101,11 +103,24 @@ const Compare: React.FunctionComponent<IProps> = (props: IProps) => {
                     />
                 </div>
 
-                {/* TODO Add 2d comparison */}
+                <div className="mb-5">
+                    <h4 className="mb-3">Dual Audio Feature Comparison</h4>
+                    {/* TODO Add 2d comparison */}
+                </div>
 
-                {/* TODO Add radial plot */}
+                <div className="mb-5">
+                    <h4 className="mb-3">0-1 Range Audio Feature Comparison</h4>
 
-                {/* TODO Add table showing averages */}
+                    <RadarChartAudioFeatureComparison 
+                        playlists={selectedPlaylists}
+                        tracks={tracks}
+                    />
+                </div>
+
+                <div className="mb-5">
+                    <h4 className="mb-3">Playlist Statistics</h4>
+                    {/* TODO Add table showing averages */}
+                </div>
 
             </>}
         </Container>
