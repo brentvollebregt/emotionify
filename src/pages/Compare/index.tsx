@@ -8,6 +8,7 @@ import Spinner from 'react-bootstrap/Spinner';
 import PlaylistSelectionTable from '../../components/PlaylistSelection';
 import SpotifyLoginStatusButton from '../../components/SpotifyLoginStatusButton';
 import BoxPlotAudioFeatureComparison from './BoxPlotAudioFeatureComparison';
+import ScatterPlotDualAudioFeatureComparison from './ScatterPlotDualAudioFeatureComparison';
 import RadarChartAudioFeatureComparison from './RadarChartAudioFeatureComparison';
 import { PlaylistObjectSimplifiedWithTrackIds, availableTrackAudioFeatures, TrackWithAudioFeatures } from '../../models/Spotify';
 
@@ -24,7 +25,9 @@ const Compare: React.FunctionComponent<IProps> = (props: IProps) => {
 
     useTitle('Compare - Emotionify');
     const [selectedPlaylistIds, setSelectedPlaylistIds] = useState<string[]>([]);
-    const [oneDimensonComparisonAudioFeature, setOneDimensonComparisonAudioFeature] = useState('Valence');
+    const [oneDimensionComparisonAudioFeature, setOneDimensionComparisonAudioFeature] = useState('Valence');
+    const [twoDimensionComparisonAudioFeatureX, setTwoDimensionComparisonAudioFeatureX] = useState('Valence');
+    const [twoDimensionComparisonAudioFeatureY, setTwoDimensionComparisonAudioFeatureY] = useState('Energy');
 
     const onPlaylistSelectionChange = (playlist_ids: string[]) => {
         if (playlist_ids.length) {
@@ -36,7 +39,9 @@ const Compare: React.FunctionComponent<IProps> = (props: IProps) => {
             });
         }
     }
-    const onOneDimensonComparisonAudioFeatureSelection = (audio_feature: string) => () => setOneDimensonComparisonAudioFeature(audio_feature);
+    const onOneDimensionComparisonAudioFeatureSelection = (audio_feature: string) => () => setOneDimensionComparisonAudioFeature(audio_feature);
+    const onTwoDimensionComparisonAudioFeatureXSelection = (audio_feature: string) => () => setTwoDimensionComparisonAudioFeatureX(audio_feature);
+    const onTwoDimensionComparisonAudioFeatureYSelection = (audio_feature: string) => () => setTwoDimensionComparisonAudioFeatureY(audio_feature);
 
     const selectedPlaylists = selectedPlaylistIds.map(pid => playlists[pid]);
 
@@ -85,11 +90,11 @@ const Compare: React.FunctionComponent<IProps> = (props: IProps) => {
                         <DropdownButton
                             as={InputGroup.Append}
                             variant="outline-secondary"
-                            title={oneDimensonComparisonAudioFeature}
+                            title={oneDimensionComparisonAudioFeature}
                             id="X-Axis"
                         >
                             {Object.keys(availableTrackAudioFeatures).map(audio_feature =>
-                                <Dropdown.Item key={audio_feature} onClick={onOneDimensonComparisonAudioFeatureSelection(audio_feature)}>{audio_feature}</Dropdown.Item>
+                                <Dropdown.Item key={audio_feature} onClick={onOneDimensionComparisonAudioFeatureSelection(audio_feature)}>{audio_feature}</Dropdown.Item>
                             )}
                         </DropdownButton>
                     </InputGroup>
@@ -97,15 +102,55 @@ const Compare: React.FunctionComponent<IProps> = (props: IProps) => {
                     <BoxPlotAudioFeatureComparison
                         selectedPlaylists={selectedPlaylists}
                         tracks={tracks}
-                        audioFeature={availableTrackAudioFeatures[oneDimensonComparisonAudioFeature].key}
-                        min={availableTrackAudioFeatures[oneDimensonComparisonAudioFeature].min}
-                        max={availableTrackAudioFeatures[oneDimensonComparisonAudioFeature].max}
+                        audioFeature={availableTrackAudioFeatures[oneDimensionComparisonAudioFeature].key}
+                        min={availableTrackAudioFeatures[oneDimensionComparisonAudioFeature].min}
+                        max={availableTrackAudioFeatures[oneDimensionComparisonAudioFeature].max}
                     />
                 </div>
 
                 <div className="mb-5">
                     <h4 className="mb-3">Dual Audio Feature Comparison</h4>
-                    {/* TODO Add 2d comparison */}
+
+                    <div className="mb-3">
+                        <InputGroup className="mr-3 mt-1" style={{display: 'inline-flex', width: 'auto'}}>
+                            <InputGroup.Prepend>
+                                <InputGroup.Text>X-Axis ( ↔ )</InputGroup.Text>
+                            </InputGroup.Prepend>
+                            <DropdownButton
+                                as={InputGroup.Append}
+                                variant="outline-secondary"
+                                title={twoDimensionComparisonAudioFeatureX}
+                                id="X-Axis"
+                            >
+                                {Object.keys(availableTrackAudioFeatures).map(audio_feature =>
+                                    <Dropdown.Item key={audio_feature} onClick={onTwoDimensionComparisonAudioFeatureXSelection(audio_feature)}>{audio_feature}</Dropdown.Item>
+                                )}
+                            </DropdownButton>
+                        </InputGroup>
+
+                        <InputGroup className="mt-1" style={{display: 'inline-flex', width: 'auto'}}>
+                            <InputGroup.Prepend>
+                                <InputGroup.Text>Y-Axis ( ↕ )</InputGroup.Text>
+                            </InputGroup.Prepend>
+                            <DropdownButton
+                                as={InputGroup.Append}
+                                variant="outline-secondary"
+                                title={twoDimensionComparisonAudioFeatureY}
+                                id="X-Axis"
+                            >
+                                {Object.keys(availableTrackAudioFeatures).map(audio_feature =>
+                                    <Dropdown.Item key={audio_feature} onClick={onTwoDimensionComparisonAudioFeatureYSelection(audio_feature)}>{audio_feature}</Dropdown.Item>
+                                )}
+                            </DropdownButton>
+                        </InputGroup>
+                    </div>
+
+                    <ScatterPlotDualAudioFeatureComparison
+                        playlists={selectedPlaylists}
+                        tracks={tracks}
+                        x_audio_feature_name={twoDimensionComparisonAudioFeatureX}
+                        y_audio_feature_name={twoDimensionComparisonAudioFeatureY}
+                    />
                 </div>
 
                 <div className="mb-5">

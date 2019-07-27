@@ -1,6 +1,7 @@
 import React from 'react';
 import Plot from 'react-plotly.js';
 import { PlaylistObjectSimplifiedWithTrackIds, TrackWithAudioFeatures } from '../../models/Spotify';
+import { getSupportedTrackAudioFeaturesFromPlaylist } from '../../logic/Spotify';
 
 const plotLimitExpand = 0.01; // To help get 0 and 1 grid lines
 
@@ -15,20 +16,13 @@ interface IProps {
 const BoxPlotAudioFeatureComparison: React.FunctionComponent<IProps> = (props: IProps) => {
     const { selectedPlaylists, tracks, audioFeature, max, min } = props;
 
-    const supportedTrackAudioFeaturesFromPlaylist = (playlist: PlaylistObjectSimplifiedWithTrackIds): SpotifyApi.AudioFeaturesObject[] => {
-        return playlist
-            .track_ids // Get the playlists tracks
-            .map(tid => tracks[tid].audio_features) // Get all audio features
-            .filter((af): af is SpotifyApi.AudioFeaturesObject  => af !== undefined && af !== null); // Filter out invalid audio features
-    }
-
     return <Plot
         data={selectedPlaylists.map((playlist: PlaylistObjectSimplifiedWithTrackIds) => ({
-            x: supportedTrackAudioFeaturesFromPlaylist(playlist)
+            x: getSupportedTrackAudioFeaturesFromPlaylist(playlist, tracks)
                 .map(afs => afs[audioFeature]),
             type: "box",
             hoverinfo: "text",
-            text: supportedTrackAudioFeaturesFromPlaylist(playlist)
+            text: getSupportedTrackAudioFeaturesFromPlaylist(playlist, tracks)
                 .map(af => tracks[af.id].name + '<br>by ' + tracks[af.id].artists.map(a => a.name).join(', ') ),
             name: playlist.name,
         }))}

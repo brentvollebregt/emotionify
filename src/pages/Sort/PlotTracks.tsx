@@ -30,14 +30,6 @@ function getDistancePercentageAlongLineTheOfClosestPointOnLineToAnArbitaryPoint(
     let len = atob.x * atob.x + atob.y * atob.y;
     let dot = atop.x * atob.x + atop.y * atob.y;
     let t = Math.min( 1, Math.max( 0, dot / len ) );
-
-    // dot = ( end.x - start.x ) * ( point.y - start.y ) - ( end.y - start.y ) * ( point.x - start.x );
-    // let distance_along_line = t;
-    // let distance_away_from_line = dot;
-    // let on_the_line = dot < 1;
-    // let x = start.x + atob.x * t;
-    // let y = start.y + atob.y * t;
-
     return t;
 }
 

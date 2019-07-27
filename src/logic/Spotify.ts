@@ -174,3 +174,11 @@ export function createPlaylist(token: string, user: SpotifyApi.UserObjectPrivate
             });
     });
 }
+
+// Get audio feature objects for tracks in a playlist that exist (aren't undefined for null) using all tracks requested
+export function getSupportedTrackAudioFeaturesFromPlaylist(playlist: PlaylistObjectSimplifiedWithTrackIds, tracks: { [key: string]: TrackWithAudioFeatures }): SpotifyApi.AudioFeaturesObject[] {
+    return playlist
+        .track_ids // Get the playlists tracks
+        .map(tid => tracks[tid].audio_features) // Get all audio features
+        .filter((af): af is SpotifyApi.AudioFeaturesObject  => af !== undefined && af !== null); // Filter out invalid audio features
+}
