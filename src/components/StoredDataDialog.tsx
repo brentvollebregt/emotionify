@@ -35,7 +35,6 @@ const StoredDataDialog: React.FunctionComponent<IProps> = (props: IProps) => {
                 </ul>
             </Modal.Body>
         <Modal.Footer>
-            <Button variant="outline-secondary" onClick={onClose}>Close</Button>
             <Button variant="outline-secondary" onClick={onLogOut}>Logout</Button>
         </Modal.Footer>
     </Modal>;

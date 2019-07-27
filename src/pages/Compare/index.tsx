@@ -40,7 +40,7 @@ const Compare: React.FunctionComponent<IProps> = (props: IProps) => {
 
     const header = <Container className="mt-3 mb-4">
         <h1 className="text-center">Compare Playlists</h1>
-        <p className="text-center lead col-md-7 mx-auto">Select playlists and compare them on one audio feature, two audio features or all audio features.</p>
+        <p className="text-center lead col-md-7 mx-auto">Select playlists and compare them on one audio feature, two audio features or seven pre-selected audio features.</p>
     </Container>;
 
     if (user === undefined) {
