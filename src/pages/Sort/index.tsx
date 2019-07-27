@@ -6,8 +6,8 @@ import { availableSortingMethods, IndexedTrackId, sort, SpotifyTrackWithIndexes 
 import { createPlaylist } from '../../logic/Spotify';
 import { PlaylistObjectSimplifiedWithTrackIds, availableTrackAudioFeatures, TrackWithAudioFeatures } from '../../models/Spotify';
 import { Token } from '../../models/Spotify'
-import PlaylistSelectionTable from './PlaylistSelection';
-import PlaylistDetails from './PlaylistDetails';
+import PlaylistSelectionTable from '../../components/PlaylistSelection';
+import PlaylistDetails from '../../components/PlaylistDetails';
 import PlotTracks from './PlotTracks';
 import TrackTable from './TrackTable';
 import TrackSortControl from './TrackSortControl';
@@ -133,7 +133,8 @@ export const Sort: React.FunctionComponent<IProps> = (props: IProps) => {
             <PlaylistSelectionTable 
                 playlists={Object.values(playlists)}
                 selectedPlaylistIds={selectedPlaylistIds}
-                multipleSelectionsAllowed={true}
+                selectionsAllowed="All"
+                defaultSelectionType="Single"
                 onPlaylistSelectionChange={onPlaylistSelectionChange} 
             />
 
@@ -150,12 +151,6 @@ export const Sort: React.FunctionComponent<IProps> = (props: IProps) => {
                 <div className="mb-3">
                     <PlotTracks 
                         tracks={sorted_tracks}
-                        x_audio_feature_key={availableTrackAudioFeatures[selectedAxis.x].key}
-                        y_audio_feature_key={availableTrackAudioFeatures[selectedAxis.y].key}
-                        x_audio_feature_min={availableTrackAudioFeatures[selectedAxis.x].min}
-                        x_audio_feature_max={availableTrackAudioFeatures[selectedAxis.x].max}
-                        y_audio_feature_min={availableTrackAudioFeatures[selectedAxis.y].min}
-                        y_audio_feature_max={availableTrackAudioFeatures[selectedAxis.x].max}
                         x_audio_feature_name={selectedAxis.x}
                         y_audio_feature_name={selectedAxis.y}
                     />

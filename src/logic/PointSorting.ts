@@ -98,7 +98,7 @@ export function yAxis(points: SortablePoint[]): SortablePoint[] {
 }
 
 // Sort tracks given x and y features and a sorting method
-export function sort(tracks: TrackWithAudioFeatures[], x_audio_feature: string, y_audio_feature: string, sorting_method: Function): IndexedTrackId[] {
+export function sort(tracks: TrackWithAudioFeatures[], x_audio_feature: keyof SpotifyApi.AudioFeaturesObject, y_audio_feature: keyof SpotifyApi.AudioFeaturesObject, sorting_method: Function): IndexedTrackId[] {
     // Get points initial indexes (to calculate movement)
     let tracks_with_playlist_indexes: IndexedTrackId[] = tracks.map((t, i) => {
         return { id: t.id, index: { before: i, after: 0 } };
@@ -107,8 +107,8 @@ export function sort(tracks: TrackWithAudioFeatures[], x_audio_feature: string, 
     // Convert tracks to sortable points
     let tracks_as_sp: SortablePoint[] = tracks.map(t => {
         if (t.audio_features !== undefined && t.audio_features !== null) {
-            let x = (t.audio_features[(x_audio_feature as keyof SpotifyApi.AudioFeaturesObject)] as number); // We know better than the compiler
-            let y = (t.audio_features[(y_audio_feature as keyof SpotifyApi.AudioFeaturesObject)] as number);
+            let x = (t.audio_features[x_audio_feature] as number); // We know better than the compiler
+            let y = (t.audio_features[y_audio_feature] as number);
             return { id: t.id, x: x, y: y }
         } else { // Commonly occurs as t.audioFeatures === undefined on first playlist selection
             return { id: t.id, x: 0, y: 0 }

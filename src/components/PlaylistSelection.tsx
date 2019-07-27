@@ -5,22 +5,27 @@ import InputGroup from 'react-bootstrap/InputGroup';
 import FormControl from 'react-bootstrap/FormControl';
 import DropdownButton from 'react-bootstrap/DropdownButton';
 import Dropdown from 'react-bootstrap/Dropdown';
-import { PlaylistObjectSimplifiedWithTrackIds } from '../../models/Spotify';
-import useWindowSize from '../../hooks/WindowSize';
+import { PlaylistObjectSimplifiedWithTrackIds } from '../models/Spotify';
+import useWindowSize from '../hooks/WindowSize';
 
 interface IProps {
     playlists: PlaylistObjectSimplifiedWithTrackIds[],
     selectedPlaylistIds: string[],
-    multipleSelectionsAllowed: boolean,
+    selectionsAllowed: 'Single' | 'Multiple' | 'All',
+    defaultSelectionType?: 'Single' | 'Multiple'
     onPlaylistSelectionChange: (playlist_ids: string[], scrollOnFirstSelection: boolean) => void
 }
 
 const selectedBackground = 'linear-gradient(to right, rgba(0, 82, 157, 0.3), rgba(235, 18, 27, 0.3))';
 
 const PlaylistSelection: React.FunctionComponent<IProps> = (props: IProps) => {
-    const {playlists, selectedPlaylistIds, multipleSelectionsAllowed, onPlaylistSelectionChange} = props;
+    const {playlists, selectedPlaylistIds, selectionsAllowed, defaultSelectionType, onPlaylistSelectionChange} = props;
 
-    const [singlePlaylistSelection, setSinglePlaylistSelection] = useState(true);
+    const [singlePlaylistSelection, setSinglePlaylistSelection] = useState(
+        selectionsAllowed === 'All' // If we are allowed all (two) selections
+            ? defaultSelectionType !== undefined ? defaultSelectionType === 'Single' : true // If a default is defined, use it, otherwise default to single
+            : selectionsAllowed === 'Single' // If a specific kind of selection is allowed, use that as the default (this will be fixed)
+    );
     const [search, setSearch] = useState('');
     const windowSize = useWindowSize();
 
@@ -32,7 +37,7 @@ const PlaylistSelection: React.FunctionComponent<IProps> = (props: IProps) => {
         setSinglePlaylistSelection(value)
     };
     const onComponentPlaylistSelected = (playlist_id: string) => () => {
-        if (singlePlaylistSelection || !multipleSelectionsAllowed) {
+        if (singlePlaylistSelection || selectionsAllowed === 'Single') {
             onPlaylistSelectionChange([playlist_id], true);
         } else {
             if (selectedPlaylistIds.indexOf(playlist_id) === -1) {
@@ -56,16 +61,17 @@ const PlaylistSelection: React.FunctionComponent<IProps> = (props: IProps) => {
                     <InputGroup.Text>{bootstrapBreakpointBiggerThanSm() ? 'Search Playlists': 'Search'}</InputGroup.Text>
                 </InputGroup.Prepend>
                 <FormControl placeholder="Playlist name..." value={search} onChange={onSearchChange} />
-                {multipleSelectionsAllowed && <DropdownButton
+                <DropdownButton
                     as={InputGroup.Append}
                     variant="outline-secondary"
                     title={singlePlaylistSelection ? 'Single' : 'Multiple'}
                     id="playlist-selection-types"
                     alignRight
+                    disabled={selectionsAllowed !== 'All'}
                 >
-                    <Dropdown.Item onClick={singlePlaylistSelectionChange(true)}>Single Playlist Selection</Dropdown.Item>
-                    <Dropdown.Item onClick={singlePlaylistSelectionChange(false)}>Multiple Playlist Selection</Dropdown.Item>
-                </DropdownButton>}
+                    {(selectionsAllowed === 'Single' || selectionsAllowed === 'All') && <Dropdown.Item onClick={singlePlaylistSelectionChange(true)}>Single Playlist Selection</Dropdown.Item>}
+                    {(selectionsAllowed === 'Multiple' || selectionsAllowed === 'All') && <Dropdown.Item onClick={singlePlaylistSelectionChange(false)}>Multiple Playlist Selection</Dropdown.Item>}
+                </DropdownButton>
             </InputGroup>
 
             <div style={{ maxHeight: 450, overflowX: 'auto' }}>
