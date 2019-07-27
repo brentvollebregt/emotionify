@@ -151,12 +151,6 @@ export const Sort: React.FunctionComponent<IProps> = (props: IProps) => {
                 <div className="mb-3">
                     <PlotTracks 
                         tracks={sorted_tracks}
-                        x_audio_feature_key={availableTrackAudioFeatures[selectedAxis.x].key}
-                        y_audio_feature_key={availableTrackAudioFeatures[selectedAxis.y].key}
-                        x_audio_feature_min={availableTrackAudioFeatures[selectedAxis.x].min}
-                        x_audio_feature_max={availableTrackAudioFeatures[selectedAxis.x].max}
-                        y_audio_feature_min={availableTrackAudioFeatures[selectedAxis.y].min}
-                        y_audio_feature_max={availableTrackAudioFeatures[selectedAxis.x].max}
                         x_audio_feature_name={selectedAxis.x}
                         y_audio_feature_name={selectedAxis.y}
                     />

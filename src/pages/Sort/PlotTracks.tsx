@@ -1,16 +1,10 @@
 import React from 'react';
 import Plot from 'react-plotly.js';
 import Alert from 'react-bootstrap/Alert';
-import { TrackWithAudioFeatures } from '../../models/Spotify';
+import { TrackWithAudioFeatures, availableTrackAudioFeatures } from '../../models/Spotify';
 
 interface IProps {
     tracks: TrackWithAudioFeatures[],
-    x_audio_feature_key: keyof SpotifyApi.AudioFeaturesObject,
-    y_audio_feature_key: keyof SpotifyApi.AudioFeaturesObject,
-    x_audio_feature_min: number | undefined,
-    x_audio_feature_max: number | undefined,
-    y_audio_feature_min: number | undefined,
-    y_audio_feature_max: number | undefined,
     x_audio_feature_name: string,
     y_audio_feature_name: string
 }
@@ -60,8 +54,10 @@ function getPointAlongColourGradient(start_hex_colour: string, end_hex_colour: s
 }
 
 const PlotTracks: React.FunctionComponent<IProps> = (props: IProps) => {
-    const { tracks, x_audio_feature_key, y_audio_feature_key, x_audio_feature_name, y_audio_feature_name } = props;
-    const { x_audio_feature_min, x_audio_feature_max, y_audio_feature_min, y_audio_feature_max } = props;
+    const { tracks, x_audio_feature_name, y_audio_feature_name } = props;
+
+    const x_audio_feature = availableTrackAudioFeatures[x_audio_feature_name];
+    const y_audio_feature = availableTrackAudioFeatures[y_audio_feature_name];
 
     const points: TrackPoint[] = tracks.map(t => {
         const track = {
@@ -72,8 +68,8 @@ const PlotTracks: React.FunctionComponent<IProps> = (props: IProps) => {
         }
 
         if (t.audio_features !== undefined && t.audio_features !== null) {
-            const x = (t.audio_features[x_audio_feature_key] as number);
-            const y = (t.audio_features[y_audio_feature_key] as number);
+            const x = (t.audio_features[x_audio_feature.key] as number);
+            const y = (t.audio_features[y_audio_feature.key] as number);
             return { x: x, y: y, track: track }
         } else if (t.audio_features === undefined) { // Commonly occurs as t.audio_features === undefined on first playlist selection
             return { x: 0, y: 0, track: track }
@@ -89,16 +85,16 @@ const PlotTracks: React.FunctionComponent<IProps> = (props: IProps) => {
     const points_y_max: number = Math.max(...points.map(p => p.y));
 
     // Mix expected and actual min's and max's to defined the colour gradient 
-    const colour_x_min: number = x_audio_feature_min !== undefined ? Math.min(x_audio_feature_min, points_x_min) : points_x_min;
-    const colour_x_max: number = x_audio_feature_max !== undefined ? Math.max(x_audio_feature_max, points_x_max) : points_x_max;
-    const colour_y_min: number = y_audio_feature_min !== undefined ? Math.min(y_audio_feature_min, points_y_min) : points_y_min;
-    const colour_y_max: number = y_audio_feature_max !== undefined ? Math.max(y_audio_feature_max, points_y_max) : points_y_max;
+    const colour_x_min: number = x_audio_feature.min !== undefined ? Math.min(x_audio_feature.min, points_x_min) : points_x_min;
+    const colour_x_max: number = x_audio_feature.max !== undefined ? Math.max(x_audio_feature.max, points_x_max) : points_x_max;
+    const colour_y_min: number = y_audio_feature.min !== undefined ? Math.min(y_audio_feature.min, points_y_min) : points_y_min;
+    const colour_y_max: number = y_audio_feature.max !== undefined ? Math.max(y_audio_feature.max, points_y_max) : points_y_max;
 
     // The min and max are passed in, but still take the points into account just incase there are values outside of the defined range
-    const scale_x_min: number | undefined = x_audio_feature_min !== undefined ? Math.min(x_audio_feature_min, points_x_min) : undefined;
-    const scale_x_max: number | undefined = x_audio_feature_max !== undefined ? Math.max(x_audio_feature_max, points_x_max) : undefined;
-    const scale_y_min: number | undefined = y_audio_feature_min !== undefined ? Math.min(y_audio_feature_min, points_y_min) : undefined;
-    const scale_y_max: number | undefined = y_audio_feature_max !== undefined ? Math.max(y_audio_feature_max, points_y_max) : undefined;
+    const scale_x_min: number | undefined = x_audio_feature.min !== undefined ? Math.min(x_audio_feature.min, points_x_min) : undefined;
+    const scale_x_max: number | undefined = x_audio_feature.max !== undefined ? Math.max(x_audio_feature.max, points_x_max) : undefined;
+    const scale_y_min: number | undefined = y_audio_feature.min !== undefined ? Math.min(y_audio_feature.min, points_y_min) : undefined;
+    const scale_y_max: number | undefined = y_audio_feature.max !== undefined ? Math.max(y_audio_feature.max, points_y_max) : undefined;
 
     return <>
         <Plot
