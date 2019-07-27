@@ -1,7 +1,7 @@
 import React from 'react';
+import Plot from 'react-plotly.js';
 import { PlaylistObjectSimplifiedWithTrackIds, availableTrackAudioFeatures, TrackWithAudioFeatures } from '../../models/Spotify';
 import { getSupportedTrackAudioFeaturesFromPlaylist } from '../../logic/Spotify';
-import Plot from 'react-plotly.js';
 
 const plotLimitExpand = 0.01; // To help get 0 and 1 grid lines
 
