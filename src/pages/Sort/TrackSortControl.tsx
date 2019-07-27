@@ -1,7 +1,5 @@
 import React from 'react';
-import Dropdown from 'react-bootstrap/Dropdown';
-import InputGroup from 'react-bootstrap/InputGroup';
-import DropdownButton from 'react-bootstrap/DropdownButton';
+import AudioFeatureDropdown from '../../components/NamedDropdown';
 
 interface IProps {
     available_audio_features: string[],
@@ -15,54 +13,32 @@ interface IProps {
 }
 
 const TrackSortControl: React.FunctionComponent<IProps> = (props: IProps) => {
+    const { available_audio_features, available_track_sorting_methods, selected_x_axis, selected_y_axis, selected_sorting_method } = props;
+    const { onXAxisSelect, onYAxisSelect, onSortMethodSelect} = props;
+
     return <>
-        <InputGroup className="mr-3 mt-1" style={{display: 'inline-flex', width: 'auto'}}>
-            <InputGroup.Prepend>
-                <InputGroup.Text>X-Axis ( ↔ )</InputGroup.Text>
-            </InputGroup.Prepend>
-            <DropdownButton
-                as={InputGroup.Append}
-                variant="outline-secondary"
-                title={props.selected_x_axis}
-                id="X-Axis"
-            >
-                {props.available_audio_features.map(audio_feature =>
-                    <Dropdown.Item key={audio_feature} onClick={() => props.onXAxisSelect(audio_feature)}>{audio_feature}</Dropdown.Item>
-                )}
-            </DropdownButton>
-        </InputGroup>
+        <AudioFeatureDropdown
+            available_values={available_audio_features}
+            selected_value={selected_x_axis}
+            title="X-Axis ( ↔ )"
+            onSelect={onXAxisSelect}
+            className="mr-3"
+        />
 
-        <InputGroup className="mr-3 mt-1" style={{display: 'inline-flex', width: 'auto'}}>
-            <InputGroup.Prepend>
-                <InputGroup.Text>Y-Axis ( ↕ )</InputGroup.Text>
-            </InputGroup.Prepend>
-            <DropdownButton
-                as={InputGroup.Append}
-                variant="outline-secondary"
-                title={props.selected_y_axis}
-                id="Y-Axis"
-            >
-                {props.available_audio_features.map(audio_feature =>
-                    <Dropdown.Item key={audio_feature} onClick={() => props.onYAxisSelect(audio_feature)}>{audio_feature}</Dropdown.Item>
-                )}
-            </DropdownButton>
-        </InputGroup>
+        <AudioFeatureDropdown
+            available_values={available_audio_features}
+            selected_value={selected_y_axis}
+            title="Y-Axis ( ↕ )"
+            onSelect={onYAxisSelect}
+            className="mr-3"
+        />
 
-        <InputGroup className="mt-1" style={{display: 'inline-flex', width: 'auto'}}>
-            <InputGroup.Prepend>
-                <InputGroup.Text>Sort Method</InputGroup.Text>
-            </InputGroup.Prepend>
-            <DropdownButton
-                as={InputGroup.Append}
-                variant="outline-secondary"
-                title={props.selected_sorting_method}
-                id="Sort-Method"
-            >
-                {props.available_track_sorting_methods.map(sorting_method =>
-                    <Dropdown.Item key={sorting_method} onClick={() => props.onSortMethodSelect(sorting_method)}>{sorting_method}</Dropdown.Item>
-                )}
-            </DropdownButton>
-        </InputGroup>
+        <AudioFeatureDropdown
+            available_values={available_track_sorting_methods}
+            selected_value={selected_sorting_method}
+            title="Sort Method"
+            onSelect={onSortMethodSelect}
+        />
     </>
 }
 
