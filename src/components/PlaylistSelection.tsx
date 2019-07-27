@@ -37,7 +37,7 @@ const PlaylistSelection: React.FunctionComponent<IProps> = (props: IProps) => {
         setSinglePlaylistSelection(value)
     };
     const onComponentPlaylistSelected = (playlist_id: string) => () => {
-        if (singlePlaylistSelection || selectionsAllowed == 'Single') {
+        if (singlePlaylistSelection || selectionsAllowed === 'Single') {
             onPlaylistSelectionChange([playlist_id], true);
         } else {
             if (selectedPlaylistIds.indexOf(playlist_id) === -1) {

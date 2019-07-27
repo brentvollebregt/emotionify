@@ -46,7 +46,7 @@ const RadarChartAudioFeatureComparison: React.FunctionComponent<IProps> = (props
             width: '100%',
             maxWidth: 800,
             margin: 'auto',
-            maxHeight: 400
+            height: 400
         }}
     />
 }

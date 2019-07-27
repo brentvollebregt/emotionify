@@ -11,8 +11,6 @@ import BoxPlotAudioFeatureComparison from './BoxPlotAudioFeatureComparison';
 import RadarChartAudioFeatureComparison from './RadarChartAudioFeatureComparison';
 import { PlaylistObjectSimplifiedWithTrackIds, availableTrackAudioFeatures, TrackWithAudioFeatures } from '../../models/Spotify';
 
-const playlist_colours = ['rgb(93, 164, 214)', 'rgb(255, 144, 14)', 'rgb(44, 160, 101)', 'rgb(255, 65, 54)', 'rgb(207, 114, 255)', 'rgb(127, 96, 0)', 'rgb(255, 140, 184)', 'rgb(79, 90, 117)', 'rgb(222, 223, 0)'];
-
 interface IProps {
     user: SpotifyApi.UserObjectPrivate | undefined,
     playlists: { [key: string]: PlaylistObjectSimplifiedWithTrackIds },
@@ -29,7 +27,7 @@ const Compare: React.FunctionComponent<IProps> = (props: IProps) => {
     const [oneDimensonComparisonAudioFeature, setOneDimensonComparisonAudioFeature] = useState('Valence');
 
     const onPlaylistSelectionChange = (playlist_ids: string[]) => {
-        if (playlist_ids.length <= playlist_colours.length) {
+        if (playlist_ids.length) {
             setSelectedPlaylistIds(playlist_ids);
             playlist_ids.forEach(playlist_id => {
                 if (playlists[playlist_id].track_ids.length === 0) {
@@ -41,7 +39,6 @@ const Compare: React.FunctionComponent<IProps> = (props: IProps) => {
     const onOneDimensonComparisonAudioFeatureSelection = (audio_feature: string) => () => setOneDimensonComparisonAudioFeature(audio_feature);
 
     const selectedPlaylists = selectedPlaylistIds.map(pid => playlists[pid]);
-    const selectedPlaylistColours: {[key: string]: string} = selectedPlaylistIds.map((pid: string, index: number) => ({ [pid]: playlist_colours[index] })).reduce((a, b) => ({ ...a, ...b }), {});
 
     const header = <Container className="mt-3 mb-4">
         <h1 className="text-center">Compare Playlists</h1>
@@ -100,7 +97,6 @@ const Compare: React.FunctionComponent<IProps> = (props: IProps) => {
                     <BoxPlotAudioFeatureComparison
                         selectedPlaylists={selectedPlaylists}
                         tracks={tracks}
-                        playlistColours={selectedPlaylistColours}
                         audioFeature={availableTrackAudioFeatures[oneDimensonComparisonAudioFeature].key}
                         min={availableTrackAudioFeatures[oneDimensonComparisonAudioFeature].min}
                         max={availableTrackAudioFeatures[oneDimensonComparisonAudioFeature].max}
@@ -119,11 +115,6 @@ const Compare: React.FunctionComponent<IProps> = (props: IProps) => {
                         playlists={selectedPlaylists}
                         tracks={tracks}
                     />
-                </div>
-
-                <div className="mb-5">
-                    <h4 className="mb-3">Playlist Statistics</h4>
-                    {/* TODO Add table showing averages */}
                 </div>
 
             </>}

@@ -7,14 +7,13 @@ const plotLimitExpand = 0.01; // To help get 0 and 1 grid lines
 interface IProps {
     selectedPlaylists: PlaylistObjectSimplifiedWithTrackIds[],
     tracks: { [key: string]: TrackWithAudioFeatures },
-    playlistColours: {[key: string]: string},
     audioFeature: keyof SpotifyApi.AudioFeaturesObject
     min: number | undefined,
     max: number | undefined
 }
 
 const BoxPlotAudioFeatureComparison: React.FunctionComponent<IProps> = (props: IProps) => {
-    const { selectedPlaylists, tracks, playlistColours, audioFeature, max, min } = props;
+    const { selectedPlaylists, tracks, audioFeature, max, min } = props;
 
     const supportedTrackAudioFeaturesFromPlaylist = (playlist: PlaylistObjectSimplifiedWithTrackIds): SpotifyApi.AudioFeaturesObject[] => {
         return playlist
@@ -28,9 +27,6 @@ const BoxPlotAudioFeatureComparison: React.FunctionComponent<IProps> = (props: I
             x: supportedTrackAudioFeaturesFromPlaylist(playlist)
                 .map(afs => afs[audioFeature]),
             type: "box",
-            marker: {
-                color: playlistColours[playlist.id]
-            },
             hoverinfo: "text",
             text: supportedTrackAudioFeaturesFromPlaylist(playlist)
                 .map(af => tracks[af.id].name + '<br>by ' + tracks[af.id].artists.map(a => a.name).join(', ') ),
