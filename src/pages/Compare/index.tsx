@@ -28,14 +28,12 @@ const Compare: React.FunctionComponent<IProps> = (props: IProps) => {
     const [twoDimensionComparisonAudioFeatureY, setTwoDimensionComparisonAudioFeatureY] = useState('Energy');
 
     const onPlaylistSelectionChange = (playlist_ids: string[]) => {
-        if (playlist_ids.length) {
-            setSelectedPlaylistIds(playlist_ids);
-            playlist_ids.forEach(playlist_id => {
-                if (playlists[playlist_id].track_ids.length === 0) {
-                    refreshPlaylist(playlists[playlist_id]);
-                }
-            });
-        }
+        setSelectedPlaylistIds(playlist_ids);
+        playlist_ids.forEach(playlist_id => {
+            if (playlists[playlist_id].track_ids.length === 0) {
+                refreshPlaylist(playlists[playlist_id]);
+            }
+        });
     }
 
     const selectedPlaylists = selectedPlaylistIds.map(pid => playlists[pid]);
