@@ -121,6 +121,10 @@ const PlotTracks: React.FunctionComponent<IProps> = (props: IProps) => {
                 }
             }}
             useResizeHandler={true}
+            config={{
+                displayModeBar: false,
+                responsive: true
+            }}
             style={{ 
                 width: "100%",
                 maxWidth: 700,
