@@ -21,7 +21,7 @@ interface IProps {
 const Compare: React.FunctionComponent<IProps> = (props: IProps) => {
     const { user, playlists, tracks, playlistsLoading, refreshPlaylist } = props;
 
-    useTitle('Compare - Emotionify');
+    useTitle('Emotionify - Compare');
     const [selectedPlaylistIds, setSelectedPlaylistIds] = useState<string[]>([]);
     const [oneDimensionComparisonAudioFeature, setOneDimensionComparisonAudioFeature] = useState('Valence');
     const [twoDimensionComparisonAudioFeatureX, setTwoDimensionComparisonAudioFeatureX] = useState('Valence');

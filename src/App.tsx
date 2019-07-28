@@ -12,6 +12,7 @@ import Compare from './pages/Compare';
 import About from './pages/About';
 import NotFound from './pages/NotFound';
 import useNavigatorOnline from './hooks/NavigatorOnline';
+import useScrollToTopOnRouteChange from './hooks/ScrollToTopOnRouteChange';
 import { Token, SpotifyData, PlaylistObjectSimplifiedWithTrackIds, TrackWithAudioFeatures } from './models/Spotify';
 import { getAllSpotifyUsersPlaylists, getAllTracksInPlaylist, getAudioFeaturesForTracks } from './logic/Spotify';
 import { arrayToObject } from './logic/Utils';
@@ -41,6 +42,7 @@ export const App: React.FunctionComponent<IProps> = (props: IProps) => {
     const [storedDataDialogOpen, setStoredDataDialogOpen] = useState(false);
     const [playlistsLoading, setPlaylistsLoading] = useState<Set<string>>(new Set());
     const isOnline = useNavigatorOnline();
+    useScrollToTopOnRouteChange();
 
     const onTokenChange = (newToken: Token | undefined) => setToken(newToken);
     const onLogOut = () => onTokenChange(undefined);
