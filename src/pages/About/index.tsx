@@ -19,17 +19,19 @@ const About: React.FunctionComponent<IProps> = (props: IProps) => {
                 <p>I made this project because I was curious if this data really did mean anything and if my guess of the data being able to be used to sort playlists by emotion was correct. I can leave that up to you to decide!</p>
                 <p>As you can see on the Sort page, I have also made the other audio features avaiable for you to play around with.</p>
 
-                <h2 className="text-center">Stored Data</h2>
-                <p>I am fully tranparent with the data that is stored here and what is done with it. None of your data is sent off this site and when stored, it stored in local storage.</p>
-                <p>To view a summary of the stored data, simply click your name in the top right. To clear this data, simply logout using the same dialog that appears.</p>
-
                 <h2 className="text-center">FAQ</h2>
-                <h5>Why is this a thing?</h5>
-                <p>I was curious.</p>
-                <h5>Will this remove duplicates?</h5>
-                <p>Yes, if this tool didn't then the duplicate songs would be bunched up by each other. Removing these allows for proper transitions into a different song.</p>
+                <h5>Why is this called Emotionify?</h5>
+                <p>By default, chosing a playlist on the Sort page will sort your music by <code>Valence</code> and <code>Energy</code> which I had used in a previous project to detect vauge emotion of songs.</p>
+                <h5>Will sorting a playlist remove duplicates?</h5>
+                <p>Yes, if the sort functionality didn't remove duplicate songs they would be bunched up by each other. Removing these allows for proper transitions into a different song.</p>
+                <h5>Why do I have to log in so much?</h5>
+                <p>When you log in, a token is stored on your machine that's used to ask Spotify for your playlists (otherwise we couldn't see them). This token only lasts for an hour, meaning if you use this site for more than an hour at a time, you will need to authorise the application again.</p>
+                <h5>What data do you store?</h5>
+                <p>All data recieved from Spotify is stored locally on your machine; none of this is sent off to some other server (apart from Spotify itself). You can view a summary of your stored data by clicking on your name in the top right when logged in.</p>
                 <h5>How do I clear all my data?</h5>
                 <p>All data is stored in localStorage on your machine; simply logging out will clear all this data.</p>
+                <h5>I just added a playlist on Spotiify but it isn't showing up here</h5>
+                <p>We look for your playlists when you log in. If you want to use a playlist you created/added after you logged into this site, log out and then log back in to get the new playlist.</p>
                 <h5>What are each of the audio features I select for the axis?</h5>
                 <p>Here are some summaries from <a href="https://developer.spotify.com/documentation/web-api/reference/tracks/get-audio-features/">Spotify</a>:</p>
                 <ul>
