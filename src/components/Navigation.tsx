@@ -26,7 +26,7 @@ const Navigation: React.FunctionComponent<IProps> = (props: IProps) => {
 
   const goTo = (location: string) => () => navigate(location);
 
-  return <Navbar collapseOnSelect expand="sm" bg="light" variant="light" sticky="top">
+  return <Navbar collapseOnSelect expand="md" bg="light" variant="light" sticky="top">
     <Container>
       <Navbar.Brand onClick={goTo('/')}>
         <img
