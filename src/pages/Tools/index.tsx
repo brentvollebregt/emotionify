@@ -71,6 +71,14 @@ const Tools: React.FunctionComponent<IProps> = (props: IProps) => {
 
     const filterDropdownSelectionOnClick = (filterName: string) => () => setAddFilterDropdownSelection(filterName);
     const addFilter = () => setAppliedFilters(currentlyAppliedFilters => [...currentlyAppliedFilters, {filterName: addFilterDropdownSelection, filter: undefined, titleText: 'New'}]);
+    const removeFilter = (index: number) => (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+        setAppliedFilters(currentlyAppliedFilters => {
+            let newListOfFeatures = [...currentlyAppliedFilters];
+            delete newListOfFeatures[index];
+            return newListOfFeatures;
+        });
+        event.stopPropagation();
+    };
 
     const filterComponentOutputCallback = (index: number) => (filter: ((tracks: TrackWithAudioFeatures[]) => TrackWithAudioFeatures[]) | undefined, titleText: string, constant: boolean) => {
         // Only allow non-constant filters to change more than once (otherwise we will get an infinite loop of re-rendering)
@@ -87,6 +95,8 @@ const Tools: React.FunctionComponent<IProps> = (props: IProps) => {
         }
     }
 
+    // TODO Red remove button on the right
+
     return <>
         {header}
 
@@ -100,6 +110,7 @@ const Tools: React.FunctionComponent<IProps> = (props: IProps) => {
                             <Accordion.Toggle as="div" eventKey={"" + index}>
                                 <Button variant={appliedFilter.filter === undefined ? "danger" : "primary"}>{appliedFilter.filterName}</Button>
                                 <span className="ml-3">{appliedFilter.titleText}</span>
+                                <Button variant="danger" style={{ float: 'right' }} onClick={removeFilter(index)}>-</Button>
                             </Accordion.Toggle>
                         </Card.Header>
                         <Accordion.Collapse eventKey={"" + index}>
