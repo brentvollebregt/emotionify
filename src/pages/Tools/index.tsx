@@ -70,18 +70,21 @@ const Tools: React.FunctionComponent<IProps> = (props: IProps) => {
     }
 
     const filterDropdownSelectionOnClick = (filterName: string) => () => setAddFilterDropdownSelection(filterName);
-    const addFilter = () => setAppliedFilters(currentlyAppliedFeatures => [...currentlyAppliedFeatures, {filterName: addFilterDropdownSelection, filter: undefined, titleText: 'New'}]);
+    const addFilter = () => setAppliedFilters(currentlyAppliedFilters => [...currentlyAppliedFilters, {filterName: addFilterDropdownSelection, filter: undefined, titleText: 'New'}]);
 
-    const filterComponentOutputCallback = (index: number) => (filter: ((tracks: TrackWithAudioFeatures[]) => TrackWithAudioFeatures[]) | undefined, titleText: string) => {
-        setAppliedFilters(currentlyAppliedFeatures => {
-            let newListOfFeatures = [...currentlyAppliedFeatures];
-            newListOfFeatures[index] = {
-                filterName: newListOfFeatures[index].filterName,
-                filter: filter,
-                titleText: titleText
-            }
-            return newListOfFeatures;
-        })
+    const filterComponentOutputCallback = (index: number) => (filter: ((tracks: TrackWithAudioFeatures[]) => TrackWithAudioFeatures[]) | undefined, titleText: string, constant: boolean) => {
+        // Only allow non-constant filters to change more than once (otherwise we will get an infinite loop of re-rendering)
+        if (appliedFilters[index].filter === undefined || !constant) {
+            setAppliedFilters(currentlyAppliedFilters => {
+                let newListOfFeatures = [...currentlyAppliedFilters];
+                newListOfFeatures[index] = {
+                    filterName: newListOfFeatures[index].filterName,
+                    filter: filter,
+                    titleText: titleText
+                }
+                return newListOfFeatures;
+            });
+        }
     }
 
     return <>
@@ -90,22 +93,22 @@ const Tools: React.FunctionComponent<IProps> = (props: IProps) => {
         <Container className="mb-5">
 
             <Accordion defaultActiveKey="0">
-                {appliedFilters.map((appliedFilter: AppliedFilter, index: number) => <Card>
-                    <Card.Header style={{ padding: 5, cursor: 'pointer' }}>
-                        <Accordion.Toggle as="div" eventKey={"" + index}>
-                            <Button variant={appliedFilter.filter === undefined ? "danger" : "primary"}>{appliedFilter.filterName}</Button>
-                            <span className="ml-3">{appliedFilter.titleText}</span>
-                        </Accordion.Toggle>
-                    </Card.Header>
-                    <Accordion.Collapse eventKey={"" + index}>
-                        <Card.Body>
-                            {React.createElement(
-                                filters[appliedFilter.filterName], 
-                                { outputCallback: filterComponentOutputCallback(index), playlists, tracks, playlistsLoading, refreshPlaylist }
-                            )}
-                        </Card.Body>
-                    </Accordion.Collapse>
-                </Card>)}
+                {appliedFilters.map((appliedFilter: AppliedFilter, index: number) => {
+                    let FilterComponent = filters[appliedFilter.filterName];
+                    return <Card key={index}>
+                        <Card.Header style={{ padding: 5, cursor: 'pointer' }}>
+                            <Accordion.Toggle as="div" eventKey={"" + index}>
+                                <Button variant={appliedFilter.filter === undefined ? "danger" : "primary"}>{appliedFilter.filterName}</Button>
+                                <span className="ml-3">{appliedFilter.titleText}</span>
+                            </Accordion.Toggle>
+                        </Card.Header>
+                        <Accordion.Collapse eventKey={"" + index}>
+                            <Card.Body>
+                                <FilterComponent outputCallback={filterComponentOutputCallback(index)} playlists={playlists} tracks={tracks} playlistsLoading={playlistsLoading} refreshPlaylist={refreshPlaylist} />
+                            </Card.Body>
+                        </Accordion.Collapse>
+                    </Card>;
+                })}
             </Accordion>
 
             <div className="mt-3 text-center">

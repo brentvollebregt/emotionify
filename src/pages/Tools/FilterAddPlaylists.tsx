@@ -15,7 +15,8 @@ const FilterAddPlaylists: React.FunctionComponent<IProps> = (props: IProps) => {
     const dos = () => {
         outputCallback(
             (tracks: TrackWithAudioFeatures[]): TrackWithAudioFeatures[] => tracks.reverse(),
-            '[Selected Playlists]'
+            '[Selected Playlists]',
+            false
         )
     }
 
