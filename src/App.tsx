@@ -212,7 +212,7 @@ export const App: React.FunctionComponent<IProps> = (props: IProps) => {
         '/spotify-authorization/': () => <SpotifyAuthorization onTokenChange={onTokenChange} />,
         '/sort': () => <Sort token={token} user={spotifyData.user} playlists={spotifyData.playlists} tracks={spotifyData.tracks} playlistsLoading={playlistsLoading} refreshPlaylist={refreshPlaylist} refreshUsersPlaylists={refreshUsersPlaylists} />,
         '/compare': () => <Compare user={spotifyData.user} playlists={spotifyData.playlists} tracks={spotifyData.tracks} playlistsLoading={playlistsLoading} refreshPlaylist={refreshPlaylist} />,
-        '/tools': () => <Tools user={spotifyData.user} />,
+        '/tools': () => <Tools user={spotifyData.user} playlists={spotifyData.playlists} tracks={spotifyData.tracks} playlistsLoading={playlistsLoading} refreshPlaylist={refreshPlaylist} />,
         '/about': () => <About />,
     };
     const routeResult = useRoutes(routes);
