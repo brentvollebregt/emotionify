@@ -10,11 +10,9 @@ const FilterReverse: React.FunctionComponent<IProps> = (props: IProps) => {
     const { outputCallback} = props;
 
     useEffect(() => {
-        console.log('New Filter Reverse');
         outputCallback(
             filter,
-            'Reverse song order',
-            true
+            'Reverse song order'
         );
     }, []);
 

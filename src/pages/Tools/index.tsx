@@ -69,7 +69,7 @@ const Tools: React.FunctionComponent<IProps> = (props: IProps) => {
         </>
     }
 
-    const filterDropdownSelectionOnClick = (filterName: string) => () => setAddFilterDropdownSelection(filterName);
+    const filterDropdownSelect = (filterName: string) => () => setAddFilterDropdownSelection(filterName);
     const addFilter = () => setAppliedFilters(currentlyAppliedFilters => [...currentlyAppliedFilters, {filterName: addFilterDropdownSelection, filter: undefined, titleText: 'New'}]);
     const removeFilter = (index: number) => (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
         setAppliedFilters(currentlyAppliedFilters => {
@@ -80,19 +80,16 @@ const Tools: React.FunctionComponent<IProps> = (props: IProps) => {
         event.stopPropagation();
     };
 
-    const filterComponentOutputCallback = (index: number) => (filter: ((tracks: TrackWithAudioFeatures[]) => TrackWithAudioFeatures[]) | undefined, titleText: string, constant: boolean) => {
-        // Only allow non-constant filters to change more than once (otherwise we will get an infinite loop of re-rendering)
-        if (appliedFilters[index].filter === undefined || !constant) {
-            setAppliedFilters(currentlyAppliedFilters => {
-                let newListOfFeatures = [...currentlyAppliedFilters];
-                newListOfFeatures[index] = {
-                    filterName: newListOfFeatures[index].filterName,
-                    filter: filter,
-                    titleText: titleText
-                }
-                return newListOfFeatures;
-            });
-        }
+    const filterComponentOutputCallback = (index: number) => (filter: ((tracks: TrackWithAudioFeatures[]) => TrackWithAudioFeatures[]) | undefined, titleText: string) => {
+        setAppliedFilters(currentlyAppliedFilters => {
+            let newListOfFeatures = [...currentlyAppliedFilters];
+            newListOfFeatures[index] = {
+                filterName: newListOfFeatures[index].filterName,
+                filter: filter,
+                titleText: titleText
+            }
+            return newListOfFeatures;
+        });
     }
 
     // TODO Red remove button on the right
@@ -125,7 +122,7 @@ const Tools: React.FunctionComponent<IProps> = (props: IProps) => {
             <div className="mt-3 text-center">
                 <InputGroup style={{ width: 'auto', display: 'inline-flex' }}>
                     <DropdownButton as={InputGroup.Prepend} variant="outline-primary" title={addFilterDropdownSelection} id="add-filter" >
-                        {Object.keys(filters).map(filterName => <Dropdown.Item onClick={filterDropdownSelectionOnClick(filterName)}>{filterName}</Dropdown.Item>)}
+                        {Object.keys(filters).map(filterName => <Dropdown.Item onClick={filterDropdownSelect(filterName)}>{filterName}</Dropdown.Item>)}
                     </DropdownButton>
                     <InputGroup.Append>
                         <Button onClick={addFilter}>Add</Button>

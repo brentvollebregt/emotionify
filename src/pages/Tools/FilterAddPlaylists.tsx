@@ -14,18 +14,12 @@ const FilterAddPlaylists: React.FunctionComponent<IProps> = (props: IProps) => {
 
     const [count, setCount] = useState(0);
 
-    useEffect(() => {
-        console.log('New Filter Add Playlist');
-    }, []);
-
     const dos = () => {
-        console.log(count);
         setCount(c => c + 1);
         outputCallback(
             (tracks: TrackWithAudioFeatures[]): TrackWithAudioFeatures[] => tracks.reverse(),
-            '[Selected Playlists] ' + count,
-            false
-        )
+            '[Selected Playlists] ' + count
+        );
     }
 
     return <>
