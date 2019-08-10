@@ -74,7 +74,7 @@ const Tools: React.FunctionComponent<IProps> = (props: IProps) => {
     const removeFilter = (index: number) => (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
         setAppliedFilters(currentlyAppliedFilters => {
             let newListOfFeatures = [...currentlyAppliedFilters];
-            delete newListOfFeatures[index];
+            newListOfFeatures.splice(index, 1);
             return newListOfFeatures;
         });
         event.stopPropagation();
@@ -105,7 +105,7 @@ const Tools: React.FunctionComponent<IProps> = (props: IProps) => {
             <Accordion defaultActiveKey="0">
                 {appliedFilters.map((appliedFilter: AppliedFilter, index: number) => {
                     let FilterComponent = filters[appliedFilter.filterName];
-                    return <Card key={index}>
+                    return <Card key={index + appliedFilter.filterName}>
                         <Card.Header style={{ padding: 5, cursor: 'pointer' }}>
                             <Accordion.Toggle as="div" eventKey={"" + index}>
                                 <Button variant={appliedFilter.filter === undefined ? "danger" : "primary"}>{appliedFilter.filterName}</Button>

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { FilterFunctionProps } from './filter';
 import { PlaylistObjectSimplifiedWithTrackIds, TrackWithAudioFeatures } from '../../models/Spotify';
 import Button from 'react-bootstrap/Button';
@@ -14,8 +14,13 @@ const FilterAddPlaylists: React.FunctionComponent<IProps> = (props: IProps) => {
 
     const [count, setCount] = useState(0);
 
+    useEffect(() => {
+        console.log('New Filter Add Playlist');
+    }, []);
+
     const dos = () => {
-        setCount(c => c++);
+        console.log(count);
+        setCount(c => c + 1);
         outputCallback(
             (tracks: TrackWithAudioFeatures[]): TrackWithAudioFeatures[] => tracks.reverse(),
             '[Selected Playlists] ' + count,
