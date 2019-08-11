@@ -92,8 +92,6 @@ const Tools: React.FunctionComponent<IProps> = (props: IProps) => {
         });
     }
 
-    // TODO Red remove button on the right
-
     return <>
         {header}
 
@@ -107,7 +105,7 @@ const Tools: React.FunctionComponent<IProps> = (props: IProps) => {
                             <Accordion.Toggle as="div" eventKey={"" + index}>
                                 <Button variant={appliedFilter.filter === undefined ? "danger" : "primary"}>{appliedFilter.filterName}</Button>
                                 <span className="ml-3">{appliedFilter.titleText}</span>
-                                <Button variant="danger" style={{ float: 'right' }} onClick={removeFilter(index)}>-</Button>
+                                {index !== 0 && <Button variant="danger" style={{ float: 'right' }} onClick={removeFilter(index)}>-</Button>}
                             </Accordion.Toggle>
                         </Card.Header>
                         <Accordion.Collapse eventKey={"" + index}>
