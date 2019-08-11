@@ -52,6 +52,7 @@ const Tools: React.FunctionComponent<IProps> = (props: IProps) => {
         titleText: 'Reverse song order'
     }]);
     const [addFilterDropdownSelection, setAddFilterDropdownSelection] = useState(Object.keys(filters)[0]);
+    const [activeCardEventKey, setActiveCardEventKey] = useState("0"); // Need to keep track of these as dropdowns in the accordion will close cards
 
     const header = <Container className="mt-3 mb-4">
         <h1 className="text-center">Playlist Tools</h1>
@@ -69,6 +70,7 @@ const Tools: React.FunctionComponent<IProps> = (props: IProps) => {
         </>
     }
 
+    const onCardHeaderClick = (eventKey: string) => () => setActiveCardEventKey(activeCardEventKey !== eventKey ? eventKey : '');
     const filterDropdownSelect = (filterName: string) => () => setAddFilterDropdownSelection(filterName);
     const addFilter = () => setAppliedFilters(currentlyAppliedFilters => [...currentlyAppliedFilters, {filterName: addFilterDropdownSelection, filter: undefined, titleText: 'New'}]);
     const removeFilter = (index: number) => (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
@@ -97,16 +99,14 @@ const Tools: React.FunctionComponent<IProps> = (props: IProps) => {
 
         <Container className="mb-5">
 
-            <Accordion defaultActiveKey="0">
+            <Accordion activeKey={activeCardEventKey}>
                 {appliedFilters.map((appliedFilter: AppliedFilter, index: number) => {
                     let FilterComponent = filters[appliedFilter.filterName];
                     return <Card key={index + appliedFilter.filterName}>
-                        <Card.Header style={{ padding: 5, cursor: 'pointer' }}>
-                            <Accordion.Toggle as="div" eventKey={"" + index}>
-                                <Button variant={appliedFilter.filter === undefined ? "danger" : "primary"}>{appliedFilter.filterName}</Button>
-                                <span className="ml-3">{appliedFilter.titleText}</span>
-                                {index !== 0 && <Button variant="danger" style={{ float: 'right' }} onClick={removeFilter(index)}>-</Button>}
-                            </Accordion.Toggle>
+                        <Card.Header style={{ padding: 5, cursor: 'pointer' }} onClick={onCardHeaderClick("" + index)}>
+                            <Button variant={appliedFilter.filter === undefined ? "danger" : "primary"}>{appliedFilter.filterName}</Button>
+                            <span className="ml-3">{appliedFilter.titleText}</span>
+                            {index !== 0 && <Button variant="danger" style={{ float: 'right' }} onClick={removeFilter(index)}>-</Button>}
                         </Card.Header>
                         <Accordion.Collapse eventKey={"" + index}>
                             <Card.Body>
@@ -120,7 +120,7 @@ const Tools: React.FunctionComponent<IProps> = (props: IProps) => {
             <div className="mt-3 text-center">
                 <InputGroup style={{ width: 'auto', display: 'inline-flex' }}>
                     <DropdownButton as={InputGroup.Prepend} variant="outline-primary" title={addFilterDropdownSelection} id="add-filter" >
-                        {Object.keys(filters).map(filterName => <Dropdown.Item onClick={filterDropdownSelect(filterName)}>{filterName}</Dropdown.Item>)}
+                        {Object.keys(filters).map(filterName => <Dropdown.Item key={filterName} onClick={filterDropdownSelect(filterName)}>{filterName}</Dropdown.Item>)}
                     </DropdownButton>
                     <InputGroup.Append>
                         <Button onClick={addFilter}>Add</Button>
