@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useTitle } from 'hookrouter';
 import FilterAddPlaylists from './FilterAddPlaylists';
 import FilterReverse from './FilterReverse';
@@ -45,14 +45,22 @@ const Tools: React.FunctionComponent<IProps> = (props: IProps) => {
     const [appliedFilters, setAppliedFilters] = useState<AppliedFilter[]>([{
         filterName: 'Add Playlist',
         filter: track_identity_function,
-        titleText: 'Select one or more playlists to start'
-    }, {
-        filterName: 'Reverse',
-        filter: undefined,
-        titleText: 'Reverse song order'
+        titleText: ''
     }]);
     const [addFilterDropdownSelection, setAddFilterDropdownSelection] = useState(Object.keys(filters)[0]);
     const [activeCardEventKey, setActiveCardEventKey] = useState("0"); // Need to keep track of these as dropdowns in the accordion will close cards
+    const [filteredTracks, setFilteredTracks] = useState<TrackWithAudioFeatures[]>([]);
+
+    useEffect(() => { // Apply new filters as they appear
+        const currentFilters = appliedFilters.map(af => af.filter);
+        if (currentFilters.indexOf(undefined) === -1) {
+            setFilteredTracks(appliedFilters
+                .map(af => af.filter as (tracks: TrackWithAudioFeatures[]) => TrackWithAudioFeatures[])
+                .reduce((accumulator: TrackWithAudioFeatures[], filter) => filter(accumulator), []))
+        } else {
+            setFilteredTracks([]);
+        }
+    }, [appliedFilters]);
 
     const header = <Container className="mt-3 mb-4">
         <h1 className="text-center">Playlist Tools</h1>
@@ -72,7 +80,7 @@ const Tools: React.FunctionComponent<IProps> = (props: IProps) => {
 
     const onCardHeaderClick = (eventKey: string) => () => setActiveCardEventKey(activeCardEventKey !== eventKey ? eventKey : '');
     const filterDropdownSelect = (filterName: string) => () => setAddFilterDropdownSelection(filterName);
-    const addFilter = () => setAppliedFilters(currentlyAppliedFilters => [...currentlyAppliedFilters, {filterName: addFilterDropdownSelection, filter: undefined, titleText: 'New'}]);
+    const addFilter = () => setAppliedFilters(currentlyAppliedFilters => [...currentlyAppliedFilters, {filterName: addFilterDropdownSelection, filter: undefined, titleText: ''}]);
     const removeFilter = (index: number) => (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
         setAppliedFilters(currentlyAppliedFilters => {
             let newListOfFeatures = [...currentlyAppliedFilters];
@@ -92,7 +100,7 @@ const Tools: React.FunctionComponent<IProps> = (props: IProps) => {
             }
             return newListOfFeatures;
         });
-    }
+    };
 
     return <>
         {header}
@@ -126,6 +134,10 @@ const Tools: React.FunctionComponent<IProps> = (props: IProps) => {
                         <Button onClick={addFilter}>Add</Button>
                     </InputGroup.Append>
                 </InputGroup>
+            </div>
+
+            <div className="mt-3 text-center">
+                {filteredTracks.map(track => <div>{track.name}</div>)}
             </div>
 
         </Container>
