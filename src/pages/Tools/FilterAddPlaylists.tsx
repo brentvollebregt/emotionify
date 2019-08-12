@@ -1,30 +1,40 @@
 import React, { useState, useEffect } from 'react';
+import PlaylistSelection from '../../components/PlaylistSelection';
 import { FilterFunctionProps } from './filter';
 import { PlaylistObjectSimplifiedWithTrackIds, TrackWithAudioFeatures } from '../../models/Spotify';
-import Button from 'react-bootstrap/Button';
 
 interface IProps extends FilterFunctionProps { 
     playlists: { [key: string]: PlaylistObjectSimplifiedWithTrackIds },
     tracks: { [key: string]: TrackWithAudioFeatures },
     playlistsLoading: Set<string>,
+    refreshPlaylist: (playlist: SpotifyApi.PlaylistObjectSimplified) => void,
 }
 
 const FilterAddPlaylists: React.FunctionComponent<IProps> = (props: IProps) => {
-    const { playlists, tracks, playlistsLoading, outputCallback} = props;
+    const { playlists, tracks, playlistsLoading, refreshPlaylist, outputCallback} = props;
 
-    const [count, setCount] = useState(0);
+    const [selectedPlaylistIds, setSelectedPlaylistIds] = useState<string[]>([]);
 
-    const dos = () => {
-        setCount(c => c + 1);
+    useEffect(() => { // Pass up new function on change
+        const selectedPlaylistTracks: TrackWithAudioFeatures[] = selectedPlaylistIds.map(pid => playlists[pid].track_ids).map(tids => tids.map(tid => tracks[tid])).flat();
         outputCallback(
-            (tracks: TrackWithAudioFeatures[]): TrackWithAudioFeatures[] => tracks.reverse(),
-            '[Selected Playlists] ' + count
+            (tracks: TrackWithAudioFeatures[]): TrackWithAudioFeatures[] => [...tracks, ...selectedPlaylistTracks],
+            `${selectedPlaylistIds.length} Playlist${selectedPlaylistIds.length !== 1 ? 's' : ''} Selected`
         );
+    }, [selectedPlaylistIds, playlists, tracks]);
+
+    const onPlaylistSelectionChange = (playlist_ids: string[]) => {
+        setSelectedPlaylistIds(playlist_ids);
+        playlist_ids.forEach(playlist_id => {
+            if (playlists[playlist_id].track_ids.length === 0) {
+                refreshPlaylist(playlists[playlist_id]);
+            }
+        });
     }
 
     return <>
-        <p className="lead">Add playlists to the current track list</p>
-        <Button onClick={dos}>Trigger</Button>
+        {/* TODO Show spinner? */}
+        <PlaylistSelection playlists={Object.values(playlists)} selectedPlaylistIds={selectedPlaylistIds} selectionsAllowed="All" defaultSelectionType="Single" onPlaylistSelectionChange={onPlaylistSelectionChange} />
     </>
 }
 
