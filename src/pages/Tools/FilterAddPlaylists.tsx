@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import Spinner from 'react-bootstrap/Spinner';
 import PlaylistSelection from '../../components/PlaylistSelection';
 import { FilterFunctionProps } from './filter';
 import { PlaylistObjectSimplifiedWithTrackIds, TrackWithAudioFeatures } from '../../models/Spotify';
@@ -33,8 +34,11 @@ const FilterAddPlaylists: React.FunctionComponent<IProps> = (props: IProps) => {
     }
 
     return <>
-        {/* TODO Show spinner? */}
         <PlaylistSelection playlists={Object.values(playlists)} selectedPlaylistIds={selectedPlaylistIds} selectionsAllowed="All" defaultSelectionType="Single" onPlaylistSelectionChange={onPlaylistSelectionChange} />
+        {playlistsLoading.size > 0 && <div className="mt-2" style={{display: 'flex', alignItems: 'center', justifyContent: 'center'}}>
+            <Spinner animation="border" />
+            <span className="ml-3">Loading tracks for selected playlists</span>
+        </div>}
     </>
 }
 
