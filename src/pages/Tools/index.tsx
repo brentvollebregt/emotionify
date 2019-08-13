@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useTitle } from 'hookrouter';
 import FilterAddPlaylists from './FilterAddPlaylists';
 import FilterReverse from './FilterReverse';
+import FilterRandomise from './FilterRandomise';
 import SpotifyLoginStatusButton from '../../components/SpotifyLoginStatusButton';
 import Container from 'react-bootstrap/Container';
 import Card from 'react-bootstrap/Card';
@@ -34,6 +35,7 @@ interface AppliedFilter {
 const filters: {[key: string]: React.FunctionComponent<any>} = {
     'Add Playlist': FilterAddPlaylists,
     'Reverse': FilterReverse,
+    'Randomise': FilterRandomise,
 }
 
 const track_identity_function = (tracks: TrackWithAudioFeatures[]): TrackWithAudioFeatures[] => tracks;
