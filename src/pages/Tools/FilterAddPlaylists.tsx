@@ -22,7 +22,7 @@ const FilterAddPlaylists: React.FunctionComponent<IProps> = (props: IProps) => {
             (tracks: TrackWithAudioFeatures[]): TrackWithAudioFeatures[] => [...tracks, ...selectedPlaylistTracks],
             `${selectedPlaylistIds.length} Playlist${selectedPlaylistIds.length !== 1 ? 's' : ''} Selected`
         );
-    }, [selectedPlaylistIds, playlists, tracks]);
+    }, [selectedPlaylistIds, playlists, tracks, outputCallback]);
 
     const onPlaylistSelectionChange = (playlist_ids: string[]) => {
         setSelectedPlaylistIds(playlist_ids);

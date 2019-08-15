@@ -21,7 +21,7 @@ const FilterRandomise: React.FunctionComponent<IProps> = (props: IProps) => {
             filter,
             'Randomise song order'
         );
-    }, []);
+    }, [outputCallback]);
 
     return <>
         <p className="lead">Randomise song order</p>

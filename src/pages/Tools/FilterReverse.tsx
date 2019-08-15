@@ -14,7 +14,7 @@ const FilterReverse: React.FunctionComponent<IProps> = (props: IProps) => {
             filter,
             'Reverse song order'
         );
-    }, []);
+    }, [outputCallback]);
 
     return <>
         <p className="lead">Reverse all tracks</p>
