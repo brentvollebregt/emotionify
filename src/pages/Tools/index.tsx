@@ -79,7 +79,10 @@ const Tools: React.FunctionComponent<IProps> = (props: IProps) => {
 
     const onCardHeaderClick = (eventKey: string) => () => setActiveCardEventKey(activeCardEventKey !== eventKey ? eventKey : '');
     const filterDropdownSelect = (filterName: string) => () => setAddFilterDropdownSelection(filterName);
-    const addFilter = () => setAppliedFilters(currentlyAppliedFilters => [...currentlyAppliedFilters, {filterName: addFilterDropdownSelection, filter: undefined, titleText: ''}]);
+    const addFilter = () => {
+        setActiveCardEventKey(appliedFilters.length + '');
+        setAppliedFilters(currentlyAppliedFilters => [...currentlyAppliedFilters, {filterName: addFilterDropdownSelection, filter: undefined, titleText: ''}]);
+    };
     const removeFilter = (index: number) => (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
         setAppliedFilters(currentlyAppliedFilters => {
             let newListOfFeatures = [...currentlyAppliedFilters];
