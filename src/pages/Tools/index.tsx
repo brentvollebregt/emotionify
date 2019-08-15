@@ -3,6 +3,7 @@ import { useTitle } from 'hookrouter';
 import FilterAddPlaylists from './FilterAddPlaylists';
 import FilterReverse from './FilterReverse';
 import FilterRandomise from './FilterRandomise';
+import FilterAudioFeaturePredicate from './FilterAudioFeaturePredicate';
 import SpotifyLoginStatusButton from '../../components/SpotifyLoginStatusButton';
 import Container from 'react-bootstrap/Container';
 import Card from 'react-bootstrap/Card';
@@ -12,11 +13,6 @@ import DropdownButton from 'react-bootstrap/DropdownButton';
 import Dropdown from 'react-bootstrap/Dropdown';
 import InputGroup from 'react-bootstrap/InputGroup';
 import { PlaylistObjectSimplifiedWithTrackIds, TrackWithAudioFeatures } from '../../models/Spotify';
-
-// Add Playlist (requires playlists and songs)
-// Reverse
-// Randomise
-// Filter include|exclude {feature} ==|>|<|>=|<= value
 
 interface IProps {
     user: SpotifyApi.UserObjectPrivate | undefined,
@@ -36,6 +32,7 @@ const filters: {[key: string]: React.FunctionComponent<any>} = {
     'Add Playlist': FilterAddPlaylists,
     'Reverse': FilterReverse,
     'Randomise': FilterRandomise,
+    'Filter Audio Feature': FilterAudioFeaturePredicate,
 }
 
 const track_identity_function = (tracks: TrackWithAudioFeatures[]): TrackWithAudioFeatures[] => tracks;
@@ -112,7 +109,7 @@ const Tools: React.FunctionComponent<IProps> = (props: IProps) => {
             <Accordion activeKey={activeCardEventKey}>
                 {appliedFilters.map((appliedFilter: AppliedFilter, index: number) => {
                     let FilterComponent = filters[appliedFilter.filterName];
-                    return <Card key={index + appliedFilter.filterName}>
+                    return <Card key={index + appliedFilter.filterName} style={{ overflow: 'visible' }}>
                         <Card.Header style={{ padding: 5, cursor: 'pointer' }} onClick={onCardHeaderClick("" + index)}>
                             <Button variant={appliedFilter.filter === undefined ? "danger" : "primary"}>{appliedFilter.filterName}</Button>
                             <span className="ml-3">{appliedFilter.titleText}</span>
@@ -139,7 +136,7 @@ const Tools: React.FunctionComponent<IProps> = (props: IProps) => {
             </div>
 
             <div className="mt-3 text-center">
-                {filteredTracks.map(track => <div>{track.name}</div>)}
+                {filteredTracks.map(track => <div key={track.name}>{track.name}</div>)}
             </div>
 
         </Container>
