@@ -154,7 +154,7 @@ const Tools: React.FunctionComponent<IProps> = (props: IProps) => {
                     return <Card key={index + appliedFilter.filterName} style={{ overflow: 'visible' }}>
                         <Card.Header style={{ padding: 5, cursor: 'pointer' }} onClick={onCardHeaderClick("" + index)}>
                             <Button variant={appliedFilter.filter === undefined ? "danger" : "primary"}>{appliedFilter.filterName}</Button>
-                            <span className="ml-3">{appliedFilter.titleText}</span>
+                            <span className="ml-3">{appliedFilter.titleText}</span> {/* TODO Handle text being too wide */}
                             {index !== 0 && <Button variant="danger" style={{ float: 'right' }} onClick={removeFilter(index)}>-</Button>}
                         </Card.Header>
                         <Accordion.Collapse eventKey={"" + index}>
@@ -168,8 +168,11 @@ const Tools: React.FunctionComponent<IProps> = (props: IProps) => {
 
             <div className="mt-3 text-center">
                 <InputGroup style={{ width: 'auto', display: 'inline-flex' }}>
+                    <InputGroup.Prepend>
+                        <InputGroup.Text>Add a new filter</InputGroup.Text>
+                    </InputGroup.Prepend>
                     <DropdownButton as={InputGroup.Prepend} variant="outline-primary" title={addFilterDropdownSelection} id="add-filter" >
-                        {Object.keys(filters).map(filterName => <Dropdown.Item key={filterName} onClick={filterDropdownSelect(filterName)}>{filterName}</Dropdown.Item>)}
+                        {Object.keys(filters).sort().map(filterName => <Dropdown.Item key={filterName} onClick={filterDropdownSelect(filterName)}>{filterName}</Dropdown.Item>)}
                     </DropdownButton>
                     <InputGroup.Append>
                         <Button onClick={addFilter}>Add</Button>
