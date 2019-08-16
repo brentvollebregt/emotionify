@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import cogoToast from 'cogo-toast';
 import { useTitle } from 'hookrouter';
 import Container from 'react-bootstrap/Container';
 import Card from 'react-bootstrap/Card';
@@ -13,14 +14,18 @@ import FilterRandomise from './FilterRandomise';
 import FilterAudioFeaturePredicate from './FilterAudioFeaturePredicate';
 import SpotifyLoginStatusButton from '../../components/SpotifyLoginStatusButton';
 import TrackTable from './TrackTable';
-import { PlaylistObjectSimplifiedWithTrackIds, TrackWithAudioFeatures } from '../../models/Spotify';
+import ExportPlaylistInput from '../../components/ExportPlaylistInput';
+import { Token, PlaylistObjectSimplifiedWithTrackIds, TrackWithAudioFeatures } from '../../models/Spotify';
+import { createPlaylist } from '../../logic/Spotify';
 
 interface IProps {
+    token: Token | undefined,
     user: SpotifyApi.UserObjectPrivate | undefined,
     playlists: { [key: string]: PlaylistObjectSimplifiedWithTrackIds },
     tracks: { [key: string]: TrackWithAudioFeatures },
     playlistsLoading: Set<string>,
     refreshPlaylist: (playlist: SpotifyApi.PlaylistObjectSimplified) => void,
+    refreshUsersPlaylists: (hard: boolean) => void,
 }
 
 interface AppliedFilter {
@@ -40,7 +45,7 @@ const filters: {[key: string]: React.FunctionComponent<any>} = {
 const track_identity_function = (tracks: TrackWithAudioFeatures[]): TrackWithAudioFeatures[] => tracks;
 
 const Tools: React.FunctionComponent<IProps> = (props: IProps) => {
-    const { user, playlists, tracks, playlistsLoading, refreshPlaylist } = props;
+    const { token, user, playlists, tracks, playlistsLoading, refreshPlaylist, refreshUsersPlaylists } = props;
 
     useTitle('Emotionify - Tools');
     const [appliedFilters, setAppliedFilters] = useState<AppliedFilter[]>([{
@@ -110,6 +115,34 @@ const Tools: React.FunctionComponent<IProps> = (props: IProps) => {
         });
     };
 
+    const onExport = (name: string, isPublic: boolean): Promise<boolean> => {
+        return new Promise(async (resolve, reject) => {
+            if (filteredTracks.length === 0) {
+                cogoToast.warn(
+                    'No songs present after filtering. Will not create an empty playlist.',
+                    { position: "bottom-center", heading: 'No Songs', hideAfter: 10, onClick: (hide: any) => hide() }
+                );
+                return;
+            }
+
+            if (token !== undefined && user !== undefined) {
+                // Map the sorted tracks to uris
+                let track_uris: string[] = filteredTracks.map(t => tracks[t.id].uri);
+                // Create the playlist
+                let success: boolean = await createPlaylist(token.value, user, name, isPublic, track_uris)
+                    .then(playlist => {
+                        refreshUsersPlaylists(false); // Get the new playlist by refreshing the playlist list (keep current track ids to not loose plot data)
+                        return true;
+                    }, err => {
+                        console.error(err);
+                        return false;
+                    });
+                resolve(success);
+            }
+            resolve(false);
+        });
+    }
+
     return <>
         {header}
 
@@ -144,11 +177,13 @@ const Tools: React.FunctionComponent<IProps> = (props: IProps) => {
                 </InputGroup>
             </div>
 
-            <div className="mt-3 text-center">
+            <div className="my-5 text-center">
                 <TrackTable tracks={filteredTracks} open={trackTableOpen} openToggle={trackTableOpenToggle} />
             </div>
 
-            {/* Export Playlist */}
+            <div className="mb-5 text-center">
+                <ExportPlaylistInput onExport={onExport}/>
+            </div>
 
         </Container>
     </>

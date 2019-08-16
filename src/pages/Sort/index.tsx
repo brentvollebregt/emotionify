@@ -11,7 +11,7 @@ import PlaylistDetails from '../../components/PlaylistDetails';
 import PlotTracks from './PlotTracks';
 import TrackTable from './TrackTable';
 import TrackSortControl from './TrackSortControl';
-import Export from './Export';
+import ExportPlaylistInput from '../../components/ExportPlaylistInput';
 import SpotifyLoginStatusButton from '../../components/SpotifyLoginStatusButton';
 
 interface IProps {
@@ -187,7 +187,7 @@ export const Sort: React.FunctionComponent<IProps> = (props: IProps) => {
                 </div>
 
                 <div className="mb-5">
-                    <Export onExport={onExport}/>
+                    <ExportPlaylistInput onExport={onExport}/>
                 </div>
             </>}
 
