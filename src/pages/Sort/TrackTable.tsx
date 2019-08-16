@@ -31,7 +31,7 @@ const TrackTable: React.FunctionComponent<IProps> = (props: IProps) => {
 
     return <Accordion defaultActiveKey={expandedDefault ? randomEventKey : undefined} style={{ maxWidth: 900, margin: 'auto' }}>
         <Card>
-            <Accordion.Toggle as={Card.Header} eventKey={randomEventKey} onClick={toggleExpansion}>{expanded ? 'Songs in Playlist (click to collapse)' : 'Songs in Playlist (click to expand)'}</Accordion.Toggle>
+            <Accordion.Toggle as={Card.Header} eventKey={randomEventKey} onClick={toggleExpansion} style={{ cursor: 'pointer' }}>{expanded ? 'Songs in Playlist (click to collapse)' : 'Songs in Playlist (click to expand)'}</Accordion.Toggle>
             <Accordion.Collapse eventKey={randomEventKey}>
                 <Card.Body className="p-0" style={{ maxHeight: 400, overflowY: 'auto', borderTop: '1px solid #dee2e6' }}>
                     <Table bordered striped size="sm" style={{borderTop: 0}}>
@@ -39,7 +39,7 @@ const TrackTable: React.FunctionComponent<IProps> = (props: IProps) => {
                             <tr>
                                 <th style={header_cell_style}>Moved</th>
                                 <th style={header_cell_style}>Title</th>
-                                <th style={header_cell_style} className="d-none d-md-table-cell">Artists</th>
+                                <th style={header_cell_style} className="d-none d-md-table-cell">Artist(s)</th>
                                 <th style={header_cell_style}>{x_audio_feature_name}</th>
                                 <th style={header_cell_style}>{y_audio_feature_name}</th>
                             </tr>

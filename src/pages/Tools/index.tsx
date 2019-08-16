@@ -1,10 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import { useTitle } from 'hookrouter';
-import FilterAddPlaylists from './FilterAddPlaylists';
-import FilterReverse from './FilterReverse';
-import FilterRandomise from './FilterRandomise';
-import FilterAudioFeaturePredicate from './FilterAudioFeaturePredicate';
-import SpotifyLoginStatusButton from '../../components/SpotifyLoginStatusButton';
 import Container from 'react-bootstrap/Container';
 import Card from 'react-bootstrap/Card';
 import Accordion from 'react-bootstrap/Accordion';
@@ -12,6 +7,12 @@ import Button from 'react-bootstrap/Button';
 import DropdownButton from 'react-bootstrap/DropdownButton';
 import Dropdown from 'react-bootstrap/Dropdown';
 import InputGroup from 'react-bootstrap/InputGroup';
+import FilterAddPlaylists from './FilterAddPlaylists';
+import FilterReverse from './FilterReverse';
+import FilterRandomise from './FilterRandomise';
+import FilterAudioFeaturePredicate from './FilterAudioFeaturePredicate';
+import SpotifyLoginStatusButton from '../../components/SpotifyLoginStatusButton';
+import TrackTable from './TrackTable';
 import { PlaylistObjectSimplifiedWithTrackIds, TrackWithAudioFeatures } from '../../models/Spotify';
 
 interface IProps {
@@ -33,6 +34,7 @@ const filters: {[key: string]: React.FunctionComponent<any>} = {
     'Reverse': FilterReverse,
     'Randomise': FilterRandomise,
     'Filter Audio Feature': FilterAudioFeaturePredicate,
+    // TODO Order by
 }
 
 const track_identity_function = (tracks: TrackWithAudioFeatures[]): TrackWithAudioFeatures[] => tracks;
@@ -49,6 +51,10 @@ const Tools: React.FunctionComponent<IProps> = (props: IProps) => {
     const [addFilterDropdownSelection, setAddFilterDropdownSelection] = useState(Object.keys(filters)[0]);
     const [activeCardEventKey, setActiveCardEventKey] = useState("0"); // Need to keep track of these as dropdowns in the accordion will close cards
     const [filteredTracks, setFilteredTracks] = useState<TrackWithAudioFeatures[]>([]);
+
+    // Track table open state (need to track this in here otherwise it will close on every change)
+    const [trackTableOpen, setTrackTableOpen] = useState(false);
+    const trackTableOpenToggle = () => setTrackTableOpen(!trackTableOpen);
 
     useEffect(() => { // Apply new filters as they appear
         const currentFilters = appliedFilters.map(af => af.filter);
@@ -139,8 +145,10 @@ const Tools: React.FunctionComponent<IProps> = (props: IProps) => {
             </div>
 
             <div className="mt-3 text-center">
-                {filteredTracks.map(track => <div key={track.name}>{track.name}</div>)}
+                <TrackTable tracks={filteredTracks} open={trackTableOpen} openToggle={trackTableOpenToggle} />
             </div>
+
+            {/* Export Playlist */}
 
         </Container>
     </>
