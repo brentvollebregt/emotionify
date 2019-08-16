@@ -25,7 +25,7 @@ const TrackTable: React.FunctionComponent<IProps> = (props: IProps) => {
 
     return <Accordion activeKey={open ? randomEventKey : undefined} style={{ maxWidth: 900, margin: 'auto' }}>
         <Card>
-            <Accordion.Toggle as={Card.Header} eventKey={randomEventKey} onClick={openToggle} style={{ cursor: 'pointer' }}>{open ? 'Filtered Songs (click to collapse)' : 'Filtered Songs (click to expand)'}</Accordion.Toggle>
+            <Accordion.Toggle as={Card.Header} eventKey={randomEventKey} onClick={openToggle} style={{ cursor: 'pointer' }}>{`Filtered Songs: ${tracks.length} (click to ${open ? 'collapse' : 'expand'})`}</Accordion.Toggle>
             <Accordion.Collapse eventKey={randomEventKey}>
                 <Card.Body className="p-0" style={{ maxHeight: 400, overflowY: 'auto', borderTop: '1px solid #dee2e6' }}>
                     <Table bordered striped size="sm" style={{borderTop: 0}}>

@@ -35,14 +35,11 @@ const FilterAudioFeaturePredicate: React.FunctionComponent<IProps> = (props: IPr
         } else {
             const audio_feature_key: keyof SpotifyApi.AudioFeaturesObject = availableTrackAudioFeatures[feature].key;
             outputCallback(
-                (tracks: TrackWithAudioFeatures[]): TrackWithAudioFeatures[] => tracks.filter(track => {
-                    console.log(track.audio_features !== undefined && track.audio_features !== null ? track.audio_features[audio_feature_key] : '?');
-                    return xor(
-                        track.audio_features !== undefined && track.audio_features !== null 
-                            && operators[operator](track.audio_features[audio_feature_key] as number, value_as_number),
-                        !include
-                    )
-                }),
+                (tracks: TrackWithAudioFeatures[]): TrackWithAudioFeatures[] => tracks.filter(track => xor(
+                    track.audio_features !== undefined && track.audio_features !== null 
+                        && operators[operator](track.audio_features[audio_feature_key] as number, value_as_number),
+                    !include
+                )),
                 `${include ? 'Include': 'Exclude'} songs where ${feature} ${operator} ${value}`
             );
         }
