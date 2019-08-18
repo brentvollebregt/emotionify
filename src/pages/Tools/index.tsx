@@ -123,6 +123,7 @@ const Tools: React.FunctionComponent<IProps> = (props: IProps) => {
                     'No songs present after filtering. Will not create an empty playlist.',
                     { position: "bottom-center", heading: 'No Songs', hideAfter: 10, onClick: (hide: any) => hide() }
                 );
+                reject();
                 return;
             }
 
