@@ -1,6 +1,6 @@
 import React from 'react';
 import { navigate, usePath } from 'hookrouter';
-import Button from 'react-bootstrap/Button';
+import { Button } from 'react-bootstrap';
 import { localStorageRedirectKey } from '../pages/SpotifyAuthorization';
 import SpotifyLogoRound from '../img/spotify-logo-round.png';
 

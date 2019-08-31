@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import Spinner from 'react-bootstrap/Spinner';
+import { Spinner } from 'react-bootstrap';
 import PlaylistSelection from '../../components/PlaylistSelection';
 import { FilterFunctionProps } from './filter';
 import { PlaylistObjectSimplifiedWithTrackIds, TrackWithAudioFeatures } from '../../models/Spotify';

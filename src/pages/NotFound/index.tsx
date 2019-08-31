@@ -1,7 +1,6 @@
 import React from 'react';
 import { navigate, useTitle } from 'hookrouter';
-import Button from 'react-bootstrap/Button';
-import Container from 'react-bootstrap/Container';
+import { Button, Container } from 'react-bootstrap';
 
 interface IProps { }
 

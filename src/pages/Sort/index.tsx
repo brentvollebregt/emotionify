@@ -1,7 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useTitle } from 'hookrouter';
-import Container from 'react-bootstrap/Container';
-import Alert from 'react-bootstrap/Alert';
+import { Alert, Container } from 'react-bootstrap';
 import { availableSortingMethods, IndexedTrackId, sort, SpotifyTrackWithIndexes } from '../../logic/PointSorting';
 import { createPlaylist } from '../../logic/Spotify';
 import { PlaylistObjectSimplifiedWithTrackIds, availableTrackAudioFeatures, TrackWithAudioFeatures } from '../../models/Spotify';

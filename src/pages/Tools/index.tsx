@@ -1,13 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import cogoToast from 'cogo-toast';
 import { useTitle } from 'hookrouter';
-import Container from 'react-bootstrap/Container';
-import Card from 'react-bootstrap/Card';
-import Accordion from 'react-bootstrap/Accordion';
-import Button from 'react-bootstrap/Button';
-import DropdownButton from 'react-bootstrap/DropdownButton';
-import Dropdown from 'react-bootstrap/Dropdown';
-import InputGroup from 'react-bootstrap/InputGroup';
+import { Accordion, Button, Card, Container, Dropdown, DropdownButton, InputGroup } from 'react-bootstrap';
 import FilterAddPlaylists from './FilterAddPlaylists';
 import FilterReverse from './FilterReverse';
 import FilterRandomise from './FilterRandomise';

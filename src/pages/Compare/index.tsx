@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { useTitle } from 'hookrouter';
-import Container from 'react-bootstrap/Container';
-import Spinner from 'react-bootstrap/Spinner';
+import { Container, Spinner } from 'react-bootstrap';
 import PlaylistSelectionTable from '../../components/PlaylistSelection';
 import SpotifyLoginStatusButton from '../../components/SpotifyLoginStatusButton';
 import AudioFeatureDropdown from '../../components/NamedDropdown';

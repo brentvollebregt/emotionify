@@ -1,10 +1,5 @@
 import React, { useState } from 'react';
-import Table from 'react-bootstrap/Table';
-import Badge from 'react-bootstrap/Badge';
-import InputGroup from 'react-bootstrap/InputGroup';
-import FormControl from 'react-bootstrap/FormControl';
-import DropdownButton from 'react-bootstrap/DropdownButton';
-import Dropdown from 'react-bootstrap/Dropdown';
+import { Badge, Dropdown, DropdownButton, FormControl, InputGroup, Table } from 'react-bootstrap';
 import { PlaylistObjectSimplifiedWithTrackIds } from '../models/Spotify';
 import useWindowSize from '../hooks/WindowSize';
 

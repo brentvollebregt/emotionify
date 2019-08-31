@@ -1,7 +1,5 @@
 import React, { useState } from 'react';
-import Dropdown from 'react-bootstrap/Dropdown';
-import InputGroup from 'react-bootstrap/InputGroup';
-import DropdownButton from 'react-bootstrap/DropdownButton';
+import { Dropdown, DropdownButton, InputGroup } from 'react-bootstrap';
 import { randomString } from '../logic/Utils';
 
 interface IProps {

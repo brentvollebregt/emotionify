@@ -1,6 +1,6 @@
 import React from 'react';
 import Plot from 'react-plotly.js';
-import Alert from 'react-bootstrap/Alert';
+import { Alert } from 'react-bootstrap';
 import { TrackWithAudioFeatures, availableTrackAudioFeatures } from '../../models/Spotify';
 
 interface IProps {

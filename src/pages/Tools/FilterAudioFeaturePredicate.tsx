@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import DropdownButton from 'react-bootstrap/DropdownButton';
-import Dropdown from 'react-bootstrap/Dropdown';
-import FormControl, { FormControlProps } from 'react-bootstrap/FormControl';
+import { Dropdown, DropdownButton, FormControl } from 'react-bootstrap';
+import { FormControlProps } from 'react-bootstrap/FormControl';
 import { ReplaceProps, BsPrefixProps } from 'react-bootstrap/helpers';
 import { FilterFunctionProps } from './filter';
 import { TrackWithAudioFeatures, availableTrackAudioFeatures } from '../../models/Spotify';

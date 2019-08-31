@@ -1,7 +1,6 @@
 import React from 'react';
 import { navigate } from 'hookrouter';
-import Container from 'react-bootstrap/Container';
-import Spinner from 'react-bootstrap/Spinner';
+import { Container, Spinner } from 'react-bootstrap';
 import settings from '../../settings.json';
 import { encodeData, randomString } from '../../logic/Utils';
 import { Token } from '../../models/Spotify';

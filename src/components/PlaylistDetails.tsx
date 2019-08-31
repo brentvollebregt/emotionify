@@ -1,6 +1,5 @@
 import React from 'react';
-import Badge from 'react-bootstrap/Badge';
-import Spinner from 'react-bootstrap/Spinner';
+import { Badge, Spinner } from 'react-bootstrap';
 import { PlaylistObjectSimplifiedWithTrackIds } from '../models/Spotify';
 
 interface IProps {

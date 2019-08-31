@@ -1,7 +1,5 @@
 import React from 'react';
-import Container from 'react-bootstrap/Container';
-import Row from 'react-bootstrap/Row';
-import Col from 'react-bootstrap/Col';
+import { Container, Col, Row } from 'react-bootstrap';
 import { useTitle } from 'hookrouter';
 
 interface IProps { }

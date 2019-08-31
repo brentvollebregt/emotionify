@@ -1,9 +1,7 @@
 import React from 'react';
 import { navigate, usePath } from 'hookrouter';
 import banner from '../img/banner.png';
-import Navbar from 'react-bootstrap/Navbar';
-import Nav from 'react-bootstrap/Nav';
-import Container from 'react-bootstrap/Container';
+import { Container, Nav, Navbar } from 'react-bootstrap';
 import SpotifyLoginStatusButton from './SpotifyLoginStatusButton';
 
 interface IProps {

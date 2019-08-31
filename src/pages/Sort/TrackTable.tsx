@@ -1,7 +1,5 @@
 import React, { useState } from 'react';
-import Table from 'react-bootstrap/Table';
-import Accordion from 'react-bootstrap/Accordion';
-import Card from 'react-bootstrap/Card';
+import { Accordion, Card, Table } from 'react-bootstrap';
 import { SpotifyTrackWithIndexes } from '../../logic/PointSorting';
 import { randomString } from '../../logic/Utils';
 

@@ -1,10 +1,6 @@
 import React, { useState } from 'react';
 import cogoToast from 'cogo-toast';
-import InputGroup from 'react-bootstrap/InputGroup';
-import FormControl from 'react-bootstrap/FormControl';
-import Button from 'react-bootstrap/Button';
-import DropdownButton from 'react-bootstrap/DropdownButton';
-import Dropdown from 'react-bootstrap/Dropdown';
+import { Button, Dropdown, DropdownButton, FormControl, InputGroup } from 'react-bootstrap';
 import { BsPrefixProps, ReplaceProps } from 'react-bootstrap/helpers';
 import { FormControlProps } from 'react-bootstrap/FormControl';
 

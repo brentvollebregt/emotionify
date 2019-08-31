@@ -1,7 +1,6 @@
 import React from 'react';
 import { navigate, useTitle } from 'hookrouter';
-import Container from 'react-bootstrap/Container';
-import Button from 'react-bootstrap/Button';
+import { Button, Container } from 'react-bootstrap';
 import BannerImage from '../../img/banner.png';
 import SortPageDemoImage from '../../img/sort-page-demo.png';
 import ComparePageDemoImage from '../../img/compare-page-demo.png';
