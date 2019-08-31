@@ -12,8 +12,7 @@ interface IProps { }
 const Home: React.FunctionComponent<IProps> = (props: IProps) => {
     useTitle('Emotionify');
 
-    const goToSort = () => navigate('/sort');
-    const goToCompare = () => navigate('/compare');
+    const goTo = (location: string) => () => navigate(location);
 
     return <>
         <section className="jumbotron jumbotron-fluid text-center">
@@ -32,7 +31,7 @@ const Home: React.FunctionComponent<IProps> = (props: IProps) => {
                     <p className="lead">Using features calculated by Spotify for each song, sort your playlist on an emotional gradient.</p>
                     <p className="lead">You can also change how and what your songs are sorted by to explore different methods of sorting playlists and discover new ways to listen to your playlists.</p>
                 </div>
-                <Button variant="outline-secondary" onClick={goToSort}>Sort My Playlist &rarr;</Button>
+                <Button variant="outline-secondary" onClick={goTo('/sort')}>Sort My Playlist &rarr;</Button>
             </Container>
         </section>
 
@@ -44,7 +43,7 @@ const Home: React.FunctionComponent<IProps> = (props: IProps) => {
                     <p className="lead">Compare your playlists based off audio features calculated by Spotify.</p>
                     <p className="lead">Select any number of playlists and compare them in one or two dimensions for any audio feature or seven dimensions for specific audio features.</p>
                 </div>
-                <Button variant="outline-secondary" onClick={goToCompare}>Compare My Playlists &rarr;</Button>
+                <Button variant="outline-secondary" onClick={goTo('/compare')}>Compare My Playlists &rarr;</Button>
             </Container>
         </section>
 
@@ -56,7 +55,7 @@ const Home: React.FunctionComponent<IProps> = (props: IProps) => {
                     <p className="lead">Merge, filter and sort your playlists to make a more focused playlist.</p>
                     <p className="lead">Select playlists, filter and sort by audio features and even randomise your playlists to make a playlist focused for any occasion.</p>
                 </div>
-                <Button variant="outline-secondary" onClick={goToCompare}>Create My New Playlist &rarr;</Button>
+                <Button variant="outline-secondary" onClick={goTo('/tools')}>Create My New Playlist &rarr;</Button>
             </Container>
         </section>
     </>
