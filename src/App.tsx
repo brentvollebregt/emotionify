@@ -9,6 +9,7 @@ import SpotifyAuthorization from './pages/SpotifyAuthorization';
 import Home from './pages/Home';
 import Sort from './pages/Sort';
 import Compare from './pages/Compare';
+import Tools from './pages/Tools';
 import About from './pages/About';
 import NotFound from './pages/NotFound';
 import useNavigatorOnline from './hooks/NavigatorOnline';
@@ -211,6 +212,7 @@ export const App: React.FunctionComponent<IProps> = (props: IProps) => {
         '/spotify-authorization/': () => <SpotifyAuthorization onTokenChange={onTokenChange} />,
         '/sort': () => <Sort token={token} user={spotifyData.user} playlists={spotifyData.playlists} tracks={spotifyData.tracks} playlistsLoading={playlistsLoading} refreshPlaylist={refreshPlaylist} refreshUsersPlaylists={refreshUsersPlaylists} />,
         '/compare': () => <Compare user={spotifyData.user} playlists={spotifyData.playlists} tracks={spotifyData.tracks} playlistsLoading={playlistsLoading} refreshPlaylist={refreshPlaylist} />,
+        '/tools': () => <Tools token={token} user={spotifyData.user} playlists={spotifyData.playlists} tracks={spotifyData.tracks} playlistsLoading={playlistsLoading} refreshPlaylist={refreshPlaylist} refreshUsersPlaylists={refreshUsersPlaylists} />,
         '/about': () => <About />,
     };
     const routeResult = useRoutes(routes);

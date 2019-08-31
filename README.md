@@ -1,16 +1,6 @@
 # Emotionify
 Create an emotion gradiented Spotify playlist
 
-## Current TODO
-- `/tools` Playlist Tools
-    - Add action by action down the page
-    - Reverse a playlist
-    - Randomise a playlist
-    - Filter out by audio feature / name / duration
-        - Show a view of the songs in the playlist with ones that are kept still coloured and ones being removed as grey
-    - Add section to home page
-- Home page for `/tools`
-
 ## Browser Support
 - Edge:
     - `.flat()` is not supported; fix: `function flatMap<T>(array: T[][]): T[] { return Array.prototype.concat.apply([], array); }`

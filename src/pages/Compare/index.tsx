@@ -59,6 +59,7 @@ const Compare: React.FunctionComponent<IProps> = (props: IProps) => {
 
         <Container className="text-center mb-5">
 
+            <h3 className="mb-3">Select a Playlist</h3>
             <PlaylistSelectionTable 
                 playlists={Object.values(playlists)}
                 selectedPlaylistIds={selectedPlaylistIds}

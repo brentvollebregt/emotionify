@@ -15,6 +15,7 @@ const navbarLinks: {[key: string]: string} = {
   '/' : 'Home',
   '/sort' : 'Sort',
   '/compare' : 'Compare',
+  '/tools' : 'Tools',
   '/about' : 'About',
 };
 

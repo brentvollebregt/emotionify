@@ -54,7 +54,6 @@ const PlaylistSelection: React.FunctionComponent<IProps> = (props: IProps) => {
     const bootstrapBreakpointBiggerThanSm = () => windowSize.innerWidth > 576; // Bootstrap >sm in js
 
     return <>
-        <h3 className="mb-3">Select a Playlist</h3>
         <div style={{ width: 700, maxWidth: '100%', margin: 'auto' }}>
             <InputGroup style={{ marginBottom: 5 }}>
                 <InputGroup.Prepend>
