@@ -7,6 +7,7 @@ import FilterReverse from './FilterReverse';
 import FilterRandomise from './FilterRandomise';
 import FilterAudioFeaturePredicate from './FilterAudioFeaturePredicate';
 import FilterOrderByAudioFeature from './FilterOrderByAudioFeature';
+import FilterDistinct from './FilterDistinct';
 import SpotifyLoginStatusButton from '../../components/SpotifyLoginStatusButton';
 import TrackTable from './TrackTable';
 import ExportPlaylistInput from '../../components/ExportPlaylistInput';
@@ -35,6 +36,7 @@ const filters: {[key: string]: React.FunctionComponent<any>} = {
     'Randomise': FilterRandomise,
     'Filter Audio Feature': FilterAudioFeaturePredicate,
     'Order by Audio Feature': FilterOrderByAudioFeature,
+    'Remove Duplicates': FilterDistinct
 }
 
 const track_identity_function = (tracks: TrackWithAudioFeatures[]): TrackWithAudioFeatures[] => tracks;
