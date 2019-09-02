@@ -10,6 +10,7 @@
     "@types/react": "16.8.19",
     "@types/react-dom": "16.8.4",
     "@types/react-plotly.js": "^2.2.2",
+    "array-flat-polyfill": "^1.0.1",
     "cogo-toast": "^3.1.0",
     "hookrouter": "^1.2.3",
     "plotly.js": "^1.48.3",
