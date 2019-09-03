@@ -11,24 +11,24 @@ const About: React.FunctionComponent<IProps> = (props: IProps) => {
         <Row className="justify-content-md-center">
             <Col className="col-md-10 col-lg-8">
                 <h1 className="text-center">About</h1>
-                <p>Emotionify is application I had though about for a few years after doing a project at university on attempting to detect emotion in music and portraying it in an interactive environment.</p>
-                <p>By default, chosing a playlist on the Sort page will sort your music by <code>Valence</code> and <code>Energy</code> which are <a href="https://developer.spotify.com/documentation/web-api/reference/tracks/get-audio-features/">audio features calculated by Spotify</a>. When conducting research for my project, this is was the some of the best public and easily accessible data that related to emotion in music. Also with Spotify being so large and active among many people, it allows for people to easily organise thier own playlists.</p>
+                <p>Emotionify is an application I had thought about for a few years after doing a project at university on attempting to detect emotion in music and portraying it in an interactive environment.</p>
+                <p>By default, choosing a playlist on the Sort page will sort your music by <code>Valence</code> and <code>Energy</code> which are <a href="https://developer.spotify.com/documentation/web-api/reference/tracks/get-audio-features/">audio features calculated by Spotify</a>. When researching my project, this is was some of the best public and easily accessible data that related to emotion in music. Also with Spotify being so large and active among many people, it allows people to easily organise their own playlists.</p>
                 <p>Emotionify is not 100% accurate as emotion is highly opinion based and the values used to sort songs are averages over the whole song. This tool however does give insight on how well a computer can plot an emotional gradient with a list of songs.</p>
                 <p>I made this project because I was curious if this data really did mean anything and if my guess of the data being able to be used to sort playlists by emotion was correct. I can leave that up to you to decide!</p>
-                <p>As you can see on the Sort page, I have also made the other audio features avaiable for you to play around with.</p>
+                <p>As you can see on the Sort page, I have also made the other audio features available for you to play around with.</p>
 
                 <h2 className="text-center">FAQ</h2>
                 <h5>Why is this called Emotionify?</h5>
-                <p>By default, chosing a playlist on the Sort page will sort your music by <code>Valence</code> and <code>Energy</code> which I had used in a previous project to detect vauge emotion of songs.</p>
+                <p>By default, choosing a playlist on the Sort page will sort your music by <code>Valence</code> and <code>Energy</code> which I had used in a previous project to detect vague emotion of songs.</p>
                 <h5>Will sorting a playlist remove duplicates?</h5>
                 <p>Yes, if the sort functionality didn't remove duplicate songs they would be bunched up by each other. Removing these allows for proper transitions into a different song.</p>
                 <h5>Why do I have to log in so much?</h5>
                 <p>When you log in, a token is stored on your machine that's used to ask Spotify for your playlists (otherwise we couldn't see them). This token only lasts for an hour, meaning if you use this site for more than an hour at a time, you will need to authorise the application again.</p>
                 <h5>What data do you store?</h5>
-                <p>All data recieved from Spotify is stored locally on your machine; none of this is sent off to some other server (apart from Spotify itself). You can view a summary of your stored data by clicking on your name in the top right when logged in.</p>
+                <p>All data received from Spotify is stored locally on your machine; none of this is sent off to some other server (apart from Spotify itself). You can view a summary of your stored data by clicking on your name in the top right when logged in.</p>
                 <h5>How do I clear all my data?</h5>
                 <p>All data is stored in localStorage on your machine; simply logging out will clear all this data.</p>
-                <h5>I just added a playlist on Spotiify but it isn't showing up here</h5>
+                <h5>I just added a playlist on Spotify but it isn't showing up here</h5>
                 <p>We look for your playlists when you log in. If you want to use a playlist you created/added after you logged into this site, log out and then log back in to get the new playlist.</p>
                 <h5>What are each of the audio features I select for the axis?</h5>
                 <p>Here are some summaries from <a href="https://developer.spotify.com/documentation/web-api/reference/tracks/get-audio-features/">Spotify</a>:</p>
