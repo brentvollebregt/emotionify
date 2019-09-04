@@ -16,6 +16,7 @@ const About: React.FunctionComponent<IProps> = (props: IProps) => {
                 <p>Emotionify is not 100% accurate as emotion is highly opinion based and the values used to sort songs are averages over the whole song. This tool however does give insight on how well a computer can plot an emotional gradient with a list of songs.</p>
                 <p>I made this project because I was curious if this data really did mean anything and if my guess of the data being able to be used to sort playlists by emotion was correct. I can leave that up to you to decide!</p>
                 <p>As you can see on the Sort page, I have also made the other audio features available for you to play around with.</p>
+                <p>You can find other projects and tutorials made by me on my site <a href="https://nitratine.net/">nitratine.net</a>.</p>
 
                 <h2 className="text-center">FAQ</h2>
                 <h5>Why is this called Emotionify?</h5>
