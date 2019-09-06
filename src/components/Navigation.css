@@ -1,0 +1,8 @@
+.github-icon {
+  cursor: pointer;
+  transition: filter .2s;
+}
+
+.github-icon:hover {
+  filter: contrast(0.5);
+}

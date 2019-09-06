@@ -3,18 +3,20 @@ import { navigate, usePath } from 'hookrouter';
 import banner from '../img/banner.png';
 import { Container, Nav, Navbar } from 'react-bootstrap';
 import SpotifyLoginStatusButton from './SpotifyLoginStatusButton';
+import GithubLogo from '../img/github-logo.png';
+import './Navigation.css';
 
 interface IProps {
   user: SpotifyApi.CurrentUsersProfileResponse | undefined,
   onAuthButtonLoggedInClick: () => void
 }
 
-const navbarLinks: {[key: string]: string} = {
-  '/' : 'Home',
-  '/sort' : 'Sort',
-  '/compare' : 'Compare',
-  '/tools' : 'Tools',
-  '/about' : 'About',
+const navbarLinks: { [key: string]: string } = {
+  '/': 'Home',
+  '/sort': 'Sort',
+  '/compare': 'Compare',
+  '/tools': 'Tools',
+  '/about': 'About',
 };
 
 const Navigation: React.FunctionComponent<IProps> = (props: IProps) => {
@@ -39,12 +41,15 @@ const Navigation: React.FunctionComponent<IProps> = (props: IProps) => {
       <Navbar.Toggle aria-controls="responsive-navbar-nav" />
       <Navbar.Collapse id="responsive-navbar-nav">
         <Nav className="mr-auto">
-          {Object.keys(navbarLinks).map(path => 
+          {Object.keys(navbarLinks).map(path =>
             <Nav.Link key={path} href="#" onClick={goTo(path)} active={currentPath === path}>{navbarLinks[path]}</Nav.Link>
           )}
         </Nav>
         <Nav>
           <SpotifyLoginStatusButton user={user} onLoggedInClick={onAuthButtonLoggedInClick} />
+          <a href="https://github.com/brentvollebregt/emotionify" style={{ display: 'flex', alignItems: 'center', padding: 5 }}>
+            <img src={GithubLogo} className="ml-md-1 github-icon" height="25" alt="GitHub Source" />
+          </a>
         </Nav>
       </Navbar.Collapse>
     </Container>
