@@ -43,7 +43,7 @@ const PlaylistSelection: React.FunctionComponent<IProps> = (props: IProps) => {
         }
     };
 
-    const filteredPlaylists = playlists.filter(p => p.name.indexOf(search) !== -1 || p.uri.indexOf(search) !== -1);
+    const filteredPlaylists = playlists.filter(p => p.name.toLowerCase().indexOf(search.toLowerCase()) !== -1 || p.uri.indexOf(search) !== -1);
     const sortedPlaylists = filteredPlaylists.sort((a: PlaylistObjectSimplifiedWithTrackIds, b: PlaylistObjectSimplifiedWithTrackIds) => a.name === b.name ? 0 : a.name > b.name ? 1 : -1);
 
     const bootstrapBreakpointBiggerThanSm = () => windowSize.innerWidth > 576; // Bootstrap >sm in js
