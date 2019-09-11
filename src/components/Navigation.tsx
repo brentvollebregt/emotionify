@@ -4,7 +4,6 @@ import banner from '../img/banner.png';
 import { Container, Nav, Navbar } from 'react-bootstrap';
 import SpotifyLoginStatusButton from './SpotifyLoginStatusButton';
 import GithubLogo from '../img/github-logo.png';
-import './Navigation.css';
 
 interface IProps {
   user: SpotifyApi.CurrentUsersProfileResponse | undefined,
@@ -47,9 +46,6 @@ const Navigation: React.FunctionComponent<IProps> = (props: IProps) => {
         </Nav>
         <Nav>
           <SpotifyLoginStatusButton user={user} onLoggedInClick={onAuthButtonLoggedInClick} />
-          <a href="https://github.com/brentvollebregt/emotionify" style={{ display: 'flex', alignItems: 'center', padding: 5 }}>
-            <img src={GithubLogo} className="ml-md-1 github-icon" height="25" alt="GitHub Source" />
-          </a>
         </Nav>
       </Navbar.Collapse>
     </Container>

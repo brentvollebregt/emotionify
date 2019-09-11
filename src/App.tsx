@@ -3,6 +3,7 @@ import { useRoutes, useRedirect } from 'hookrouter';
 import SpotifyWebApi from 'spotify-web-api-js';
 import cogoToast from 'cogo-toast';
 import Navigation from './components/Navigation';
+import Footer from './components/Footer';
 import TokenRefreshWarning from './components/TokenRefreshWarning';
 import StoredDataDialog from './components/StoredDataDialog';
 import SpotifyAuthorization from './pages/SpotifyAuthorization';
@@ -234,6 +235,7 @@ export const App: React.FunctionComponent<IProps> = (props: IProps) => {
         }
         <Navigation user={spotifyData.user} onAuthButtonLoggedInClick={openStoredDataDialog} />
         {routeResult || <NotFound />}
+        <Footer />
     </>
 }
 

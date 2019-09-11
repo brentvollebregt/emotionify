@@ -43,7 +43,7 @@ const SpotifyLoginStatusButton: React.FunctionComponent<IProps> = (props: IProps
         {
             user !== undefined
                 ? user.display_name
-                : 'Spotify Sign In'
+                : 'Sign In With Spotify'
         }
     </Button>;
 }
