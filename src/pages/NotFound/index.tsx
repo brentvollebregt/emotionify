@@ -2,9 +2,7 @@ import React from 'react';
 import { navigate, useTitle } from 'hookrouter';
 import { Button, Container } from 'react-bootstrap';
 
-interface IProps { }
-
-const NotFound: React.FunctionComponent<IProps> = (props: IProps) => {
+const NotFound: React.FunctionComponent = () => {
     useTitle('Emotionify - Page Not Found');
 
     const navigateHome = () => navigate('/');

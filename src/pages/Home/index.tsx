@@ -6,9 +6,7 @@ import SortPageDemoImage from '../../img/sort-page-demo.png';
 import ComparePageDemoImage from '../../img/compare-page-demo.png';
 import ToolsPageDemoImage from '../../img/tools-page-demo.png';
 
-interface IProps { }
-
-const Home: React.FunctionComponent<IProps> = (props: IProps) => {
+const Home: React.FunctionComponent = () => {
     useTitle('Emotionify');
 
     const goTo = (location: string) => () => navigate(location);

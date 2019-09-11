@@ -2,9 +2,7 @@ import React from 'react';
 import { Container, Col, Row } from 'react-bootstrap';
 import { useTitle } from 'hookrouter';
 
-interface IProps { }
-
-const About: React.FunctionComponent<IProps> = (props: IProps) => {
+const About: React.FunctionComponent = () => {
     useTitle('Emotionify - About');
 
     return <Container>

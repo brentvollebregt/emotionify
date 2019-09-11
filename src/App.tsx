@@ -29,8 +29,6 @@ const emptySpotifyData = {
     audioFeatures: {}
 }
 
-interface IProps { }
-
 interface IStorage {
     version: number,
     token: Token,
@@ -38,7 +36,7 @@ interface IStorage {
     playlists: { [key: string]: PlaylistObjectSimplifiedWithTrackIds }
 }
 
-export const App: React.FunctionComponent<IProps> = (props: IProps) => {
+export const App: React.FunctionComponent = () => {
     const [token, setToken] = useState<Token | undefined>(undefined);
     const [spotifyData, setSpotifyData] = useState<SpotifyData>(emptySpotifyData);
     const [storedDataDialogOpen, setStoredDataDialogOpen] = useState(false);
