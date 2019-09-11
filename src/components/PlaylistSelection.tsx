@@ -49,8 +49,8 @@ const PlaylistSelection: React.FunctionComponent<IProps> = (props: IProps) => {
     const bootstrapBreakpointBiggerThanSm = () => windowSize.innerWidth > 576; // Bootstrap >sm in js
 
     return <>
-        <div style={{ width: 700, maxWidth: '100%', margin: 'auto' }}>
-            <InputGroup style={{ marginBottom: 5 }}>
+        <div className="mw-100 m-auto" style={{ width: 700 }}>
+            <InputGroup className="mb-1">
                 <InputGroup.Prepend>
                     <InputGroup.Text>{bootstrapBreakpointBiggerThanSm() ? 'Search Playlists': 'Search'}</InputGroup.Text>
                 </InputGroup.Prepend>
@@ -74,13 +74,13 @@ const PlaylistSelection: React.FunctionComponent<IProps> = (props: IProps) => {
                         {sortedPlaylists.map(playlist => 
                             <tr 
                                 key={playlist.id} 
-                                onClick={onComponentPlaylistSelected(playlist.id)} 
+                                onClick={onComponentPlaylistSelected(playlist.id)}
                                 style={{ cursor: 'pointer', background: selectedPlaylistIds.indexOf(playlist.id) !== -1 ? selectedBackground : undefined, display: 'grid', gridTemplateColumns: '60px 1fr' }}
                             >
                                 <td style={{ padding: 2 }}>
-                                    {playlist.images.length > 0 && <img src={playlist.images[0].url} style={{ width: '100%' }} alt={'Artwork for: ' + playlist.name}/>}
+                                    {playlist.images.length > 0 && <img src={playlist.images[0].url} className="w-100" alt={'Artwork for: ' + playlist.name}/>}
                                 </td>
-                                <td style={{ textAlign: 'left', padding: '0 0 0 10px' }}>
+                                <td className="text-left" style={{ padding: '0 0 0 10px' }}>
                                     <div style={{ fontSize: 22 }}>{playlist.name}</div>
                                     <div>
                                         <Badge variant="primary">{playlist.owner.display_name}</Badge>

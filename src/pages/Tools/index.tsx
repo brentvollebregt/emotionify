@@ -150,10 +150,10 @@ const Tools: React.FunctionComponent<IProps> = (props: IProps) => {
                 {appliedFilters.map((appliedFilter: AppliedFilter, index: number) => {
                     let FilterComponent = filters[appliedFilter.filterName];
                     return <Card key={index + appliedFilter.filterName} style={{ overflow: 'visible' }}>
-                        <Card.Header style={{ padding: 5, cursor: 'pointer', display: 'flex', alignItems: 'center' }} onClick={onCardHeaderClick("" + index)}>
+                        <Card.Header className="d-flex align-items-center p-1" style={{ cursor: 'pointer' }} onClick={onCardHeaderClick("" + index)}>
                             <Button variant={appliedFilter.filter === undefined ? "danger" : "primary"}>{appliedFilter.filterName}</Button>
-                            <span className="ml-3" style={{ flex: '1' }}>{appliedFilter.titleText}</span>
-                            {index !== 0 && <Button variant="danger" style={{ float: 'right' }} onClick={removeFilter(index)}>-</Button>}
+                            <span className="ml-3 flex-grow-1">{appliedFilter.titleText}</span>
+                            {index !== 0 && <Button variant="danger" className="float-right" onClick={removeFilter(index)}>-</Button>}
                         </Card.Header>
                         <Accordion.Collapse eventKey={"" + index}>
                             <Card.Body>
@@ -165,7 +165,7 @@ const Tools: React.FunctionComponent<IProps> = (props: IProps) => {
             </Accordion>
 
             <div className="mt-3 text-center">
-                <InputGroup style={{ width: 'auto', display: 'inline-flex' }}>
+                <InputGroup className="w-auto d-inline-flex">
                     <InputGroup.Prepend>
                         <InputGroup.Text>Add filter</InputGroup.Text>
                     </InputGroup.Prepend>

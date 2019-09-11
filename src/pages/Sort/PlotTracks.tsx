@@ -125,13 +125,11 @@ const PlotTracks: React.FunctionComponent<IProps> = (props: IProps) => {
                 displayModeBar: false,
                 responsive: true
             }}
+            className="w-100 m-auto overflow-hidden"
             style={{ 
-                width: "100%",
                 maxWidth: 700,
                 height: 450,
-                margin: 'auto',
                 border: '2px solid #6c757d',
-                overflow: 'hidden',
                 borderRadius: 10
             }}
         />

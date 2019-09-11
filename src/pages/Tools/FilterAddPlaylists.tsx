@@ -35,7 +35,7 @@ const FilterAddPlaylists: React.FunctionComponent<IProps> = (props: IProps) => {
 
     return <>
         <PlaylistSelection playlists={Object.values(playlists)} selectedPlaylistIds={selectedPlaylistIds} selectionsAllowed="All" defaultSelectionType="Single" onPlaylistSelectionChange={onPlaylistSelectionChange} />
-        {playlistsLoading.size > 0 && <div className="mt-2" style={{display: 'flex', alignItems: 'center', justifyContent: 'center'}}>
+        {playlistsLoading.size > 0 && <div className="mt-3 d-flex align-items-center justify-content-center">
             <Spinner animation="border" />
             <span className="ml-3">Loading tracks for selected playlists</span>
         </div>}

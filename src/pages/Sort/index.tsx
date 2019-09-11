@@ -5,7 +5,7 @@ import { availableSortingMethods, IndexedTrackId, sort, SpotifyTrackWithIndexes 
 import { createPlaylist } from '../../logic/Spotify';
 import { PlaylistObjectSimplifiedWithTrackIds, availableTrackAudioFeatures, TrackWithAudioFeatures } from '../../models/Spotify';
 import { Token } from '../../models/Spotify'
-import PlaylistSelectionTable from '../../components/PlaylistSelection';
+import PlaylistSelection from '../../components/PlaylistSelection';
 import PlaylistDetails from '../../components/PlaylistDetails';
 import PlotTracks from './PlotTracks';
 import TrackTable from './TrackTable';
@@ -130,7 +130,7 @@ export const Sort: React.FunctionComponent<IProps> = (props: IProps) => {
         <Container className="text-center mb-5">
 
             <h3 className="mb-3">Select a Playlist</h3>
-            <PlaylistSelectionTable 
+            <PlaylistSelection 
                 playlists={Object.values(playlists)}
                 selectedPlaylistIds={selectedPlaylistIds}
                 selectionsAllowed="All"
@@ -170,7 +170,7 @@ export const Sort: React.FunctionComponent<IProps> = (props: IProps) => {
                 </div>
 
                 {selectedPlaylistIds.map(pid => pid in playlists ? playlists[pid].track_ids.length : 0).reduce((a, b) => a + b) > 0 && selectedPlaylistIds.map(pid => pid in playlists ? playlists[pid].tracks.total : 0).reduce((a, b) => a + b) !== sortedTrackIds.length && 
-                    <Alert variant="warning" style={{display: 'inline-block'}}>
+                    <Alert variant="warning" className="d-inline-block">
                         Warning: Duplicate songs will be removed in the new playlist
                     </Alert>
                 }

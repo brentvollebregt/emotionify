@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
 import { useTitle } from 'hookrouter';
 import { Container, Spinner } from 'react-bootstrap';
-import PlaylistSelectionTable from '../../components/PlaylistSelection';
+import PlaylistSelection from '../../components/PlaylistSelection';
 import SpotifyLoginStatusButton from '../../components/SpotifyLoginStatusButton';
-import AudioFeatureDropdown from '../../components/NamedDropdown';
+import NamedDropdown from '../../components/NamedDropdown';
 import BoxPlotAudioFeatureComparison from './BoxPlotAudioFeatureComparison';
 import ScatterPlotDualAudioFeatureComparison from './ScatterPlotDualAudioFeatureComparison';
 import RadarChartAudioFeatureComparison from './RadarChartAudioFeatureComparison';
@@ -59,7 +59,7 @@ const Compare: React.FunctionComponent<IProps> = (props: IProps) => {
         <Container className="text-center mb-5">
 
             <h3 className="mb-3">Select a Playlist</h3>
-            <PlaylistSelectionTable 
+            <PlaylistSelection 
                 playlists={Object.values(playlists)}
                 selectedPlaylistIds={selectedPlaylistIds}
                 selectionsAllowed="Multiple"
@@ -76,7 +76,7 @@ const Compare: React.FunctionComponent<IProps> = (props: IProps) => {
                 <div className="mb-5">
                     <h4 className="mb-3">Single Audio Feature Comparison</h4>
 
-                    <AudioFeatureDropdown
+                    <NamedDropdown
                         available_values={Object.keys(availableTrackAudioFeatures)}
                         selected_value={oneDimensionComparisonAudioFeature}
                         title="Audio Feature"
@@ -97,7 +97,7 @@ const Compare: React.FunctionComponent<IProps> = (props: IProps) => {
                     <h4 className="mb-3">Dual Audio Feature Comparison</h4>
 
                     <div className="mb-3">
-                        <AudioFeatureDropdown
+                        <NamedDropdown
                             available_values={Object.keys(availableTrackAudioFeatures)}
                             selected_value={twoDimensionComparisonAudioFeatureX}
                             title="X-Axis ( ↔ )"
@@ -105,7 +105,7 @@ const Compare: React.FunctionComponent<IProps> = (props: IProps) => {
                             className="mr-3"
                         />
 
-                        <AudioFeatureDropdown
+                        <NamedDropdown
                             available_values={Object.keys(availableTrackAudioFeatures)}
                             selected_value={twoDimensionComparisonAudioFeatureY}
                             title="Y-Axis ( ↕ )"

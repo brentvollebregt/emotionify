@@ -26,7 +26,7 @@ const StoredDataDialog: React.FunctionComponent<IProps> = (props: IProps) => {
         </Modal.Header>
             <Modal.Body>
                 Data currently stored:
-                <ul style={{ marginBottom: 0 }}>
+                <ul className="mb-0">
                     <li title={tokenStub}>Token expires at: <code>{token.expiry.toLocaleTimeString()}</code></li>
                     <li title={user.uri}>User associated: <code>{user.display_name}</code></li>
                     <li>Playlists stored: <code>{publicPlaylistCount} public and {privatePlaylistCount} private</code></li>

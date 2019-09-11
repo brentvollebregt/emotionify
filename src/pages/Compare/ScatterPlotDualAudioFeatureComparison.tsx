@@ -79,11 +79,10 @@ const ScatterPlotDualAudioFeatureComparison: React.FunctionComponent<IProps> = (
             displayModeBar: false,
             responsive: true
         }}
+        className="w-100 m-auto"
         style={{ 
-            width: "100%",
             maxWidth: 700,
             height: 450,
-            margin: 'auto',
         }}
     />
 }

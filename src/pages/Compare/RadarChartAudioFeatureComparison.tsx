@@ -41,10 +41,9 @@ const RadarChartAudioFeatureComparison: React.FunctionComponent<IProps> = (props
             displayModeBar: false,
             responsive: true
         }}
+        className="w-100 m-auto"
         style={{
-            width: '100%',
             maxWidth: 800,
-            margin: 'auto',
             height: 400
         }}
     />

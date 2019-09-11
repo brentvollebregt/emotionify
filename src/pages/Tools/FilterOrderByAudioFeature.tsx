@@ -25,7 +25,7 @@ const FilterOrderByAudioFeature: React.FunctionComponent<IProps> = (props: IProp
     const setFeatureFromDropdown = (featureValue: string) => () => setFeature(featureValue);
 
     return <>
-        <InputGroup className="mb-1" style={{ display: 'inline-flex', width: 'auto' }}>
+        <InputGroup className="mb-1 d-inline-flex w-auto">
             <InputGroup.Prepend>
                 <InputGroup.Text>Audio Feature</InputGroup.Text>
             </InputGroup.Prepend>

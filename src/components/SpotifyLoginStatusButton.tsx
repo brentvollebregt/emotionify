@@ -37,8 +37,8 @@ const SpotifyLoginStatusButton: React.FunctionComponent<IProps> = (props: IProps
                     ? user.display_name + ' Logo'
                     : 'Spotify Logo Round'
             }
-            style={{ height: 20, width: 20, borderRadius: '50%' }}
-            className="mr-2"
+            style={{ height: 20, width: 20 }}
+            className="mr-2 rounded-circle"
         />
         {
             user !== undefined

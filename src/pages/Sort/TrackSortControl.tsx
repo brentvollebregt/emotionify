@@ -1,5 +1,5 @@
 import React from 'react';
-import AudioFeatureDropdown from '../../components/NamedDropdown';
+import NamedDropdown from '../../components/NamedDropdown';
 
 interface IProps {
     available_audio_features: string[],
@@ -17,7 +17,7 @@ const TrackSortControl: React.FunctionComponent<IProps> = (props: IProps) => {
     const { onXAxisSelect, onYAxisSelect, onSortMethodSelect} = props;
 
     return <>
-        <AudioFeatureDropdown
+        <NamedDropdown
             available_values={available_audio_features}
             selected_value={selected_x_axis}
             title="X-Axis ( ↔ )"
@@ -25,7 +25,7 @@ const TrackSortControl: React.FunctionComponent<IProps> = (props: IProps) => {
             className="mr-3"
         />
 
-        <AudioFeatureDropdown
+        <NamedDropdown
             available_values={available_audio_features}
             selected_value={selected_y_axis}
             title="Y-Axis ( ↕ )"
@@ -33,7 +33,7 @@ const TrackSortControl: React.FunctionComponent<IProps> = (props: IProps) => {
             className="mr-3"
         />
 
-        <AudioFeatureDropdown
+        <NamedDropdown
             available_values={available_track_sorting_methods}
             selected_value={selected_sorting_method}
             title="Sort Method"

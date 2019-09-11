@@ -74,7 +74,7 @@ export const Export: React.FunctionComponent<IProps> = (props: IProps) => {
             </InputGroup.Append>
         </InputGroup>
 
-        <InputGroup className="mb-3 d-inline-flex d-sm-none" style={{ maxWidth: 500, justifyContent: 'center' }}>
+        <InputGroup className="mb-3 d-inline-flex d-sm-none justify-content-center" style={{ maxWidth: 500 }}>
             <InputGroup.Prepend>
                 <InputGroup.Text id="playlist-name">Playlist Name</InputGroup.Text>
             </InputGroup.Prepend>
@@ -87,7 +87,7 @@ export const Export: React.FunctionComponent<IProps> = (props: IProps) => {
                 isInvalid={nameInvalid}
             />
         </InputGroup>
-        <InputGroup className="mb-3 d-inline-flex d-sm-none" style={{ maxWidth: 500, justifyContent: 'center' }}>
+        <InputGroup className="mb-3 d-inline-flex d-sm-none justify-content-center" style={{ maxWidth: 500 }}>
             <DropdownButton
                 as={InputGroup.Prepend}
                 variant={'outline-secondary'}

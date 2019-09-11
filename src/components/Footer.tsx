@@ -4,10 +4,10 @@ import GithubLogo from '../img/github-logo.png';
 import './Footer.css';
 
 const Footer: React.FunctionComponent = () => {
-  return <footer className="footer" style={{ display: 'flex', alignItems: 'center' }}>
+  return <footer className="footer d-flex align-items-center">
     <Container className="text-center">
-      <div style={{ display: 'inline-flex', alignItems: 'center' }}>
-        <a href="https://github.com/brentvollebregt/emotionify" style={{ display: 'flex', alignItems: 'center', padding: 5, cursor: 'pointer' }}>
+      <div className="d-inline-flex align-items-center">
+        <a href="https://github.com/brentvollebregt/emotionify" className="d-flex align-items-center" style={{ cursor: 'pointer' }}>
           <img src={GithubLogo} height="25" alt="GitHub Source" />
           <span className="ml-2">Source</span>
         </a>

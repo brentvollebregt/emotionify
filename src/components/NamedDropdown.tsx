@@ -17,7 +17,7 @@ const NamedDropdown: React.FunctionComponent<IProps> = (props: IProps) => {
 
     const onComponentAudioFeatureSelect = (audioFeature: string) => () => onSelect(audioFeature);
 
-    return <InputGroup className={className === undefined ? "mt-1" : "mt-1 " + className} style={{display: 'inline-flex', width: 'auto'}}>
+    return <InputGroup className={`mt-1 d-inline-flex w-auto ${className !== undefined ? className : ''}`}>
         <InputGroup.Prepend>
             <InputGroup.Text>{title}</InputGroup.Text>
         </InputGroup.Prepend>

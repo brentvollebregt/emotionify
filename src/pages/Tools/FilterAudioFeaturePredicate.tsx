@@ -49,17 +49,17 @@ const FilterAudioFeaturePredicate: React.FunctionComponent<IProps> = (props: IPr
     const setOperatorFromDropdown = (operatorValue: string) => () => setOperator(operatorValue);
     const setvalueFromDropdown = (event: React.FormEvent<ReplaceProps<"input", BsPrefixProps<"input"> & FormControlProps>>) => setValue(event.currentTarget.value === undefined ? '' : event.currentTarget.value);
 
-    return <div style={{ display: 'inline-flex', width: '100%'}}>
-        <DropdownButton id="dropdown-include" title={include ? 'Include': 'Exclude'} className="my-1" style={{ display: 'inline' }}>
+    return <div className="d-inline-flex w-100">
+        <DropdownButton id="dropdown-include" title={include ? 'Include': 'Exclude'} className="my-1 d-inline">
             <Dropdown.Item onClick={setIncludeFromDropdown(true)}>Include</Dropdown.Item>
             <Dropdown.Item onClick={setIncludeFromDropdown(false)}>Exclude</Dropdown.Item>
         </DropdownButton>
 
-        <DropdownButton id="dropdown-feature" title={feature} className="ml-1 my-1" style={{ display: 'inline' }}>
+        <DropdownButton id="dropdown-feature" title={feature} className="ml-1 my-1 d-inline">
             {Object.keys(availableTrackAudioFeatures).map(af => <Dropdown.Item key={af} onClick={setFeatureFromDropdown(af)}>{af}</Dropdown.Item>)}
         </DropdownButton>
 
-        <DropdownButton id="dropdown-operator" title={operator} className="ml-1 my-1" style={{ display: 'inline' }}>
+        <DropdownButton id="dropdown-operator" title={operator} className="ml-1 my-1 d-inline">
             {Object.keys(operators).map(op => <Dropdown.Item key={op} onClick={setOperatorFromDropdown(op)}>{op}</Dropdown.Item>)}
         </DropdownButton>
 
@@ -69,8 +69,8 @@ const FilterAudioFeaturePredicate: React.FunctionComponent<IProps> = (props: IPr
             type="number"
             value={value === undefined ? '' : value + ''}
             onChange={setvalueFromDropdown}
-            className="ml-1 my-1"
-            style={{ display: 'inline', maxWidth: 400 }}
+            className="ml-1 my-1 d-inline"
+            style={{ maxWidth: 400 }}
         />
     </div>
 }

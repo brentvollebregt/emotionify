@@ -51,11 +51,10 @@ const BoxPlotAudioFeatureComparison: React.FunctionComponent<IProps> = (props: I
             displayModeBar: false,
             responsive: true
         }}
+        className="w-100 m-auto"
         style={{
-            width: '100%',
             maxWidth: 800,
             height: 50 + (selectedPlaylists.length * 60),
-            margin: 'auto',
         }}
     />
 }
