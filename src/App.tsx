@@ -6,6 +6,7 @@ import Navigation from "./components/Navigation";
 import Footer from "./components/Footer";
 import TokenRefreshWarning from "./components/TokenRefreshWarning";
 import StoredDataDialog from "./components/StoredDataDialog";
+import MetaTags from "./components/MetaTags";
 import SpotifyAuthorization from "./pages/SpotifyAuthorization";
 import Home from "./pages/Home";
 import Sort from "./pages/Sort";
@@ -311,41 +312,74 @@ export const App: React.FunctionComponent = () => {
   }, [isOnline]);
 
   const routes = {
-    "/": () => <Home />,
+    "/": () => (
+      <MetaTags
+        route="/"
+        description="Easily create emotionally gradiented Spotify playlists for smoother emotional transitions in your listening."
+      >
+        <Home />
+      </MetaTags>
+    ),
     "/spotify-authorization": () => <SpotifyAuthorization onTokenChange={onTokenChange} />,
     "/spotify-authorization/": () => <SpotifyAuthorization onTokenChange={onTokenChange} />,
     "/sort": () => (
-      <Sort
-        token={token}
-        user={spotifyData.user}
-        playlists={spotifyData.playlists}
-        tracks={spotifyData.tracks}
-        playlistsLoading={playlistsLoading}
-        refreshPlaylist={refreshPlaylist}
-        refreshUsersPlaylists={refreshUsersPlaylists}
-      />
+      <MetaTags
+        route="/sort"
+        titlePrefix="Sort - "
+        description="Select one of your Spotify playlists and look at how the new playlist is sorted. You can then create the new playlist or select a different playlist."
+      >
+        <Sort
+          token={token}
+          user={spotifyData.user}
+          playlists={spotifyData.playlists}
+          tracks={spotifyData.tracks}
+          playlistsLoading={playlistsLoading}
+          refreshPlaylist={refreshPlaylist}
+          refreshUsersPlaylists={refreshUsersPlaylists}
+        />
+      </MetaTags>
     ),
     "/compare": () => (
-      <Compare
-        user={spotifyData.user}
-        playlists={spotifyData.playlists}
-        tracks={spotifyData.tracks}
-        playlistsLoading={playlistsLoading}
-        refreshPlaylist={refreshPlaylist}
-      />
+      <MetaTags
+        route="/compare"
+        titlePrefix="Compare - "
+        description="Select playlists and compare them on one audio feature, two audio features or seven pre-selected audio features."
+      >
+        <Compare
+          user={spotifyData.user}
+          playlists={spotifyData.playlists}
+          tracks={spotifyData.tracks}
+          playlistsLoading={playlistsLoading}
+          refreshPlaylist={refreshPlaylist}
+        />
+      </MetaTags>
     ),
     "/tools": () => (
-      <Tools
-        token={token}
-        user={spotifyData.user}
-        playlists={spotifyData.playlists}
-        tracks={spotifyData.tracks}
-        playlistsLoading={playlistsLoading}
-        refreshPlaylist={refreshPlaylist}
-        refreshUsersPlaylists={refreshUsersPlaylists}
-      />
+      <MetaTags
+        route="/tools"
+        titlePrefix="Tools - "
+        description="Apply filters and functions to your Spotify playlists to order then in a way you want."
+      >
+        <Tools
+          token={token}
+          user={spotifyData.user}
+          playlists={spotifyData.playlists}
+          tracks={spotifyData.tracks}
+          playlistsLoading={playlistsLoading}
+          refreshPlaylist={refreshPlaylist}
+          refreshUsersPlaylists={refreshUsersPlaylists}
+        />
+      </MetaTags>
     ),
-    "/about": () => <About />
+    "/about": () => (
+      <MetaTags
+        route="/about"
+        titlePrefix="About - "
+        description="Emotionfy is a webapp that helps you look at your Spotify playlists and the pre-calculated audio features of each song in playlists to plot them on an emotional pane. The app also provides other tools for manipulating playlists using these features. "
+      >
+        <About />
+      </MetaTags>
+    )
   };
   const routeResult = useRoutes(routes);
   useRedirect("/sort/", "/sort");

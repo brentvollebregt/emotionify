@@ -1,10 +1,8 @@
 import React from "react";
-import { navigate, useTitle } from "hookrouter";
+import { navigate } from "hookrouter";
 import { Button, Container } from "react-bootstrap";
 
 const NotFound: React.FunctionComponent = () => {
-  useTitle("Emotionify - Page Not Found");
-
   const navigateHome = () => navigate("/");
 
   return (

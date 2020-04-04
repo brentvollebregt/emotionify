@@ -1,5 +1,5 @@
 import React from "react";
-import { navigate, useTitle } from "hookrouter";
+import { navigate } from "hookrouter";
 import { Button, Container } from "react-bootstrap";
 import BannerImage from "../../img/banner.png";
 import SortPageDemoImage from "../../img/sort-page-demo.png";
@@ -7,8 +7,6 @@ import ComparePageDemoImage from "../../img/compare-page-demo.png";
 import ToolsPageDemoImage from "../../img/tools-page-demo.png";
 
 const Home: React.FunctionComponent = () => {
-  useTitle("Emotionify");
-
   const goTo = (location: string) => () => navigate(location);
 
   return (

@@ -1,10 +1,7 @@
 import React from "react";
 import { Container, Col, Row } from "react-bootstrap";
-import { useTitle } from "hookrouter";
 
 const About: React.FunctionComponent = () => {
-  useTitle("Emotionify - About");
-
   return (
     <Container>
       <Row className="justify-content-md-center">

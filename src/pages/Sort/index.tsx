@@ -1,5 +1,4 @@
 import React, { useState, useEffect, useRef } from "react";
-import { useTitle } from "hookrouter";
 import { Alert, Container } from "react-bootstrap";
 import {
   availableSortingMethods,
@@ -41,7 +40,6 @@ export const Sort: React.FunctionComponent<IProps> = (props: IProps) => {
   const { token, user, playlists, tracks, playlistsLoading } = props;
   const { refreshPlaylist, refreshUsersPlaylists } = props;
 
-  useTitle("Emotionify - Sort");
   const [selectedPlaylistIds, setSelectedPlaylistIds] = useState<string[]>([]);
   const [selectedAxis, setSelectedAxis] = useState<selectedAxis>({ x: "Valence", y: "Energy" });
   const [sortingMethod, setSortingMethod] = useState<string>("Distance From Origin");

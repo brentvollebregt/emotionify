@@ -1,9 +1,9 @@
 import React from "react";
 import { navigate } from "hookrouter";
 import { Container, Spinner } from "react-bootstrap";
-import settings from "../../settings.json";
 import { encodeData, randomString } from "../../logic/Utils";
 import { Token } from "../../models/Spotify";
+import config from "../../config";
 
 // Based off https://developer.spotify.com/documentation/general/guides/authorization-guide/#implicit-grant-flow
 
@@ -43,11 +43,11 @@ const SpotifyAuthorization: React.FunctionComponent<IProps> = (props: IProps) =>
     localStorage.setItem(localStorageStateKey, random_state);
     // Redirect
     const url_parameters = {
-      client_id: settings.spotify_client_id,
+      client_id: config.spotify.clientId,
       response_type: "token",
       redirect_uri: window.location.href,
       state: random_state,
-      scope: settings.spotify_premission_scope,
+      scope: config.spotify.permissionScope,
       show_dialog: true
     };
     const url_parameters_encoded = encodeData(url_parameters);

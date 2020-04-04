@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
 import cogoToast from "cogo-toast";
-import { useTitle } from "hookrouter";
 import {
   Accordion,
   Button,
@@ -65,7 +64,6 @@ const Tools: React.FunctionComponent<IProps> = (props: IProps) => {
     refreshUsersPlaylists
   } = props;
 
-  useTitle("Emotionify - Tools");
   const [appliedFilters, setAppliedFilters] = useState<AppliedFilter[]>([
     {
       filterName: "Add Playlist",

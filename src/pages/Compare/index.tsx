@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import { useTitle } from "hookrouter";
 import { Container, Spinner } from "react-bootstrap";
 import PlaylistSelection from "../../components/PlaylistSelection";
 import SpotifyLoginStatusButton from "../../components/SpotifyLoginStatusButton";
@@ -24,7 +23,6 @@ interface IProps {
 const Compare: React.FunctionComponent<IProps> = (props: IProps) => {
   const { user, playlists, tracks, playlistsLoading, refreshPlaylist } = props;
 
-  useTitle("Emotionify - Compare");
   const [selectedPlaylistIds, setSelectedPlaylistIds] = useState<string[]>([]);
   const [oneDimensionComparisonAudioFeature, setOneDimensionComparisonAudioFeature] = useState(
     "Valence"
