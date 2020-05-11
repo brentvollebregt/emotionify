@@ -14,6 +14,23 @@
 
 > After following these steps, a new browser tab will open with the locally hosted application in development mode.
 
+## 🧪 Development Setup
+
+1. Create a new app / client id at [developer.spotify.com](https://developer.spotify.com/dashboard/applications).
+2. Copy your client id into `/src/config.ts`.
+3. Click "Edit Settings" in the newly created Spotify developer app and add a redirect URI to where `/api/spotify/authentication-callback` will be hosted.
+
+## 📷 Snippets From the Web App
+
+Example Sort Visualisation of a Personal Playlist
+![Example Sort Visualisation of a Personal Playlist](https://nitratine.net/posts/emotionify/emotionify-sort-comparison.png)
+
+Example Comparison Visualisation of a Personal Playlists
+![Example Comparison Visualisation of a Personal Playlists](https://nitratine.net/posts/emotionify/emotionify-compare-box-plot.png)
+
+Example of Applying Filters to Playlists
+![Example of Applying Filters to Playlists](https://nitratine.net/posts/emotionify/emotionifytools-page-demo.png)
+
 ## 📝 Features
 
 - **Spotify authorization for library access**
@@ -21,7 +38,7 @@
 - **Compare playlists** - Compare multiple playlists in 1D, 2D or 7D from selected audio features.
 - **Playlist tools** - Add playlists and apply filters and functions to playlists to manipulate song ordering - Exports to a new playlist
 
-> All [audio features](<[https://developer.spotify.com/documentation/web-api/reference/tracks/get-audio-features/](https://developer.spotify.com/documentation/web-api/reference/tracks/get-audio-features/)>) used are pre-computed by Spotify and obtained through their API.
+> All [audio features](https://developer.spotify.com/documentation/web-api/reference/tracks/get-audio-features/) used are pre-computed by Spotify and obtained through their API.
 
 ## ❓ Why?
 
@@ -30,7 +47,3 @@ Emotionify is an application I had thought about for a few years after doing a p
 I was curious how the method implemented would play out with music I listen to every day and wanted some extra tools for Spotify playlists.
 
 Emotionify is not 100% accurate as emotion is highly opinion based and the values used to sort songs are averages over the whole song. This tool however does give insight on how well a computer can plot an emotional gradient with a list of songs.
-
-## 🚧 TODO
-
-- [Static pre-renderer?](https://github.com/geelen/react-snapshot)
