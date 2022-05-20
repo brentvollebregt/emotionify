@@ -3,7 +3,7 @@ import { Readable } from "stream";
 import fs from "fs";
 import config from "../src/config";
 
-const rootDestinations = ["sort", "compare", "tools", "about"];
+const rootDestinations = ["/", "/sort", "/compare", "/tools", "/about"];
 
 const links = rootDestinations.map((dest) => ({ url: `${dest}`, priority: 0.8 }));
 
