@@ -5,12 +5,9 @@ import config from "../src/config";
 
 const rootDestinations = ["sort", "compare", "tools", "about"];
 
-// An array with your links
 const links = rootDestinations.map((dest) => ({ url: `${dest}`, priority: 0.8 }));
 
-// Create a stream to write to
 const stream = new SitemapStream({ hostname: config.siteUrl });
-
 streamToPromise(Readable.from(links).pipe(stream)).then((data) => {
   fs.writeFileSync("./public/sitemap.xml", data);
   console.log("Sitemap created.");
