@@ -29,3 +29,6 @@ jobs:
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: ./build
+          PUBLISH_BRANCH: gh-pages
+          cname: emotionify.nitratine.net
+          force_orphan: true # Only keep latest commit in gh-pages (to keep repo size down)
