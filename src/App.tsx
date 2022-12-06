@@ -384,6 +384,7 @@ export const App: React.FunctionComponent = () => {
   const routeResult = useRoutes(routes);
   useRedirect("/sort/", "/sort");
   useRedirect("/compare/", "/compare");
+  useRedirect("/tools/", "/tools");
   useRedirect("/about/", "/about");
 
   return (
