@@ -117,7 +117,8 @@ const PlaylistSelection: React.FunctionComponent<IProps> = (props: IProps) => {
                   }}
                 >
                   <td style={{ padding: 2 }}>
-                    {playlist.images.length > 0 && (
+                    {/* Spotify has recently changed their responses - playlist.images is now nullable */}
+                    {playlist.images !== null && playlist.images.length > 0 && (
                       <img
                         src={playlist.images[0].url}
                         className="w-100"
