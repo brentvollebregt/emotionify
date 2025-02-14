@@ -7,16 +7,12 @@ export function encodeData(data: any): string {
     .join("&");
 }
 
-// Create a random string (src: https://stackoverflow.com/a/1349426)
-export function randomString(length: number): string {
-  let result = "";
-  let characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
-  let charactersLength = characters.length;
-  for (let i = 0; i < length; i++) {
-    result += characters.charAt(Math.floor(Math.random() * charactersLength));
-  }
-  return result;
-}
+// Create a random string of n length
+export const randomString = (length: number) => {
+  const possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+  const values = crypto.getRandomValues(new Uint8Array(length));
+  return values.reduce((acc, x) => acc + possible[x % possible.length], "");
+};
 
 // Turn a list into lists of lists with each top level list holding a max of `chunk_amount` lists
 export function chunkList<T>(list: T[], chunk_amount: number): T[][] {

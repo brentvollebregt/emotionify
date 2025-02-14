@@ -6,19 +6,19 @@
 <p align="center">Create emotionally gradiented Spotify playlists and more.</p>
 <p align="center"><a href="https://emotionify.nitratine.net/">🌐: emotionify.nitratine.net</a></p>
 
-## 🛠️ Setup
-
-- Clone the repo
-- Execute `npm install`
-- Execute `npm start`
-
-> After following these steps, a new browser tab will open with the locally hosted application in development mode.
-
 ## 🧪 Development Setup
 
-1. Create a new app / client id at [developer.spotify.com](https://developer.spotify.com/dashboard/applications).
-2. Copy your client id into `/src/config.ts`.
-3. Click "Edit Settings" in the newly created Spotify developer app and add a redirect URI to where `/api/spotify/authentication-callback` will be hosted.
+1. Clone the repo
+2. Execute `npm install`
+3. Create a new app / client id at [developer.spotify.com](https://developer.spotify.com/dashboard/applications).
+4. Copy your client id into `/src/config.ts`.
+5. Click "Edit Settings" in the newly created Spotify developer app and add a redirect URI to where `/spotify-authorization` will be hosted - by default this will be `https://localhost:3000/spotify-authorization`
+6. Set `HTTPS=true` (HTTPS is required to use `window.crypto`)
+   - In PowerShell: `$env:HTTPS = "true"`
+7. Set `NODE_OPTIONS=--openssl-legacy-provider` (react-scripts doesn't play nice with newer versions of Node)
+   - In PowerShell: ` $env:NODE_OPTIONS = "--openssl-legacy-provider"`
+8. Execute `npm start`
+9. Accept the SSL warning
 
 ## 📷 Snippets From the Web App
 

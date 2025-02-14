@@ -9,13 +9,15 @@ on:
 jobs:
   build-deploy:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
       - name: Setup Node
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
         with:
-          node-version: "10.x"
+          node-version: 10
 
       - name: Install Dependencies and Build
         run: |
@@ -30,6 +32,6 @@ jobs:
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: ./build
-          PUBLISH_BRANCH: gh-pages
+          publish_branch: gh-pages
           cname: emotionify.nitratine.net
           force_orphan: true # Only keep latest commit in gh-pages (to keep repo size down)
